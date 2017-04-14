@@ -15,67 +15,100 @@
 #  * **letters_source.txt**: The list of input letter sequences. Each sequence is its own line. 
 #  * **letters_target.txt**: The list of target sequences we'll use in the training process. Each sequence here is a response to the input sequence in letters_source.txt with the same line number.
 
-# In[1]:
+# In[2]:
 
+import helper
 
+# Load the data
+source_path = 'data/letters_source.txt'
+target_path = 'data/letters_target.txt'
+
+source_sentences = helper.load_data(source_path)
+target_sentences = helper.load_data(target_path)
 
 
 # Let's start by examining the current state of the dataset. `source_sentences` contains the entire input sequence file as text delimited by newline symbols.
 
-# In[2]:
+# In[6]:
+
+source_sentences[:50].split('\n')
 
 
+# `target_sentences` contains the entire output sequence file as text delimited by newline symbols.  Each line corresponds to the line from `source_sentences`.  `target_sentences` contains a sorted list characters of the line.
 
+# In[7]:
 
-# `source_sentences` contains the entire output sequence file as text delimited by newline symbols.  Each line corresponds to the line from `source_sentences`.  `source_sentences` contains a sorted characters of the line.
-
-# In[3]:
-
-
+target_sentences[:50].split('\n')
 
 
 # ## Preprocess
 # To do anything useful with it, we'll need to turn the characters into a list of integers: 
 
-# In[4]:
+# In[16]:
 
-def extract_character_vocab(data):
+set_words_1 = list(set(char for line in source_sentences.split('\n') for char in line))
 
 
-# Build int2letter and letter2int dicts
+# In[17]:
 
+set_words_1[:10]
+
+
+# In[35]:
+
+def char_to_vec(data):
+    # Define character sets
+    special_chars = ['<pad>', '<unk>', '<s>',  '<\s>']
+    set_chars = list(set(char for line in data.split('\n') for char in line))
+    
+    # Map chars to IDs
+    int_to_char = {i: char for i, char in enumerate(special_chars + set_chars)}
+    char_to_int = {char: i for i, char in int_to_char.items()}
+
+    return int_to_char, char_to_int
+
+
+# Build int_to_char and char_to_int dicts for source and target data
+source_int_to_char, source_char_to_int = char_to_vec(source_sentences)
+target_int_to_char, target_char_to_int = char_to_vec(target_sentences)
 
 # Convert characters to ids
-
+source_char_ids = [[source_char_to_int.get(letter, source_char_to_int['<unk>']) for letter in line] for line in source_sentences.split('\n')]
+target_char_ids = [[target_char_to_int.get(letter, target_char_to_int['<unk>']) for letter in line] for line in target_sentences.split('\n')]
 
 print("Example source sequence")
-print(source_letter_ids[:3])
+print(source_char_ids[:3])
 print("\n")
 print("Example target sequence")
-print(target_letter_ids[:3])
+print(target_char_ids[:3])
 
 
 # The last step in the preprocessing stage is to determine the the longest sequence size in the dataset we'll be using, then pad all the sequences to that length.
 
-# In[5]:
+# In[38]:
 
 def pad_id_sequences(source_ids, source_letter_to_int, target_ids, target_letter_to_int, sequence_length):
+    new_source_ids = [sentence + [source_char_to_int['<pad>']] * (sequence_length - len(sentence))                       for sentence in source_ids]
+    new_target_ids = [sentence + [target_char_to_int['<pad>']] * (sequence_length - len(sentence))                       for sentence in target_ids]
+    
+    return new_source_ids, new_target_ids
 
 
 # Use the longest sequence as sequence length
-
+sequence_length = max([len(sentence) for sentence in source_char_ids] +                       [len(sentence) for sentence in target_char_ids])
 
 # Pad all sequences up to sequence length
+source_vecs, target_vecs = pad_id_sequences(source_char_ids, source_char_to_int,                                             target_char_ids, target_char_to_int, sequence_length)
 
 
 print("Sequence Length")
 print(sequence_length)
 print("\n")
 print("Input sequence example")
-print(source_ids[:3])
+print(source_vecs[:3])
 print("\n")
 print("Target sequence example")
-print(target_ids[:3])
+print(target_vecs[:3])
 
 
 # This is the final shape we need them to be in. We can now proceed to building the model.
@@ -260,5 +293,3 @@ print('\nPrediction')
 print('  Word Ids:      {}'.format([i for i in np.argmax(chatbot_logits, 1)]))
 print('  Chatbot Answer Words: {}'.format([target_int_to_letter[i] for i in np.argmax(chatbot_logits, 1)]))
 
-
-# test change 6
