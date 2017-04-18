@@ -15,7 +15,7 @@
 #  * **letters_source.txt**: The list of input letter sequences. Each sequence is its own line. 
 #  * **letters_target.txt**: The list of target sequences we'll use in the training process. Each sequence here is a response to the input sequence in letters_source.txt with the same line number.
 
-# In[2]:
+# In[5]:
 
 import helper
 
@@ -44,17 +44,17 @@ target_sentences[:50].split('\n')
 # ## Preprocess
 # To do anything useful with it, we'll need to turn the characters into a list of integers: 
 
-# In[16]:
+# In[8]:
 
 set_words_1 = list(set(char for line in source_sentences.split('\n') for char in line))
 
 
-# In[17]:
+# In[9]:
 
 set_words_1[:10]
 
 
-# In[35]:
+# In[10]:
 
 def char_to_vec(data):
     # Define character sets
@@ -85,24 +85,24 @@ print(target_char_ids[:3])
 
 # The last step in the preprocessing stage is to determine the the longest sequence size in the dataset we'll be using, then pad all the sequences to that length.
 
-# In[38]:
+# In[11]:
 
-def pad_id_sequences(source_ids, source_letter_to_int, target_ids, target_letter_to_int, sequence_length):
-    new_source_ids = [sentence + [source_char_to_int['<pad>']] * (sequence_length - len(sentence))                       for sentence in source_ids]
-    new_target_ids = [sentence + [target_char_to_int['<pad>']] * (sequence_length - len(sentence))                       for sentence in target_ids]
+def pad_id_sequences(source_ids, source_letter_to_int, target_ids, target_letter_to_int, seq_length):
+    new_source_ids = [sentence + [source_char_to_int['<pad>']] * (seq_length - len(sentence))                       for sentence in source_ids]
+    new_target_ids = [sentence + [target_char_to_int['<pad>']] * (seq_length - len(sentence))                       for sentence in target_ids]
     
     return new_source_ids, new_target_ids
 
 
 # Use the longest sequence as sequence length
-sequence_length = max([len(sentence) for sentence in source_char_ids] +                       [len(sentence) for sentence in target_char_ids])
+seq_length = max([len(sentence) for sentence in source_char_ids] +                       [len(sentence) for sentence in target_char_ids])
 
 # Pad all sequences up to sequence length
-source_vecs, target_vecs = pad_id_sequences(source_char_ids, source_char_to_int,                                             target_char_ids, target_char_to_int, sequence_length)
+source_vecs, target_vecs = pad_id_sequences(source_char_ids, source_char_to_int,                                             target_char_ids, target_char_to_int, seq_length)
 
 
 print("Sequence Length")
-print(sequence_length)
+print(seq_length)
 print("\n")
 print("Input sequence example")
 print(source_vecs[:3])
@@ -117,7 +117,7 @@ print(target_vecs[:3])
 # #### Check the Version of TensorFlow
 # This will check to make sure you have the correct version of TensorFlow
 
-# In[6]:
+# In[1]:
 
 from distutils.version import LooseVersion
 import tensorflow as tf
@@ -129,29 +129,32 @@ print('TensorFlow Version: {}'.format(tf.__version__))
 
 # ### Hyperparameters
 
-# In[7]:
+# In[16]:
 
 # Number of Epochs
-epochs = 
+epochs = 10
 # Batch Size
-batch_size = 
+batch_size = 128
 # RNN Size
-rnn_size = 
+rnn_size = 100
 # Number of Layers
-num_layers = 
+num_layers = 2
 # Embedding Size
-encoding_embedding_size = 
-decoding_embedding_size = 
+encode_embed_size = 13
+decode_embed_size = 13
 # Learning Rate
-learning_rate = 
+learning_rate = 0.003
 
 
 # ### Input
 
-# In[8]:
+# In[17]:
 
 # set placeholders
 
+inputs_ = tf.placeholder(tf.int32, [batch_size, seq_length], name='inputs')
+targets_ = tf.placeholder(tf.int32, [batch_size, seq_length], name='targets')
+lr = tf.placeholder(tf.float32)
 
 
 # ### Sequence to Sequence
@@ -179,29 +182,42 @@ learning_rate =
 # - Embed the input data using [`tf.contrib.layers.embed_sequence`](https://www.tensorflow.org/api_docs/python/tf/contrib/layers/embed_sequence)
 # - Pass the embedded input into a stack of RNNs.  Save the RNN state and ignore the output.
 
-# In[9]:
+# In[39]:
 
 # vocab size
-
+source_vocab_size = len(source_char_to_int)
 
 # Encoder embedding
-
-
+enc_embed_input = tf.contrib.layers.embed_sequence(inputs_, source_vocab_size, encode_embed_size)
+    
 # Encoder
+enc_cell = tf.contrib.rnn.MultiRNNCell([tf.contrib.rnn.BasicLSTMCell(rnn_size)] * num_layers)
+_, enc_state = tf.nn.dynamic_rnn(enc_cell, enc_embed_input, scope='reuse', dtype=tf.float32)
 
 
+# # STOPPING WORK HERE UNTIL BETTER MATERIALS ARE AVAILABLE
 
 # ### Process Decoding Input
 
-# In[10]:
+# In[40]:
 
 import numpy as np
 
-# Process the input we'll feed to the decoder
+### I DON'T UNDERSTAND THIS ####
 
+# Process the input we'll feed to the decoder
+ending = tf.strided_slice(targets, [0, 0], [batch_size, -1], [1, 1])
+dec_input = tf.concat([tf.fill([batch_size, 1], target_char_to_int['<s>']), ending], 1)
+
+demonstration_outputs = np.reshape(range(batch_size * seq_length), (batch_size, seq_length))
 
 # print Targets and Processed Decoding Input
-
+sess = tf.InteractiveSession()
+print("Targets")
+print(demonstration_outputs[:2])
+print("\n")
+print("Processed Decoding Input")
+print(sess.run(dec_input, {targets: demonstration_outputs})[:2])
 
 
 # ### Decoding
@@ -209,18 +225,22 @@ import numpy as np
 # - Build the decoding RNNs
 # - Build the output layer in the decoding scope, so the weight and bias can be shared between the training and inference decoders.
 
-# In[11]:
+# In[42]:
 
-target_vocab_size = len(target_letter_to_int)
+target_vocab_size = len(target_char_to_int)
+
+### I DON'T UNDERSTAND THIS ####
 
 # Decoder Embedding
-
+dec_embeddings = tf.Variable(tf.random_uniform([target_vocab_size, decoding_embedding_size]))
+dec_embed_input = tf.nn.embedding_lookup(dec_embeddings, dec_input)
 
 # Decoder RNNs
+dec_cell = tf.contrib.rnn.MultiRNNCell([tf.contrib.rnn.BasicLSTMCell(rnn_size)] * num_layers)
 
-
+with tf.variable_scope("decoding") as decoding_scope:
     # Output Layer
-
+    output_fn = lambda x: tf.contrib.layers.fully_connected(x, target_vocab_size, None, scope=decoding_scope)
 
 
 # #### Decoder During Training
