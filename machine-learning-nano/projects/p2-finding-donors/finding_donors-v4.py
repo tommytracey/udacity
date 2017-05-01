@@ -21,7 +21,7 @@
 # ## Exploring the Data
 # Run the code cell below to load necessary Python libraries and load the census data. Note that the last column from this dataset, `'income'`, will be our target label (whether an individual makes more than, or at most, $50,000 annually). All other columns are features about each individual in the census database.
 
-# In[1]:
+# In[2]:
 
 # Import libraries necessary for this project
 import numpy as np
@@ -33,13 +33,13 @@ from IPython.display import display # Allows the use of display() for DataFrames
 import visuals as vs
 
 # Pretty display for notebooks
-get_ipython().magic(u'matplotlib inline')
+get_ipython().magic('matplotlib inline')
 
 # Load the Census dataset
 data = pd.read_csv("census.csv")
 
 # Success - Display the first record
-display(data.head(n=5))
+display(data.head(n=25))
 
 
 # ### Implementation: Data Exploration
@@ -50,11 +50,6 @@ display(data.head(n=5))
 # - The percentage of individuals making more than \$50,000 annually, `'greater_percent'`.
 # 
 # **Hint:** You may need to look at the table above to understand how the `'income'` entries are formatted. 
-
-# In[2]:
-
-data['income'][:10]
-
 
 # In[3]:
 
@@ -68,13 +63,13 @@ print(income_segments)
 # In[4]:
 
 # TODO: Total number of records
-n_records = len(data)  # 45,222
+n_records = len(data)
 
 # TODO: Number of records where individual's income is more than $50,000
-n_greater_50k = income_segments['>50K']  # 11,208
+n_greater_50k = income_segments['>50K']
 
 # TODO: Number of records where individual's income is at most $50,000
-n_at_most_50k = income_segments['<=50K']  # 34,014
+n_at_most_50k = income_segments['<=50K']
 
 # TODO: Percentage of individuals whose income is more than $50,000
 greater_percent = n_greater_50k / float(n_records) * 100
@@ -140,7 +135,7 @@ numerical = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-
 features_raw[numerical] = scaler.fit_transform(data[numerical])
 
 # Show an example of a record with scaling applied
-display(features_raw.head(n = 1))
+display(features_raw.head(n = 5))
 
 
 # ### Implementation: Data Preprocessing
@@ -158,11 +153,10 @@ display(features_raw.head(n = 1))
 #  - Convert the target label `'income_raw'` to numerical entries.
 #    - Set records with "<=50K" to `0` and records with ">50K" to `1`.
 
-# In[9]:
+# In[12]:
 
 # TODO: One-hot encode the 'features_raw' data using pandas.get_dummies()
-categorical = ['workclass', 'education_level', 'marital-status', 'occupation', 'relationship',                'race', 'sex', 'native-country']
-features = pd.get_dummies(features_raw[categorical])
+features = pd.get_dummies(features_raw)
 
 # TODO: Encode the 'income_raw' data to numerical values
 income = income_raw.map({'>50K': 1, '<=50K': 0})
@@ -180,7 +174,7 @@ print encoded
 # 
 # Run the code cell below to perform this split.
 
-# In[10]:
+# In[13]:
 
 # Import train_test_split
 from sklearn.cross_validation import train_test_split
@@ -210,7 +204,7 @@ print "Testing set has {} samples.".format(X_test.shape[0])
 # *If we chose a model that always predicted an individual made more than \$50,000, what would that model's accuracy and F-score be on this dataset?*  
 # **Note:** You must use the code cell below and assign your results to `'accuracy'` and `'fscore'` to be used later.
 
-# In[11]:
+# In[14]:
 
 # TODO: Calculate accuracy
 accuracy = n_greater_50k / float(n_records)
@@ -247,6 +241,27 @@ print "Naive Predictor: [Accuracy score: {:.4f}, F-score: {:.4f}]".format(accura
 # - *What makes this model a good candidate for the problem, given what you know about the data?*
 
 # **Answer: **
+# 
+# The three models I feel are most appropriate for this problem are: 
+# 
+# **1) Decision Trees **
+# - **Real-world application**: This example is over 20 years old, but I found it really interesting. Apparently NASA has used decision trees to classfy various celestial objects such as galaxies, stars, and cosmic rays based on the different types of light signatures they emit. http://adsabs.harvard.edu/full/1995PASP..107..279S
+# - **Strengths**: Decision trees are simple and easy to interpret. They perform well on non-parametric data, which means we don't have to worry about outliers or whether our data is linearly separable. And decision trees take into account variable interactions (whereas Naive Bayes does not). 
+# - **Weaknesses**: Decision trees tend to overfit the data unless you prune them or use ensemble methods like random forests or boosted trees. Another negative is that you have to rebuild your tree whenever you get new data. 
+# - **Good candidate because**: The CharityML data set has a lot of categorical features (8 out of the 13) and it seems plausible that some of them are dependent on each other...and decision trees would provide a simple way to understand those interactions. If the initial results look promising, we can then try random forests to improve performance and negate overfitting. 
+# 
+# **2) Logistic Regression **
+# - **Real-world application**: Banks use logistic regression to determine whether home loan application is approved or rejected. There are many factors that are taken into account, including the applicants' credit score, credit history, debt-to-income ratio, employment status, and the loan-to-value ratio of the home itself.  
+# - **Strengths**: Logistic regression also performs better (than Naive Bayes) if your features are *not* conditionally independent. But logistic regression has the advantage over decision trees and SVM of (a) allowing you to update your model as you receive new data, and (b) producing probababities so that you can measure the confidence level of the model's predictions. 
+# - **Weaknesses**:  Logistic regression doesn’t perform well when the feature space is too large and/or there is a large number of categorical features. It also requires you to perform transformations for non-linear features and may be influenced by outliers since it relies on the entire data set. 
+# - **Good candidate because**: It would be great to understand the model's confidence level -- e.g. is it 90% confident or ony 10% confident the person earns more than \$50k? Also, in real world scenario, logistic regression would provide more flexibility should we get additional data or decide to experiment with different thresholds (e.g. \$60k instead of \$50k).
+# 
+# **3) Support Vector Machines **
+# - **Real-world application**: One interesting application of support vector machines is predicting if a certain geographic region will exceed some contamination threshold based on various types of timeseries measurements of environmental pollutants. http://baikal-bangkok.org/~nicolas/publi/acai99-svm.pdf
+# - **Strengths**: Unlike logistic regression, support vector machines can handle a large set of features and don't rely on the entire data set (i.e. SVM can handle missing data in some cases). Also, SVM can handle non-linear feature interactions.
+# - **Weaknesses**: SVMs are not as intuitive as decision trees and they can be costly to train on large data sets (given their non-linear kernels). 
+# - **Good candidate because**: To be honest, I'm not convinced it's a good candidate. But given my limited experience, I chose SVM because I wasn't sure if the number of features (13) and samples (~32k) made the CharityML dataset too large for logistic regression. If so, then SVM might be a better predictor since it's generally better suited for larger feature spaces. And if not, it seems that SVM would at least be a good benchmark...especially with regard to accuracy vs training time (since LR will certainly train quicker than SVM). 
+# 
 
 # ### Implementation - Creating a Training and Predicting Pipeline
 # To properly evaluate the performance of each model you've chosen, it's important that you create a training and predicting pipeline that allows you to quickly and effectively train models using various sizes of training data and perform predictions on the testing data. Your implementation here will be used in the following section.
@@ -259,7 +274,7 @@ print "Naive Predictor: [Accuracy score: {:.4f}, F-score: {:.4f}]".format(accura
 #  - Calculate the F-score for both the training subset and testing set.
 #    - Make sure that you set the `beta` parameter!
 
-# In[12]:
+# In[15]:
 
 # TODO: Import two metrics from sklearn - fbeta_score and accuracy_score
 from sklearn.metrics import fbeta_score, accuracy_score
@@ -280,7 +295,7 @@ def train_predict(learner, sample_size, X_train, y_train, X_test, y_test):
     
     # TODO: Fit the learner to the training data using slicing with 'sample_size'
     start = time() # Get start time
-    learner = learner.fit(X_train, y_train)
+    learner = learner.fit(X_train[:sample_size], y_train[:sample_size])
     end = time() # Get end time
     
     # TODO: Calculate the training time
@@ -326,52 +341,18 @@ def train_predict(learner, sample_size, X_train, y_train, X_test, y_test):
 # 
 # **Note:** Depending on which algorithms you chose, the following implementation may take some time to run!
 
-# In[13]:
+# In[16]:
 
 # TODO: Import the three supervised learning models from sklearn
 from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.linear_model import LogisticRegression, SGDClassifier
-
-
-# TODO: Initialize the three models
-clf_A = tree.DecisionTreeClassifier(random_state=0)
-clf_B = RandomForestClassifier(random_state=0)
-clf_C = AdaBoostClassifier(random_state=0)
-# clf_D = LogisticRegression(random_state=0)
-# clf_E = SGDClassifier(random_state=0)
-
-# TODO: Calculate the number of samples for 1%, 10%, and 100% of the training data
-samples_1 = int(0.01 * len(X_train))
-samples_10 = int(0.1 * len(X_train))
-samples_100 = len(X_train)
-
-# Collect results on the learners
-results = {}
-for clf in [clf_A, clf_B, clf_C]:
-    clf_name = clf.__class__.__name__
-    results[clf_name] = {}
-    for i, samples in enumerate([samples_1, samples_10, samples_100]):
-        results[clf_name][i] =         train_predict(clf, samples, X_train, y_train, X_test, y_test)
-
-# Run metrics visualization for the three supervised learning models chosen
-vs.evaluate(results, accuracy, fscore)
-
-
-# In[14]:
-
-# TODO: Import the three supervised learning models from sklearn
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.linear_model import LogisticRegression, SGDClassifier
-from sklearn import tree
+from sklearn.linear_model import LogisticRegression
+from sklearn import svm
 
 
 # TODO: Initialize the three models
 clf_A = tree.DecisionTreeClassifier(random_state=0)
 clf_B = LogisticRegression(random_state=0)
-clf_C = SGDClassifier(random_state=0)
+clf_C = svm.SVC(random_state=0)
 
 # TODO: Calculate the number of samples for 1%, 10%, and 100% of the training data
 samples_1 = int(0.01 * len(X_train))
@@ -383,9 +364,12 @@ results = {}
 for clf in [clf_A, clf_B, clf_C]:
     clf_name = clf.__class__.__name__
     results[clf_name] = {}
+    start = time()
     for i, samples in enumerate([samples_1, samples_10, samples_100]):
         results[clf_name][i] =         train_predict(clf, samples, X_train, y_train, X_test, y_test)
-
+    train_time = time() - start
+    print "{} training time: {:.2f}".format(clf_name, train_time)
+    
 # Run metrics visualization for the three supervised learning models chosen
 vs.evaluate(results, accuracy, fscore)
 
@@ -399,11 +383,23 @@ vs.evaluate(results, accuracy, fscore)
 # **Hint:** Your answer should include discussion of the metrics, prediction/training time, and the algorithm's suitability for the data.
 
 # **Answer: **
+# 
+# This is a close call given that all three models had very similar performance on both accuracy and F-score. But, we can easily eliminate the SVM model since it took over 350 times longer to train than the other two models. So that leaves us with logistic regression (LR) vs. decision trees (DT).
+# 
+# I think logistic regression is most appropriate in this case. We should note that the LR model's accuracy and F-scores are only marginally better than the DT model (accuracy: 0.8296 vs 0.8198, F-score: 0.6556 vs 0.6313). However, the LR model trained 32% faster than the DT model. The LR model also had lower variance than the DT model, which achieved a signficantly higher validation accuracy than testing accuracy.
+# 
+# Finally, I think because the LR model generates probabalities that can be used to measure the model's confidence in its predictions, the LR model would be more practical for the CharityML team. The confidence intervals make the predictions less black and white, and might reveal additional insight into the data which could help the team consider other income thresholds or improvements to their approach. 
 
 # ### Question 4 - Describing the Model in Layman's Terms
 # *In one to two paragraphs, explain to *CharityML*, in layman's terms, how the final model chosen is supposed to work. Be sure that you are describing the major qualities of the model, such as how the model is trained and how the model makes a prediction. Avoid using advanced mathematical or technical jargon, such as describing equations or discussing the algorithm implementation.*
 
 # **Answer: ** 
+# 
+# Logistic regression allows us to predict whether someone earns more than >50k, based on the set of things we know about that person. What we know about each person is represented by a set of data points (e.g., age, gender, education level, etc). The logistic regression model learns the relationship of these data points by looking at thousands of historical examples of people for whom we know either do or don't earn more than \$50k. As a result, we can understand if and by how much a given data point (or combination of data points) increases or decreases the odds that someone earns more than \$50k. 
+# 
+# This is one of the benefits of logistic regression in that it calculates a probabability for each prediction. So, the model doesn't just identify "John Doe" as a >\$50k earner; it gives you the estimated probabability that John Doe earns more than \$50k. This probabability provides more insight than a simple yes/no answer. The probability score could be used to further refine your team's strategy for approaching potential donors. For example, maybe people with a 95% probability receive a different prirority/offer than those with a 55% probability. 
+# 
+# In order to calculate these probabilities, the model looks at how each input variable (age, gender, etc) correlates with the target variable (income level) across a number of samples. Based on all of those individual calculations, the model determines how strongly each input variable predicts the target variable on average. The prediction power of each input variable is represented by a coefficient, which can be positive or negative. Then, when the model encounters a new set of data for a person with an unknown income level, it uses this set of coefficients to calculate the individual probababilities for each input variable for that person. Then the model sums all of these into a cumulative probability and selects the class with the highest probability, either income level >\$50k or <=\$50k. 
 
 # ### Implementation: Model Tuning
 # Fine tune the chosen model. Use grid search (`GridSearchCV`) with at least one important parameter tuned with at least 3 different values. You will need to use the entire training set for this. In the code cell below, you will need to implement the following:
@@ -419,7 +415,59 @@ vs.evaluate(results, accuracy, fscore)
 # 
 # **Note:** Depending on the algorithm chosen and the parameter list, the following implementation may take some time to run!
 
-# In[27]:
+# #### Grid search with Logistic Regression
+
+# In[21]:
+
+# TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
+from sklearn.linear_model import LogisticRegression
+from sklearn.grid_search import GridSearchCV
+from sklearn.metrics import make_scorer
+
+
+# TODO: Initialize the classifier
+clf = LogisticRegression(random_state=0)
+
+# TODO: Create the parameters list you wish to tune
+parameters = {'solver': ('newton-cg', 'lbfgs'), 'multi_class': ('ovr', 'multinomial'), 'C':[0.25, 0.5, 0.75, 1.0]} # 'penalty':('l1', 'l2'), 
+
+# TODO: Make an fbeta_score scoring object
+scorer = make_scorer(fbeta_score, beta=0.5)
+
+# TODO: Perform grid search on the classifier using 'scorer' as the scoring method
+grid_obj = GridSearchCV(clf, parameters, scoring=scorer)
+
+# TODO: Fit the grid search object to the training data and find the optimal parameters
+grid_start = time()
+grid_fit = grid_obj.fit(X_train, y_train)
+
+# Get the estimator
+best_clf = grid_fit.best_estimator_
+grid_end = time()
+grid_time = grid_end - grid_start
+
+# Make predictions using the unoptimized and model
+unop_start = time()
+predictions = (clf.fit(X_train, y_train)).predict(X_test)
+best_predictions = best_clf.predict(X_test)
+unop_end = time()
+unop_time = unop_end - unop_start
+
+# Report the before-and-afterscores
+print "Unoptimized model\n------"
+print "Accuracy score on testing data: {:.4f}".format(accuracy_score(y_test, predictions))
+print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta = 0.5))
+print "train+pred time: {:.2f} sec".format(unop_time)
+print "\nOptimized Model\n------"
+print "Final accuracy score on the testing data: {:.4f}".format(accuracy_score(y_test, best_predictions))
+print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5))
+print "train+pred time: {:.2f} sec".format(grid_time)
+
+
+# #### Grid search with Decision Trees
+# NOTE: Given the similarity in performance between the logistic regression and decision tree models, I decided to perform a grid search on both of them. 
+
+# In[18]:
 
 # TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
 from sklearn.grid_search import GridSearchCV
@@ -439,137 +487,30 @@ scorer = make_scorer(fbeta_score, beta=0.5)
 grid_obj = GridSearchCV(clf, parameters, scoring=scorer)
 
 # TODO: Fit the grid search object to the training data and find the optimal parameters
+grid_start = time()
 grid_fit = grid_obj.fit(X_train, y_train)
 
 # Get the estimator
 best_clf = grid_fit.best_estimator_
+grid_end = time()
+grid_time = grid_end - grid_start
 
 # Make predictions using the unoptimized and model
+unop_start = time()
 predictions = (clf.fit(X_train, y_train)).predict(X_test)
 best_predictions = best_clf.predict(X_test)
+unop_end = time()
+unop_time = unop_end - unop_start
 
 # Report the before-and-afterscores
 print "Unoptimized model\n------"
 print "Accuracy score on testing data: {:.4f}".format(accuracy_score(y_test, predictions))
 print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta = 0.5))
+print "train+pred time: {:.2f} sec".format(unop_time)
 print "\nOptimized Model\n------"
 print "Final accuracy score on the testing data: {:.4f}".format(accuracy_score(y_test, best_predictions))
 print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5))
-
-
-# In[24]:
-
-# TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import make_scorer
-
-
-# TODO: Initialize the classifier
-clf = LogisticRegression()
-
-# TODO: Create the parameters list you wish to tune
-parameters = {'penalty':('l1', 'l2'), 'C':[0.3, 0.7, 1.0], 'random_state':[0, 1, None]}
-
-# TODO: Make an fbeta_score scoring object
-scorer = make_scorer(fbeta_score, beta=0.5)
-
-# TODO: Perform grid search on the classifier using 'scorer' as the scoring method
-grid_obj = GridSearchCV(clf, parameters, scoring=scorer)
-
-# TODO: Fit the grid search object to the training data and find the optimal parameters
-grid_fit = grid_obj.fit(X_train, y_train)
-
-# Get the estimator
-best_clf = grid_fit.best_estimator_
-
-# Make predictions using the unoptimized and model
-predictions = (clf.fit(X_train, y_train)).predict(X_test)
-best_predictions = best_clf.predict(X_test)
-
-# Report the before-and-afterscores
-print "Unoptimized model\n------"
-print "Accuracy score on testing data: {:.4f}".format(accuracy_score(y_test, predictions))
-print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta = 0.5))
-print "\nOptimized Model\n------"
-print "Final accuracy score on the testing data: {:.4f}".format(accuracy_score(y_test, best_predictions))
-print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5))
-
-
-# In[25]:
-
-# TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import make_scorer
-
-
-# TODO: Initialize the classifier
-clf = LogisticRegression()
-
-# TODO: Create the parameters list you wish to tune
-# parameters = {'penalty':('l1', 'l2'), 'C':[0.3, 0.7, 1.0], 'random_state':[0, 1, None]}
-parameters = {'random_state':[0, 1, None]}
-
-# TODO: Make an fbeta_score scoring object
-scorer = make_scorer(fbeta_score, beta=0.5)
-
-# TODO: Perform grid search on the classifier using 'scorer' as the scoring method
-grid_obj = GridSearchCV(clf, parameters, scoring=scorer)
-
-# TODO: Fit the grid search object to the training data and find the optimal parameters
-grid_fit = grid_obj.fit(X_train, y_train)
-
-# Get the estimator
-best_clf = grid_fit.best_estimator_
-
-# Make predictions using the unoptimized and model
-predictions = (clf.fit(X_train, y_train)).predict(X_test)
-best_predictions = best_clf.predict(X_test)
-
-# Report the before-and-afterscores
-print "Unoptimized model\n------"
-print "Accuracy score on testing data: {:.4f}".format(accuracy_score(y_test, predictions))
-print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta = 0.5))
-print "\nOptimized Model\n------"
-print "Final accuracy score on the testing data: {:.4f}".format(accuracy_score(y_test, best_predictions))
-print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5))
-
-
-# In[ ]:
-
-# TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import make_scorer
-
-
-# TODO: Initialize the classifier
-clf = SGDClassifier(random_state=0)
-
-# TODO: Create the parameters list you wish to tune
-parameters = {'loss':('hinge', 'log', 'modified_huber', 'perceptron', 'squared_loss'), 'penalty':('l1', 'l2')}
-
-# TODO: Make an fbeta_score scoring object
-scorer = make_scorer(fbeta_score, beta=0.5)
-
-# TODO: Perform grid search on the classifier using 'scorer' as the scoring method
-grid_obj = GridSearchCV(clf, parameters, scoring=scorer)
-
-# TODO: Fit the grid search object to the training data and find the optimal parameters
-grid_fit = grid_obj.fit(X_train, y_train)
-
-# Get the estimator
-best_clf = grid_fit.best_estimator_
-
-# Make predictions using the unoptimized and model
-predictions = (clf.fit(X_train, y_train)).predict(X_test)
-best_predictions = best_clf.predict(X_test)
-
-# Report the before-and-afterscores
-print "Unoptimized model\n------"
-print "Accuracy score on testing data: {:.4f}".format(accuracy_score(y_test, predictions))
-print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta = 0.5))
-print "\nOptimized Model\n------"
-print "Final accuracy score on the testing data: {:.4f}".format(accuracy_score(y_test, best_predictions))
-print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5))
+print "train+pred time: {:.2f} sec".format(grid_time)
 
 
 # ### Question 5 - Final Model Evaluation
@@ -580,11 +521,15 @@ print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, bes
 # 
 # |     Metric     | Benchmark Predictor | Unoptimized Model | Optimized Model |
 # | :------------: | :-----------------: | :---------------: | :-------------: | 
-# | Accuracy Score |                     |                   |                 |
-# | F-score        |                     |                   |   EXAMPLE       |
+# | Accuracy Score |         0.2478      |     0.8296        |     0.8293      |
+# | F-score        |         0.2917      |     0.6556        |     0.6549      |
 # 
 
 # **Answer: **
+# 
+# My chosen model (Logistic Regresssion) far outperformed the naive predictor benchmark with more than a 3x improvement in accuracy and more than a 2x improvement in F-score.
+# 
+# However, performing grid search optimization did not improve the results. The optimized model peformed essentially the same as the unoptimized model even after testing various sets of parameters. I suppose the default model parameters were sufficient in this case. 
 
 # ----
 # ## Feature Importance
@@ -595,9 +540,17 @@ print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, bes
 
 # ### Question 6 - Feature Relevance Observation
 # When **Exploring the Data**, it was shown there are thirteen available features for each individual on record in the census data.  
-# _Of these thirteen records, which five features do you believe to be most important for prediction, and in what order would you rank them and why?_
+# _Of the thirteen features, which five features do you believe to be most important for prediction, and in what order would you rank them and why?_
 
 # **Answer:**
+# 
+# I would guess that the following features are most important in predicting if someone earns more than $50k/yr (in 1994 dollars):
+# 
+# 1. *occupation* -- We know from experience that certain types of jobs pay more than others.
+# 2. *education_level* -- Intuitively, it seems that higher education levels would correlate with higher paying jobs...although certainly not in all cases.
+# 3. *capital_gain* -- Capital gains only occur if someone has assets such as stock or real estate (and then liquidates them). I would guess that capital gains over a certain level would be a good predictor of whether someone earns more than 50k.  
+# 4. *marital_status* -- Honestly, this could go either way. You could predict that married people earn more because they're motivated to provide for their family. However, you could also argue that unmarried people earn more because they have more time to focus on their career sans other family obligations. Either way, it seems marital status could play a role in predicting income level. Again, just using intuition here. 
+# 5. *age* -- People's earnings typically increase over time, so it seems that people above a certain age (25? 30?) are more likely to earn more than $50k. 
 
 # ### Implementation - Extracting Feature Importance
 # Choose a `scikit-learn` supervised learning algorithm that has a `feature_importance_` attribute availble for it. This attribute is a function that ranks the importance of each feature when making predictions based on the chosen algorithm.
@@ -607,7 +560,7 @@ print "Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, bes
 #  - Train the supervised model on the entire training set.
 #  - Extract the feature importances using `'.feature_importances_'`.
 
-# In[22]:
+# In[19]:
 
 # TODO: Import a supervised learning model that has 'feature_importances_'
 from sklearn.ensemble import RandomForestClassifier
@@ -635,11 +588,15 @@ print(columns)
 # _How do these five features compare to the five features you discussed in **Question 6**? If you were close to the same answer, how does this visualization confirm your thoughts? If you were not close, why do you think these features are more relevant?_
 
 # **Answer:**
+# 
+# The graph confirms my intuition that the type of job and education level would be the strongest predictors. The results also confirmed that marital status is a predictor, with the "never married" and "married-husband" statuses having the most influence. 
+# 
+# However, the results revealed that I was dead wrong about 'captial gains' and 'age' being strong predictors. 
 
 # ### Feature Selection
 # How does a model perform if we only use a subset of all the available features in the data? With less features required to train, the expectation is that training and prediction time is much lower — at the cost of performance metrics. From the visualization above, we see that the top five most important features contribute more than half of the importance of **all** features present in the data. This hints that we can attempt to *reduce the feature space* and simplify the information required for the model to learn. The code cell below will use the same optimized model you found earlier, and train it on the same training set *with only the top five important features*. 
 
-# In[28]:
+# In[20]:
 
 # Import functionality for cloning a model
 from sklearn.base import clone
@@ -649,18 +606,24 @@ X_train_reduced = X_train[X_train.columns.values[(np.argsort(importances)[::-1])
 X_test_reduced = X_test[X_test.columns.values[(np.argsort(importances)[::-1])[:5]]]
 
 # Train on the "best" model found from grid search earlier
+redu_start = time()
 clf = (clone(best_clf)).fit(X_train_reduced, y_train)
 
 # Make new predictions
 reduced_predictions = clf.predict(X_test_reduced)
+redu_end = time()
+redu_time = redu_end - redu_start
 
 # Report scores from the final model using both versions of data
 print "Final Model trained on full data\n------"
 print "Accuracy on testing data: {:.4f}".format(accuracy_score(y_test, best_predictions))
 print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5))
+print "unoptimized train+pred time: {:.2f} sec".format(unop_time)
+print "optimized train+pred time: {:.2f} sec".format(grid_time)
 print "\nFinal Model trained on reduced data\n------"
 print "Accuracy on testing data: {:.4f}".format(accuracy_score(y_test, reduced_predictions))
 print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, reduced_predictions, beta = 0.5))
+print "train+pred time: {:.2f} sec".format(redu_time)
 
 
 # ### Question 8 - Effects of Feature Selection
@@ -668,6 +631,10 @@ print "F-score on testing data: {:.4f}".format(fbeta_score(y_test, reduced_predi
 # *If training time was a factor, would you consider using the reduced data as your training set?*
 
 # **Answer:**
+# 
+# The accuracy and F-score decreased with the reduced data set by 0.0242 and 0.0692 respectively. But, the training time was almost 300 times faster! So, if training time was a factor, it seems like this would be a reasonable performance tradeoff. 
+# 
+# However, since the grid search optimization did not yield any performance improvements, the best choice is still the unoptimized model which yields the greatest performance with very low training time (accuracy: 0.8296, F-score: 0.6556, training time: 0.15 sec).
 
 # > **Note**: Once you have completed all of the code implementations and successfully answered each question above, you may finalize your work by exporting the iPython Notebook as an HTML document. You can do this by using the menu above and navigating to  
 # **File -> Download as -> HTML (.html)**. Include the finished document along with this notebook as your submission.
