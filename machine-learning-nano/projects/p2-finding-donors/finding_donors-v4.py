@@ -153,7 +153,7 @@ display(features_raw.head(n = 5))
 #  - Convert the target label `'income_raw'` to numerical entries.
 #    - Set records with "<=50K" to `0` and records with ">50K" to `1`.
 
-# In[12]:
+# In[9]:
 
 # TODO: One-hot encode the 'features_raw' data using pandas.get_dummies()
 features = pd.get_dummies(features_raw)
@@ -174,7 +174,7 @@ print encoded
 # 
 # Run the code cell below to perform this split.
 
-# In[13]:
+# In[10]:
 
 # Import train_test_split
 from sklearn.cross_validation import train_test_split
@@ -204,7 +204,7 @@ print "Testing set has {} samples.".format(X_test.shape[0])
 # *If we chose a model that always predicted an individual made more than \$50,000, what would that model's accuracy and F-score be on this dataset?*  
 # **Note:** You must use the code cell below and assign your results to `'accuracy'` and `'fscore'` to be used later.
 
-# In[14]:
+# In[11]:
 
 # TODO: Calculate accuracy
 accuracy = n_greater_50k / float(n_records)
@@ -274,7 +274,7 @@ print "Naive Predictor: [Accuracy score: {:.4f}, F-score: {:.4f}]".format(accura
 #  - Calculate the F-score for both the training subset and testing set.
 #    - Make sure that you set the `beta` parameter!
 
-# In[15]:
+# In[12]:
 
 # TODO: Import two metrics from sklearn - fbeta_score and accuracy_score
 from sklearn.metrics import fbeta_score, accuracy_score
@@ -341,7 +341,7 @@ def train_predict(learner, sample_size, X_train, y_train, X_test, y_test):
 # 
 # **Note:** Depending on which algorithms you chose, the following implementation may take some time to run!
 
-# In[16]:
+# In[13]:
 
 # TODO: Import the three supervised learning models from sklearn
 from sklearn import tree
@@ -386,7 +386,7 @@ vs.evaluate(results, accuracy, fscore)
 # 
 # This is a close call given that all three models had very similar performance on both accuracy and F-score. But, we can easily eliminate the SVM model since it took over 350 times longer to train than the other two models. So that leaves us with logistic regression (LR) vs. decision trees (DT).
 # 
-# I think logistic regression is most appropriate in this case. We should note that the LR model's accuracy and F-scores are only marginally better than the DT model (accuracy: 0.8296 vs 0.8198, F-score: 0.6556 vs 0.6313). However, the LR model trained 32% faster than the DT model. The LR model also had lower variance than the DT model, which achieved a signficantly higher validation accuracy than testing accuracy.
+# I think logistic regression is most appropriate in this case. We should note that the LR model's accuracy and F-scores are only marginally better than the DT model. However, the LR model trained 15% faster than the DT model. And, the LR model also had lower variance than the DT model, which achieved a signficantly higher validation accuracy than testing accuracy.
 # 
 # Finally, I think because the LR model generates probabalities that can be used to measure the model's confidence in its predictions, the LR model would be more practical for the CharityML team. The confidence intervals make the predictions less black and white, and might reveal additional insight into the data which could help the team consider other income thresholds or improvements to their approach. 
 
@@ -417,7 +417,7 @@ vs.evaluate(results, accuracy, fscore)
 
 # #### Grid search with Logistic Regression
 
-# In[21]:
+# In[15]:
 
 # TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
 from sklearn.linear_model import LogisticRegression
@@ -467,7 +467,7 @@ print "train+pred time: {:.2f} sec".format(grid_time)
 # #### Grid search with Decision Trees
 # NOTE: Given the similarity in performance between the logistic regression and decision tree models, I decided to perform a grid search on both of them. 
 
-# In[18]:
+# In[14]:
 
 # TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
 from sklearn.grid_search import GridSearchCV
@@ -521,15 +521,15 @@ print "train+pred time: {:.2f} sec".format(grid_time)
 # 
 # |     Metric     | Benchmark Predictor | Unoptimized Model | Optimized Model |
 # | :------------: | :-----------------: | :---------------: | :-------------: | 
-# | Accuracy Score |         0.2478      |     0.8296        |     0.8293      |
-# | F-score        |         0.2917      |     0.6556        |     0.6549      |
+# | Accuracy Score |         0.2478      |     0.8483        |     0.8494      |
+# | F-score        |         0.2917      |     0.6993        |     0.7015      |
 # 
 
 # **Answer: **
 # 
 # My chosen model (Logistic Regresssion) far outperformed the naive predictor benchmark with more than a 3x improvement in accuracy and more than a 2x improvement in F-score.
 # 
-# However, performing grid search optimization did not improve the results. The optimized model peformed essentially the same as the unoptimized model even after testing various sets of parameters. I suppose the default model parameters were sufficient in this case. 
+# However, performing grid search optimization did not significantly improve the results. The optimized model peformed essentially the same as the unoptimized model even after testing various sets of parameters. I suppose the default model parameters were mostly sufficient in this case. 
 
 # ----
 # ## Feature Importance
@@ -560,7 +560,7 @@ print "train+pred time: {:.2f} sec".format(grid_time)
 #  - Train the supervised model on the entire training set.
 #  - Extract the feature importances using `'.feature_importances_'`.
 
-# In[19]:
+# In[16]:
 
 # TODO: Import a supervised learning model that has 'feature_importances_'
 from sklearn.ensemble import RandomForestClassifier
@@ -589,14 +589,14 @@ print(columns)
 
 # **Answer:**
 # 
-# The graph confirms my intuition that the type of job and education level would be the strongest predictors. The results also confirmed that marital status is a predictor, with the "never married" and "married-husband" statuses having the most influence. 
+# The graph confirms my intuition that marital status, capital gain, and age would be strong predictors. However, the results revealed that I was dead wrong about occupation and eduction level being strong predictors. And, I also didn't guess that hours-per-week would be a strong predictor. 
 # 
-# However, the results revealed that I was dead wrong about 'captial gains' and 'age' being strong predictors. 
+# 
 
 # ### Feature Selection
 # How does a model perform if we only use a subset of all the available features in the data? With less features required to train, the expectation is that training and prediction time is much lower — at the cost of performance metrics. From the visualization above, we see that the top five most important features contribute more than half of the importance of **all** features present in the data. This hints that we can attempt to *reduce the feature space* and simplify the information required for the model to learn. The code cell below will use the same optimized model you found earlier, and train it on the same training set *with only the top five important features*. 
 
-# In[20]:
+# In[17]:
 
 # Import functionality for cloning a model
 from sklearn.base import clone
@@ -632,9 +632,9 @@ print "train+pred time: {:.2f} sec".format(redu_time)
 
 # **Answer:**
 # 
-# The accuracy and F-score decreased with the reduced data set by 0.0242 and 0.0692 respectively. But, the training time was almost 300 times faster! So, if training time was a factor, it seems like this would be a reasonable performance tradeoff. 
+# The accuracy and F-score decreased with the reduced data set by 0.0566 and 0.1563 respectively. This equates to a 6.7% reduction in accuracy and a 7.8% reduction in F-score. But, the training time was 188 times faster! So, if training time was a factor, it seems like this would be a reasonable performance tradeoff. 
 # 
-# However, since the grid search optimization did not yield any performance improvements, the best choice is still the unoptimized model which yields the greatest performance with very low training time (accuracy: 0.8296, F-score: 0.6556, training time: 0.15 sec).
+# However, since the grid search optimization did not yield significant performance improvements, the best choice is still the unoptimized logistic regression model which yields the greatest performance with very low training time (Accuracy score: 0.8483, F-score: 0.6993, train+pred time: 0.27 sec)
 
 # > **Note**: Once you have completed all of the code implementations and successfully answered each question above, you may finalize your work by exporting the iPython Notebook as an HTML document. You can do this by using the menu above and navigating to  
 # **File -> Download as -> HTML (.html)**. Include the finished document along with this notebook as your submission.
