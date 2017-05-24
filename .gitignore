@@ -2,13 +2,22 @@
 
 intro-machine-learning
 
-machine-learning-nano/exercises
-# !deep-learning-nano/exercises/wk-13-seq2seq
-deep-learning-nano/exercises/**
-
-# deep-learning-nano/exercises/wk-13-seq2seq/data
-
-**/class-repo
-**/reading
-**/data
 **/archive
+**/class-repo
+
+**/data
+**/MNIST_data
+**/test_data
+**.tar.gz
+**/input
+**/inputs
+
+**/images
+**/**images
+**/flower_photos
+**/photos
+**/**photos
+
+**/reading
+
+**/dlnd_face_generation_DELETEME.ipynb
