@@ -10,7 +10,7 @@ boxes = cross(rows, cols)
 
 row_units = [cross(r, cols) for r in rows]
 
-# print(row_units[0])
+# print(row_units)
 
 col_units = [cross(rows, c) for c in cols]
 
@@ -20,4 +20,19 @@ square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', 
 
 # print(square_units[0])
 
-unitlist = row_units + column_units + square_units
+def diagonal(rows):
+	col_a, col_b = 1, 9
+	diag_a, diag_b = [], []
+	for r in rows:
+		box_a, box_b = r + str(col_a), r + str(col_b)
+		diag_a.append(box_a)
+		diag_b.append(box_b)
+		col_a += 1
+		col_b -= 1
+	return [diag_a, diag_b]
+
+diag_units = diagonal(rows)
+
+# print(diag_units)
+
+unitlist = row_units + col_units + square_units + diag_units

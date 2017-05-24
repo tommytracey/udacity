@@ -15,6 +15,7 @@ def assign_value(values, box, value):
         assignments.append(values.copy())
     return values
 
+
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
     Args:
@@ -25,11 +26,16 @@ def naked_twins(values):
     """
 
     # Find all instances of naked twins
+
+    
     # Eliminate the naked twins as possibilities for their peers
+
+
 
 def cross(A, B):
     "Cross product of elements in A and elements in B."
-    pass
+    return [s+t for s in A for t in B]
+
 
 def grid_values(grid):
     """
@@ -41,7 +47,20 @@ def grid_values(grid):
             Keys: The boxes, e.g., 'A1'
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
-    pass
+    all_digits = '123456789'
+    values = []
+
+    # Convert grid into a list of numbered character strings
+    for char in grid:
+        if char == '.':
+            values.append(all_digits)
+        elif char in all_digits:
+            values.append(char)
+
+    # add pairs to dictionary
+    return dict(zip(boxes, values))
+
+
 
 def display(values):
     """
@@ -49,19 +68,106 @@ def display(values):
     Args:
         values(dict): The sudoku in dictionary form
     """
-    pass
+    # Borrowed from 'Strategy 1' lesson utils.py
+    width = 1+max(len(values[s]) for s in boxes)
+    line = '+'.join(['-'*(width*3)]*3)
+    for r in rows:
+        print(''.join(values[r+c].center(width)+('|' if c in '36' else '')
+                      for c in cols))
+        if r in 'CF': print(line)
+    return
+
 
 def eliminate(values):
-    pass
+    """Eliminates values from peers of each box with a single value.
+
+    Goes through all the boxes, and whenever there is a box with a single value,
+    eliminates this value from the set of values of all its peers.
+
+    Args:
+        values: Sudoku in dictionary form.
+    Returns:
+        Resulting Sudoku in dictionary form after eliminating values.
+    """
+    # Create list of solved boxes
+    solved_boxes = [box for box in values.keys() if len(values[box]) == 1]
+    
+    # Iterate through peers for each box and remove digit from each peer
+    for box in solved_boxes:
+        digit = values[box]
+        for peer in peers[box]:
+            values[peer] = values[peer].replace(digit, '')
+    return values
+
 
 def only_choice(values):
-    pass
+    """Finalizes all values that are the only choice for a unit.
+
+    Goes through all the units, and whenever there is a unit with a value
+    that only fits in one box, assigns the value to this box.
+
+    Input: Sudoku in dictionary form.
+    Output: Resulting Sudoku in dictionary form after filling in only choices.
+    """
+    for unit in unitlist:
+        for digit in '123456789':
+            d_boxes = [box for box in unit if digit in values[box]]
+            if len(d_boxes) == 1:
+                values[d_boxes[0]] = digit
+    return values
+
 
 def reduce_puzzle(values):
-    pass
+    """Uses the 'eliminate' and 'only_choice' functions as initial strategies to solve 
+    the puzzle, or at least reduce the number of empty boxes. 
+
+    The function stops if the puzzle gets solved or quits if it stops making progress. 
+    
+    Input: Sudoku in dictionary form.
+    Output: Resulting Sudoku in dictionary form after applying updates.
+    """
+    stalled = False
+    while not stalled:
+        # Check boxes for determined values
+        solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
+
+        # Use the Eliminate strategy
+        values = eliminate(values)
+        # Use the Only Choice strategy
+        values = only_choice(values)
+        # Check again how many boxes have a determined value
+        solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
+        # Stop the loop if no new values added
+        stalled = solved_values_before == solved_values_after
+        # Sanity check, return False if there is a box with zero available values:
+        if len([box for box in values.keys() if len(values[box]) == 0]):
+            return False
+    return values
+
 
 def search(values):
-    pass
+    """Creates a tree of possibilities and traverses it using depth-first search (DFS) until 
+    it finds a solution for the sudoku puzzle.
+    """
+    # Reduce the puzzle using the previous function
+    values = reduce_puzzle(values)
+    if values is False:
+        return False
+    if all(len(values[box]) == 1 for box in boxes):
+        return values
+        print("solved!")
+        
+    # Choose one of the unfilled squares with the fewest possibilities
+    count, box = min((len(values[box]), box) for box in boxes if len(values[box]) > 1)
+    
+    # Recurse tree of resulting sudokus; if one returns a value (not False), return that answer!
+    for digit in values[box]:
+        new_board = values.copy()
+        new_board[box] = digit
+        attempt = search(new_board)
+        if attempt:
+            return attempt
+
 
 def solve(grid):
     """
