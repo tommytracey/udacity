@@ -9,23 +9,18 @@ def cross(a, b):
 
 
 boxes = cross(rows, cols)
-# print(boxes)
 
 row_units = [cross(r, cols) for r in rows]
-# print("\nrow_units: ", row_units)
 
 col_units = [cross(rows, c) for c in cols]
-# print(col_units[0])
 
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
-# print(square_units[0])
 
-
+# Create diagnol units
 diag_units_1 = [[rows[i]+cols[i] for i in range(len(rows))]]
 diag_units_2 = [[rows[::-1][i]+cols[i] for i in range(len(rows))]]
-# print("\ndiag_units_1: ", diag_units_1)
-# print("\ndiag_units_2: ", diag_units_2)
 
+# Add diagnol units to unitlist
 unitlist = row_units + col_units + square_units + diag_units_1 + diag_units_2
 
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
@@ -55,9 +50,6 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-    # print("\n START naked_twins")
-    # print("values in: ", values)
-
     # Find all boxes with 2 digit values
     possible_naked_twins = [box for box in boxes if len(values[box]) == 2]
 
@@ -66,6 +58,7 @@ def naked_twins(values):
                     for box_b in peers[box_a] \
                     if values[box_a] == values[box_b]]
 
+    # Remove naked twin digits from common peers
     for box_a, box_b in naked_twins:
         peers_common = peers[box_a] & peers[box_b]
         for peer in peers_common:
@@ -96,8 +89,9 @@ def grid_values(grid):
             values.append(all_digits)
         elif char in all_digits:
             values.append(char)
-
+    
     assert len(values) == 81
+    
     # add pairs to dictionary
     grid_dict = dict(zip(boxes, values))
     
@@ -110,7 +104,7 @@ def display(values):
     Args:
         values(dict): The sudoku in dictionary form
     """
-    # Borrowed from 'Strategy 1' lesson utils.py
+    # Copied from 'Strategy 1' lesson utils.py
     width = 1+max(len(values[s]) for s in boxes)
     line = '+'.join(['-'*(width*3)]*3)
     for r in rows:
@@ -131,41 +125,18 @@ def eliminate(values):
     Returns:
         Resulting Sudoku in dictionary form after eliminating values.
     """
-    # print("\n START eliminate()")
-    # print("values in: ", values)
-
     # Create list of solved boxes
     solved_boxes = [box for box in values.keys() if len(values[box]) == 1]
     
-    # Check to see if E5 is solved
+    # Eliminate solved values from peers 
     for box in solved_boxes:
-    #     if box == 'E5':
-    #     # Remove E5 digit from peers
-    #         remove_from_peers('E5', values)
-    # # Iterate through diaganol boxes and remove solved digits from unsolved peers
-    #     for box in diag_units:
-    #         remove_from_peers(box, values)
-    # # Remove solved digits from all unsolved peers
-        remove_from_peers(box, values)
+        digit = values[box]
+        for peer in peers[box]:
+            if len(values[peer]) > 1:
+                if digit in values[peer]:
+                    new_value = values[peer].replace(digit,'')
+                    values = assign_value(values, peer, new_value)
     
-    # print("\neliminate values out: ", values)
-    # display(values)
-    return values
- 
-
-def remove_from_peers(box, values):
-    """Removes the digit within a solved box from the peers of that box.
-    """
-    digit = values[box]
-    for peer in peers[box]:
-        if len(values[peer]) > 1:
-            if digit in values[peer]:
-                print("{} to be removed from value {} for box {}".format(digit, values[peer], box))
-                new_value = values[peer].replace(digit,'')
-                values = assign_value(values, peer, new_value)
-                # values[peer] = values[peer].replace(digit, '')
-                print("new value is {}".format(values[peer]))
-
     return values
 
 
@@ -178,16 +149,11 @@ def only_choice(values):
     Input: Sudoku in dictionary form.
     Output: Resulting Sudoku in dictionary form after filling in only choices.
     """
-    # print("\n START only_choice()")
-    # print("values in: ", values)
-
     for unit in unitlist:
         for digit in '123456789':
             d_boxes = [box for box in unit if digit in values[box]]
             if len(d_boxes) == 1:
                 values[d_boxes[0]] = digit
-    # print("\nonly_choice values out: ", values)
-    # display(values)
     return values
 
 
@@ -200,9 +166,6 @@ def reduce_puzzle(values):
     Input: Sudoku in dictionary form.
     Output: Resulting Sudoku in dictionary form after applying updates.
     """
-    # print("\n START reduce_puzzle()")
-    # print("values in: ", values)
-
     stalled = False
     while not stalled:
         # Check boxes for determined values
@@ -220,13 +183,8 @@ def reduce_puzzle(values):
         stalled = solved_values_before == solved_values_after
         # Sanity check, return False if there is a box with zero available values:
         if len([box for box in values.keys() if len(values[box]) == 0]):
-            print("line 192 returns False ")
             empty_boxes = [box for box in values.keys() if len(values[box]) == 0]
-            print("empty_boxes: ", empty_boxes)
             return False
-
-    print("\nreduce_puzzle values out: ", values)
-    display(values)
 
     return values
 
@@ -235,9 +193,6 @@ def search(values):
     """Creates a tree of possibilities and traverses it using depth-first search (DFS) until 
     it finds a solution for the sudoku puzzle.
     """
-    print("\n START search()")
-    print("values in: ", values)
-
     # Reduce the puzzle using the previous function
     values = reduce_puzzle(values)
 
@@ -246,23 +201,19 @@ def search(values):
     if all(len(values[box]) == 1 for box in boxes):
         display(values)    
         return values
-        print("solved!")
+        print("\nsolved!")
         
     # Choose one of the unfilled squares with the fewest possibilities
     count, box = min((len(values[box]), box) for box in boxes if len(values[box]) > 1)
     
-    # Recurse tree of resulting sudokus; if one returns a value (not False), return that answer!
+    # Recurse tree of resulting sudokus; if one returns a value (not False), return that answer
     for digit in values[box]:
         new_board = values.copy()
         new_board[box] = digit
         attempt = search(new_board)
         if attempt:
-            # print("\nsearch values out (attempt): ", attempt)
-            # display(values)
             return attempt
         else:
-            # print("\nsearch values out: ", values)
-            # display(values)
             return values
 
 
