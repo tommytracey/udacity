@@ -11,17 +11,17 @@ We do this in three simple steps:
 
 1. First, we identify all boxes that have exactly 2 possible answers (represented as digits).
 
-<img src='images/naked-twins-1.png'>
+<img src='images/naked-twins-1.png' width="75%"/>
 
 
 2. Within this set, we then identify any pairs of boxes that are: (a) peers, and (b) have an equivalent set of possible answers/digits.
 
-<img src='images/naked-twins-2.png'>
+<img src='images/naked-twins-2.png' width="70%"/>
 
 
 3. Lastly, since we know each of these two answers/digits will NOT be possible for any peers that the naked twin boxes have in common, we can remove both digits from their mutual peers -- which in turn reduces the search space. 
 
-<img src='images/naked-twins-3.png'>
+<img src='images/naked-twins-3.png' width="70%"/>
 
 
 # Question 2 (Diagonal Sudoku)
@@ -32,15 +32,15 @@ We achieve this by:
 
 1. Creating lists of diaganol units, just as we previously did with the rows, columns, and squares on the sudoku board.
 
-<img src='images/diaganol-1.png'>
+<img src='images/diaganol-1.png' width="75%"/>
 
 2. Adding the diagnol units to the peers dictionary, so that we can reference them later while reducing the puzzle.  
 
-<img src='images/diaganol-2.png'>
+<img src='images/diaganol-2.png' width="85%"/>
 
 3. Eliminate solved values from the various peer groups -- which in turn reduces the number of possible solutions remaining in the search space. 
 
-<img src='images/diaganol-3.png'>
+<img src='images/diaganol-3.png' width="70%"/>
 
 
 ___
