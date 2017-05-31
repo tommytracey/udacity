@@ -7,24 +7,19 @@ cols = '123456789'
 def cross(a, b):
     return [s+t for s in a for t in b]
 
-
+# Create unit lists for rows, columns, and squares
 boxes = cross(rows, cols)
-
 row_units = [cross(r, cols) for r in rows]
-
 col_units = [cross(rows, c) for c in cols]
-
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
 
-# Create diagnol units
+# Create diagnol unit lists
 diag_units_1 = [[rows[i]+cols[i] for i in range(len(rows))]]
 diag_units_2 = [[rows[::-1][i]+cols[i] for i in range(len(rows))]]
 
-# Add diagnol units to unitlist
+# Add diagnol units to the peers dictionary
 unitlist = row_units + col_units + square_units + diag_units_1 + diag_units_2
-
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
-
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
 
@@ -56,11 +51,11 @@ def naked_twins(values):
     # Find peers with matching values, aka naked twins
     naked_twins = [[box_a, box_b] for box_a in possible_naked_twins \
                     for box_b in peers[box_a] \
-                    if values[box_a] == values[box_b]]
+                    if set(values[box_a]) == set(values[box_b])]
 
     # Remove naked twin digits from common peers
     for box_a, box_b in naked_twins:
-        peers_common = peers[box_a] & peers[box_b]
+        peers_common = set(peers[box_a]) & set(peers[box_b])
         for peer in peers_common:
             if len(values[peer]) > 2:
                 for digit in values[box_a]:
@@ -233,7 +228,10 @@ def solve(grid):
     return values
 
 if __name__ == '__main__':
-    diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
+    # diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
+    # diag_sudoku_grid = '9.1....8.8.5.7..4.2.4....6...7......5..............83.3..6......9................'
+    # diag_sudoku_grid = '8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4..'
+    diag_sudoku_grid =  '...............9..97.3......1..6.5....47.8..2.....2..6.31..4......8..167.87......'
     display(solve(diag_sudoku_grid))
 
     try:
