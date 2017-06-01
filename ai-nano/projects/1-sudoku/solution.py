@@ -14,11 +14,10 @@ col_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
 
 # Create diagnol unit lists
-diag_units_1 = [[rows[i]+cols[i] for i in range(len(rows))]]
-diag_units_2 = [[rows[::-1][i]+cols[i] for i in range(len(rows))]]
+diag_units = [[rows[i]+cols[i] for i in range(len(rows))], [rows[::-1][i]+cols[i] for i in range(len(rows))]]
 
 # Add diagnol units to the peers dictionary
-unitlist = row_units + col_units + square_units + diag_units_1 + diag_units_2
+unitlist = row_units + col_units + square_units + diag_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
@@ -34,6 +33,7 @@ def assign_value(values, box, value):
     values[box] = value
     if len(value) == 1:
         assignments.append(values.copy())
+    
     return values
 
 
@@ -45,24 +45,22 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-    # Find all boxes with 2 digit values
-    possible_naked_twins = [box for box in boxes if len(values[box]) == 2]
+    # Create dictionary of possible naked twins  
+    for unit in unitlist:
+        possible_twins = {}
+        for box in unit:
+            if (len(values[box]) == 2):
+                value = values[box]
+                possible_twins[value] = [box for box in unit if values[box] == value]
+        # Find actual instances of naked twins and remove values from peers in same unit
+        for x, y in possible_twins.items():
+            if (len(y) == 2):
+                for box in unit:
+                    if (box not in y):
+                        for digit in x:
+                            values = assign_value(values, box, values[box].replace(digit, ''))
 
-    # Find peers with matching values, aka naked twins
-    naked_twins = [[box_a, box_b] for box_a in possible_naked_twins \
-                    for box_b in peers[box_a] \
-                    if set(values[box_a]) == set(values[box_b])]
-
-    # Remove naked twin digits from common peers
-    for box_a, box_b in naked_twins:
-        peers_common = set(peers[box_a]) & set(peers[box_b])
-        for peer in peers_common:
-            if len(values[peer]) > 2:
-                for digit in values[box_a]:
-                    new_value = values[peer].replace(digit, '')
-                    values = assign_value(values, peer, new_value)
-                            
-    return values
+    return values                    
 
 
 def grid_values(grid):
@@ -89,7 +87,7 @@ def grid_values(grid):
     
     # add pairs to dictionary
     grid_dict = dict(zip(boxes, values))
-    
+
     return grid_dict
 
 
@@ -106,6 +104,7 @@ def display(values):
         print(''.join(values[r+c].center(width)+('|' if c in '36' else '')
                       for c in cols))
         if r in 'CF': print(line)
+    
     return
 
 
@@ -127,10 +126,8 @@ def eliminate(values):
     for box in solved_boxes:
         digit = values[box]
         for peer in peers[box]:
-            if len(values[peer]) > 1:
-                if digit in values[peer]:
-                    new_value = values[peer].replace(digit,'')
-                    values = assign_value(values, peer, new_value)
+            # values[peer] = values[peer].replace(digit, '')
+            values = assign_value(values, peer, values[peer].replace(digit,''))
     
     return values
 
@@ -149,6 +146,7 @@ def only_choice(values):
             d_boxes = [box for box in unit if digit in values[box]]
             if len(d_boxes) == 1:
                 values[d_boxes[0]] = digit
+    
     return values
 
 
@@ -170,8 +168,6 @@ def reduce_puzzle(values):
         values = eliminate(values)
         # Use the Only Choice strategy
         values = only_choice(values)
-        # # Use Naked Twins strategy
-        values = naked_twins(values)
         # Check again how many boxes have a determined value
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         # Stop the loop if no new values added
@@ -190,15 +186,14 @@ def search(values):
     """
     # Reduce the puzzle using the previous function
     values = reduce_puzzle(values)
-
     if values is False:
         return False
     if all(len(values[box]) == 1 for box in boxes):
+        print("\nSOLVED!\n")
         display(values)    
         return values
-        print("\nsolved!")
         
-    # Choose one of the unfilled squares with the fewest possibilities
+    # Choose one of the unsolved squares with the fewest possibilities
     count, box = min((len(values[box]), box) for box in boxes if len(values[box]) > 1)
     
     # Recurse tree of resulting sudokus; if one returns a value (not False), return that answer
@@ -208,8 +203,6 @@ def search(values):
         attempt = search(new_board)
         if attempt:
             return attempt
-        else:
-            return values
 
 
 def solve(grid):
@@ -228,10 +221,10 @@ def solve(grid):
     return values
 
 if __name__ == '__main__':
-    # diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
+    diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
     # diag_sudoku_grid = '9.1....8.8.5.7..4.2.4....6...7......5..............83.3..6......9................'
     # diag_sudoku_grid = '8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4..'
-    diag_sudoku_grid =  '...............9..97.3......1..6.5....47.8..2.....2..6.31..4......8..167.87......'
+    # diag_sudoku_grid =  '...............9..97.3......1..6.5....47.8..2.....2..6.31..4......8..167.87......'
     display(solve(diag_sudoku_grid))
 
     try:
