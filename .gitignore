@@ -13,6 +13,7 @@ intro-machine-learning
 **/inputs
 
 **/images
+!/ai-nano/projects/1-sudoku/images
 **/**images
 **/flower_photos
 **/photos
@@ -20,4 +21,4 @@ intro-machine-learning
 
 **/reading
 
-**/dlnd_face_generation_DELETEME.ipynb
+**/setup
