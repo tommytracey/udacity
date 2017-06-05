@@ -14,14 +14,10 @@ We do this in three simple steps:
 <img src='images/naked-twins-1.png' width="75%"/>
 
 
-2. Within this set, we then identify any pairs of boxes that are: (a) peers, and (b) have an equivalent set of possible answers/digits.
+2. From this set, we then identify any pairs of boxes in the same unit which have an equivalent set of possible digits. And, lastly, since we know each of these two digits will NOT be possible for any other boxes within the unit, we then remove both digits from the other boxes within that unit. 
 
 <img src='images/naked-twins-2.png' width="70%"/>
 
-
-3. Lastly, since we know each of these two answers/digits will NOT be possible for any peers that the naked twin boxes have in common, we can remove both digits from their mutual peers -- which in turn reduces the search space. 
-
-<img src='images/naked-twins-3.png' width="70%"/>
 
 
 # Question 2 (Diagonal Sudoku)
