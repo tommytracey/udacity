@@ -4,39 +4,43 @@
 ___
 
 # Question 1 (Naked Twins)
-Q: How do we use constraint propagation to solve the naked twins problem?  
+**Q: How do we use constraint propagation to solve the naked twins problem?**
+
 A: Constraint propagation helps us solve the naked twins problem by reducing the search space. That is, we're able to leverage the constraints imposed by the presence of naked twins to reduce the number of possible solutions to the sudoku puzzle.
 
-We do this in three simple steps:
+We do this in a few simple steps:
 
 1. First, we identify all boxes that have exactly 2 possible answers (represented as digits).
 
-<img src='images/naked-twins-1.png' width="75%"/>
+<img src='images/naked-twins-1.png' width="82%"/>
 
 
-2. From this set, we then identify any pairs of boxes in the same unit which have an equivalent set of possible digits. And, lastly, since we know each of these two digits will NOT be possible for any other boxes within the unit, we then remove both digits from the other boxes within that unit. 
+2. From this set, we then identify any pairs of boxes in the same unit which have an equivalent set of possible digits. And, lastly, since we know each of these two digits will NOT be possible for any other boxes within the unit, we then remove both digits from the other boxes in that unit. 
 
-<img src='images/naked-twins-2.png' width="70%"/>
+<img src='images/naked-twins-2.png' width="87%"/>
 
 
 
 # Question 2 (Diagonal Sudoku)
-Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
+**Q: How do we use constraint propagation to solve the diagonal sudoku problem?**
+
 A: We use constraint propagation to solve the diagonal sudoku problem by again reducing the search space. Specifically, we leverage the constraint that each digit can only be used once within a diaganol to reduce the number of possible solutions to the puzzle. 
 
 We achieve this by:
 
 1. Creating lists of diaganol units, just as we previously did with the rows, columns, and squares on the sudoku board.
 
-<img src='images/diaganol-1.png' width="75%"/>
+<img src='images/diaganol-1.png' width="70%"/>
 
 2. Adding the diagnol units to the peers dictionary, so that we can reference them later while reducing the puzzle.  
 
-<img src='images/diaganol-2.png' width="85%"/>
+<img src='images/diaganol-2.png' width="70%"/>
 
 3. Eliminate solved values from the various peer groups -- which in turn reduces the number of possible solutions remaining in the search space. 
 
-<img src='images/diaganol-3.png' width="70%"/>
+<img src='images/diaganol-3.png' width="80%"/>
+
+
 
 
 ___
