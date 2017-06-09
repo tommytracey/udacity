@@ -43,7 +43,7 @@
 
 # ## Import Packages
 
-# In[1]:
+# In[4]:
 
 #importing some useful packages
 import matplotlib.pyplot as plt
@@ -55,7 +55,7 @@ get_ipython().magic('matplotlib inline')
 
 # ## Read in an Image
 
-# In[2]:
+# In[5]:
 
 #reading in an image
 image = mpimg.imread('test_images/solidWhiteRight.jpg')
@@ -83,7 +83,7 @@ plt.imshow(image)  # if you wanted to show a single color channel image called '
 
 # Below are some helper functions to help get you started. They should look familiar from the lesson!
 
-# In[27]:
+# In[47]:
 
 import math
 
@@ -97,7 +97,7 @@ def grayscale(img):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         # Or use BGR2GRAY if you read an image with cv2.imread()
         # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    plt.imshow(gray, cmap='gray')
+#     plt.imshow(gray, cmap='gray')
     return gray
     
     
@@ -237,7 +237,7 @@ def weighted_img(img, initial_img, α=0.8, β=1., λ=0.):
 # Build your pipeline to work on the images in the directory "test_images"  
 # **You should make sure your pipeline works well on these images before you try the videos.**
 
-# In[4]:
+# In[7]:
 
 import os
 os.listdir("test_images/")
@@ -251,7 +251,7 @@ os.listdir("test_images/")
 # 
 # Try tuning the various parameters, especially the low and high Canny thresholds as well as the Hough lines parameters.
 
-# In[28]:
+# In[8]:
 
 def render(image_name):
     '''This function executes the line drawing pipeline for images.
@@ -298,8 +298,9 @@ def render(image_name):
 
 
 
-# In[29]:
+# In[30]:
 
+# Run all images through the pipeline
 image_list = os.listdir("test_images/")
 
 for image in image_list:
@@ -327,7 +328,7 @@ for image in image_list:
 # ```
 # **Follow the instructions in the error message and check out [this forum post](https://carnd-forums.udacity.com/display/CAR/questions/26218840/import-videofileclip-error) for more troubleshooting tips across operating systems.**
 
-# In[7]:
+# In[10]:
 
 # Import everything needed to edit/save/watch video clips
 from moviepy.editor import VideoFileClip
@@ -335,11 +336,11 @@ from IPython.display import HTML
 
 
 # ### Modified Helper Functions for Video
-# These functions are similar to ones used above for images, but have been modified to handle cases encountered when displaying lines on video. 
+# The functions below are similar to ones used above for images, but these have been modified to handle cases encountered when displaying lines on video. In particular, the lines are now drawn using a moving average of the most recent coordinates.
 
 # In[54]:
 
-# List of historical averages for x, y coordinates
+# List of historical averages for lane line x, y coordinates
 left_x1_hist, left_y1_hist = [], []
 left_x2_hist, left_y2_hist = [], []
 
@@ -352,8 +353,9 @@ def draw_video_lines(img, lines, color=[255, 0, 0], thickness=12):
     This function draws `lines` with `color` and `thickness`.    
     Lines are drawn on the image inplace (mutates the image).
     
-    If slope is not valid, the function draws the line using the last 
-    set of valid parameters.
+    Lines are drawn using a moving average of most recent 'n' sets of 
+    coordinates. If moving averages aren't available or the slope is not valid,
+    the function draws the line using the last set of valid coordinates.
     
     """
     # List all x,y coordinates
@@ -378,7 +380,7 @@ def draw_video_lines(img, lines, color=[255, 0, 0], thickness=12):
                 right_x2.append(x2)
                 right_y2.append(y2)
     
-    # Average x, y points
+    # Average x,y points
     left_x1_avg = (sum(left_x1) / len(left_x1)) if len(left_x1) != 0 else 0
     left_y1_avg = (sum(left_y1) / len(left_y1)) if len(left_y1) != 0 else 0
     left_x2_avg = (sum(left_x2) / len(left_x2)) if len(left_x2) != 0 else 0
@@ -435,10 +437,29 @@ def draw_video_lines(img, lines, color=[255, 0, 0], thickness=12):
         right_y1_hist.append(y1_right)
         right_x2_hist.append(x2_right)
         right_y2_hist.append(y2_right) 
+
+    # Calculate moving averages
+    n = 5  # recent number of frames to include
     
-    # Draw lines using last valid set of coordinates
-    cv2.line(img, (left_x1_hist[-1], left_y1_hist[-1]), (left_x2_hist[-1], left_y2_hist[-1]), color, thickness)
-    cv2.line(img, (right_x1_hist[-1], right_y1_hist[-1]), (right_x2_hist[-1], right_y2_hist[-1]), color, thickness)
+    left_x1_sma = int(sum(left_x1_hist[-n:]) / n)
+    left_x2_sma = int(sum(left_x2_hist[-n:]) / n)
+    left_y1_sma = int(sum(left_y1_hist[-n:]) / n)
+    left_y2_sma = int(sum(left_y2_hist[-n:]) / n)
+    
+    right_x1_sma = int(sum(right_x1_hist[-n:]) / n)
+    right_x2_sma = int(sum(right_x2_hist[-n:]) / n)
+    right_y1_sma = int(sum(right_y1_hist[-n:]) / n)
+    right_y2_sma = int(sum(right_y2_hist[-n:]) / n)
+    
+    # Draw lines 
+    # use most recent coordinates if moving averages are not available
+    if (len(left_x1_hist) < n):
+        cv2.line(img, (left_x1_hist[-1], left_y1_hist[-1]), (left_x2_hist[-1], left_y2_hist[-1]), color, thickness)
+        cv2.line(img, (right_x1_hist[-1], right_y1_hist[-1]), (right_x2_hist[-1], right_y2_hist[-1]), color, thickness)
+    # but use moving averages by default
+    else:
+        cv2.line(img, (left_x1_sma, left_y1_sma), (left_x2_sma, left_y2_sma), color, thickness)
+        cv2.line(img, (right_x1_sma, right_y1_sma), (right_x2_sma, right_y2_sma), color, thickness)
     
     
 def hough_video_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
@@ -447,15 +468,27 @@ def hough_video_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
         
     Returns image with hough lines drawn.
     """
-    lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_len, maxLineGap=max_line_gap)
+    lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]),                             minLineLength=min_line_len, maxLineGap=max_line_gap)
     line_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
-    draw_video_lines(line_img, lines)
+    draw_video_lines(line_img, lines)  # modified draw function for video
+    
     return line_img
 
 
 # ### Video Pipeline
 
-# In[44]:
+# In[55]:
+
+# Historical outputs from each step of the pipeline (see Appendix for more info)
+gray_hist = []
+blur_gray_hist = []
+edges_hist = []
+masked_edges_hist = []
+lines_hist = []
+lines_edges_hist = []
+
+
+# In[56]:
 
 def process_image(image_orig):
     '''This function executes the line drawing pipeline for a series of images 
@@ -463,15 +496,18 @@ def process_image(image_orig):
     '''
     # Read image and grayscale it
     gray = grayscale(image_orig)
-
+    gray_hist.append(gray)
+    
     # Define kernel size and apply Gaussian smoothing
     kernel_size = 5
     blur_gray = gaussian_blur(gray, kernel_size)
+    blur_gray_hist.append(blur_gray)
 
     # Detect edges via Canny algorithm
     low_threshold = 50
     high_threshold = 150
     edges = canny(blur_gray, low_threshold, high_threshold)
+    edges_hist.append(edges)
 
     # Create quadrilateral mask 
     imshape = image_orig.shape
@@ -484,6 +520,7 @@ def process_image(image_orig):
     vertices = np.array([[vert_bot_left, vert_top_left, vert_top_right, vert_bot_right]], dtype=np.int32)
 
     masked_edges = region_of_interest(edges, vertices)
+    masked_edges_hist.append(masked_edges)
 
     # Define Hough transform parameters
     rho = 1               # distance resolution in pixels of the Hough grid
@@ -494,9 +531,11 @@ def process_image(image_orig):
 
     # Draw lines
     lines = hough_video_lines(masked_edges, rho, theta, threshold, min_line_len, max_line_gap)
+    lines_hist.append(lines)
 
     # Apply lines to original image as transparency
     lines_edges = weighted_img(lines, image_orig, α=0.8, β=1., λ=0.)
+    lines_edges_hist.append(lines_edges)
 
     
     return lines_edges
@@ -504,7 +543,7 @@ def process_image(image_orig):
 
 # Let's try the one with the solid white lane on the right first ...
 
-# In[58]:
+# In[57]:
 
 white_output = 'test_videos_output/solidWhiteRight.mp4'
 #clip2 = VideoFileClip('test_videos/solidYellowLeft.mp4').subclip(0,5)
@@ -513,7 +552,7 @@ white_clip = clip2.fl_image(process_image)
 get_ipython().magic('time white_clip.write_videofile(white_output, audio=False)')
 
 
-# In[61]:
+# In[58]:
 
 HTML("""
 <video width="960" height="540" controls>
@@ -530,7 +569,7 @@ HTML("""
 
 # Now for the one with the solid yellow lane on the left. This one's more tricky!
 
-# In[62]:
+# In[59]:
 
 yellow_output = 'test_videos_output/solidYellowLeft.mp4'
 #clip2 = VideoFileClip('test_videos/solidYellowLeft.mp4').subclip(0,5)
@@ -539,7 +578,7 @@ yellow_clip = clip2.fl_image(process_image)
 get_ipython().magic('time yellow_clip.write_videofile(yellow_output, audio=False)')
 
 
-# In[56]:
+# In[60]:
 
 HTML("""
 <video width="960" height="540" controls>
@@ -548,16 +587,62 @@ HTML("""
 """.format(yellow_output))
 
 
+# ---
+
 # ## Writeup and Submission
 # 
-# If you're satisfied with your video outputs, it's time to make the report writeup in a pdf or markdown file. Once you have this Ipython notebook ready along with the writeup, it's time to submit for review! Here is a [link](https://github.com/udacity/CarND-LaneLines-P1/blob/master/writeup_template.md) to the writeup template file.
+# Here is a [link](https://github.com/tommytracey/udacity/tree/master/self-driving-nano/projects/1-lane-lines/P1-writeup.md) to my writeup for this project.
 # 
 
-# ## Optional Challenge
+# ---
+
+# # Appendix
+
+# ### Output from each step of the pipeline
+
+# In[48]:
+
+# Step 1 - convert image to grayscale
+plt.imshow(gray_hist[-50], cmap='gray')
+
+
+# In[49]:
+
+# Step 2 - apply Gaussian blur
+plt.imshow(blur_gray_hist[-50], cmap='gray')
+
+
+# In[50]:
+
+# Step 3 - apply the Canny transform
+plt.imshow(edges_hist[-50])
+
+
+# In[51]:
+
+# Step 4 - apply mask to define 'region of interest'
+plt.imshow(masked_edges_hist[-50])
+
+
+# In[52]:
+
+# Step 5a - detect lanes using Hough transform and draw lines on new image
+plt.imshow(lines_hist[-50])
+
+
+# In[53]:
+
+# Step 5b - apply lines to original image as transparency
+plt.imshow(lines_edges_hist[-50])
+
+
+# ---
+
+# # Optional Challenge -- *did not complete*
 # 
 # Try your lane finding pipeline on the video below.  Does it still work?  Can you figure out a way to make it more robust?  If you're up for the challenge, modify your pipeline so it works with this video and submit it along with the rest of your project!
 
-# In[50]:
+# In[26]:
 
 challenge_output = 'test_videos_output/challenge.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
@@ -570,7 +655,7 @@ challenge_clip = clip3.fl_image(process_image)
 get_ipython().magic('time challenge_clip.write_videofile(challenge_output, audio=False)')
 
 
-# In[51]:
+# In[27]:
 
 HTML("""
 <video width="960" height="540" controls>
