@@ -53,7 +53,7 @@ Each point along lines in Hough space represents a possible set of line paramete
 
 The Hough algorithm can also be tuned with various parameters. For example, in my model, I expect relevant lines to have at least 60 pixels. 
 
-<img src='results/5-hough-params.png' width="70%"/>
+<img src='results/5-hough-params.png' width="80%"/>
 
 The Hough output lines are then averaged to create two distinct lane lines. The final two lane lines are then drawn onto a separate image and applied to the original image as a transparency.
 
