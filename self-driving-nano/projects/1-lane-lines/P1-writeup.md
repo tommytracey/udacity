@@ -51,9 +51,9 @@ Each point along lines in Hough space represents a possible set of line paramete
 
 <img src='results/5-hough-diagram.png' width="60%"/>
 
-The Hough algorithm can also be tuned so that only lines with a minimum number of points are detected. For example, in my parameter set, I expect relevant lines to have at least 60 pixels. 
+The Hough algorithm can also be tuned with various parameters. For example, in my model, I expect relevant lines to have at least 60 pixels. 
 
-<img src='results/5-hough-diagram.png' width="65%"/>
+<img src='results/5-hough-params.png' width="70%"/>
 
 The Hough output lines are then averaged to create two distinct lane lines. The final two lane lines are then drawn onto a separate image and applied to the original image as a transparency.
 
@@ -66,7 +66,7 @@ In order convert the various lines identified by the Hough transform into two si
 
 - First, I divide the Hough output lines into two groups: those with positive slope vs. those with negative slope.
 - I then average all of the x,y coordinates for each group to derive a single set of line parameters which best describes the group.
-- The two sets of line parameters for each individual frame are then logged. From the log, I calculate a moving average based on the most recent set of video frames. This moving average set of line parameters is then used to draw the lane line guides. 
+- The two sets of line parameters for each individual frame of the video are then logged. From the log, I calculate a moving average based on the most recent set of frames. These moving average line parameters are then used to draw the final lane line guides. 
 
 
 [Here](http://localhost:8888/notebooks/P1-v3.ipynb#Modified-Helper-Functions-for-Video) is a link to the code.
@@ -82,7 +82,7 @@ There are lots of potential shortcoming with my current pipeline. Here are a few
 2. The pipeline only works on relatively flat and straight sections of road. It cannot detect or draw lane lines when the road curves. 
 3. The 'region of interest' dimensions are hard coded pixel values, so you can't use the pipeline on different screen resolutions without manually adjusting the vertices each time. 
 
-
+---
 
 ### 3. Suggest possible improvements to your pipeline
 
