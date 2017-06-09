@@ -83,7 +83,7 @@ plt.imshow(image)  # if you wanted to show a single color channel image called '
 
 # Below are some helper functions to help get you started. They should look familiar from the lesson!
 
-# In[47]:
+# In[61]:
 
 import math
 
@@ -95,20 +95,17 @@ def grayscale(img):
     (assuming your grayscaled image is called 'gray')
     you should call plt.imshow(gray, cmap='gray')"""
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        # Or use BGR2GRAY if you read an image with cv2.imread()
-        # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-#     plt.imshow(gray, cmap='gray')
     return gray
     
-    
-def canny(img, low_threshold, high_threshold):
-    """Applies the Canny transform"""
-    return cv2.Canny(img, low_threshold, high_threshold)
-
 
 def gaussian_blur(img, kernel_size):
     """Applies a Gaussian Noise kernel"""
     return cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
+
+    
+def canny(img, low_threshold, high_threshold):
+    """Applies the Canny transform"""
+    return cv2.Canny(img, low_threshold, high_threshold)
 
 
 def region_of_interest(img, vertices):
@@ -140,6 +137,10 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=12):
     """   
     This function draws `lines` with `color` and `thickness`.    
     Lines are drawn on the image inplace (mutates the image).
+    
+    NOTE: This is the initial version of the function used to 
+    draw lines for the 'test images.' This function is NOT used 
+    for the video portion of the project.
     """
     # List all x,y coordinates
     left_x1, left_y1 = [], []
@@ -254,7 +255,11 @@ os.listdir("test_images/")
 # In[8]:
 
 def render(image_name):
-    '''This function executes the line drawing pipeline for images.
+    '''This is the initial version of the function used to execute the line 
+    drawing pipeline for the 'test images.'
+    
+    NOTE: This function is NOT used for processing a series of images within 
+    a video clip. A separate function was created for that part of the project.
     '''
     # Read image and grayscale it
     image_orig = mpimg.imread('test_images/{}'.format(image_name))
