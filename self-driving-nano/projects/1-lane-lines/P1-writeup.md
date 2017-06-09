@@ -26,31 +26,34 @@ My pipeline consists of five steps:
 
 1. First, I convert the images to grayscale. 
 
-<img src='results/1-grayscale.png' />
+<img src='results/1-code.png' width="60%"/>
 
-<img src='results/1-code.png' width="100%"/>
+<img src='results/1-grayscale.png' />
 
 
 
 2. I then apply Gaussian smoothing. This reduces the amount of noise in the image and makes it easier to identify the most prominent edges in the next step. 
 
+<img src='results/2-code.png' width="65%"/>
+
 <img src='results/2-gaussian.png' />
 
-<img src='results/2-code.png' width="100%"/>
 
 
 3. Next, I apply the Canny transform to identify edges within the image. Edges are areas with the strongest gradient -- i.e., areas where there's a large difference in brightness between adjacent pixels. In photography, you might think of these as the areas with the highest contrast. These edges allow us to detect the boundaries of objects within the image. In this case, we're looking for the boundaries of the brighter driving lane lines against the darker background of the highway pavement (but, this process will also detect the edges of other objects). The Canny algorithm allows us to identify the individual pixels where these edges are the strongest.
 
+<img src='results/3-code.png' width="60%"/>
+
 <img src='results/3-canny.png' />
 
-<img src='results/3-code.png' width="100%"/>
 
 
 4. Then, I create a mask in the shape of a trapezoid to define the part of the image where we want to detect the lane lines (aka the 'region of interest'). Obviously, we should look for lane lines on the road immediately in front of the car; we should not look for them in the sky. But maybe someday! 8')
 
+<img src='results/4-code.png' width="60%"/>
+
 <img src='results/4-region-of-interest.png' />
 
-<img src='results/4-code.png' width="100%"/>
 
 
 5. Finally, I detect the lane lines using the probabilistic Hough transform method. The lines are then drawn onto a separate image and applied to the original image as a transparency. 

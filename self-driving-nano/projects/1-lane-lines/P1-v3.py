@@ -83,7 +83,7 @@ plt.imshow(image)  # if you wanted to show a single color channel image called '
 
 # Below are some helper functions to help get you started. They should look familiar from the lesson!
 
-# In[61]:
+# In[62]:
 
 import math
 
