@@ -240,7 +240,8 @@ class MinimaxPlayer(IsolationPlayer):
         return best_move
 
     def min_value(self, game, depth):
-        """ Implements the MIN-VALUE method as described in the AIMA text.
+        """ Implements the MIN-VALUE method as described in the AIMA 
+        MINIMAX-DECISION text.
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
@@ -266,7 +267,8 @@ class MinimaxPlayer(IsolationPlayer):
         return min_score
     
     def max_value(self, game, depth):
-        """ Implements the MAX-VALUE method as described in the AIMA text.
+        """ Implements the MAX-VALUE method as described in the AIMA 
+        MINIMAX-DECISION text.
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
@@ -398,4 +400,74 @@ class AlphaBetaPlayer(IsolationPlayer):
         if not legal_moves:
             return (-1, -1)
 
-        return legal_moves[0]
+        # Initialize the best move, best score
+        best_move = legal_moves[0]
+        best_score = float('-inf')
+
+        # Recurse through legal moves
+        for move in legal_moves:
+            # calculate outputs of opponent's minimizing AB method
+            score = self.min_value_ab(game.forecast_move(move), depth - 1, alpha, beta)
+            # take max value from opponent's available moves
+            if score > best_score:
+                best_score = score
+                alpha = score
+                best_move = move
+
+        return best_move
+
+    def min_value_ab(self, game, depth,  alpha=float('-inf'), beta=float('inf')):
+        """ Implements the MIN-VALUE method as described in the AIMA 
+        ALPHA-BETA-SEARCH text.
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        # Get legal moves for the opponent, if any
+        legal_moves = game.get_legal_moves(game.get_opponent(self))
+        if depth == 0 or not legal_moves:
+            return self.score(game, self)
+
+        # Initialize best score for opponent
+        min_score = beta
+
+        # Recurse legal moves
+        for move in legal_moves:
+            # calculate my score for each of opponent's moves
+            score = self.max_value_ab(game.forecast_move(move), depth -1, alpha, beta)
+            # return score if <= alpha
+            if score <= alpha:
+                return score
+            # update min_score if less than beta
+            if score < beta:
+                min_score = score
+
+        return min_score
+
+    def max_value_ab(self, game, depth,  alpha=float('-inf'), beta=float('inf')):
+        """ Implements the MAX-VALUE method as described in the AIMA 
+        ALPHA-BETA-SEARCH text.
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        # Get my legal moves, if any
+        legal_moves = game.get_legal_moves(self)
+        if depth == 0 or not legal_moves:
+            return self.score(game, self)
+
+        # Initialize best score for me
+        max_score = alpha
+
+        # Recurse my legal moves
+        for move in legal_moves:
+            # calculate outputs from opponent's minimizing method
+            score = self.min_value_ab(game.forecast_move(move), depth -1, alpha, beta)
+            # return score if >= beta
+            if score >= beta:
+                return score
+            # update max_score if greater than alpha
+            if score > alpha:
+                max_score = score
+
+        return max_score
