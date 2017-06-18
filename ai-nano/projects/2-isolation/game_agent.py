@@ -236,17 +236,17 @@ class MinimaxPlayer(IsolationPlayer):
         if not legal_moves:
             return (-1, -1)
         
-        # Initialize the best move, best score
+        # Initialize the best move, best value
         best_move = legal_moves[0]
-        best_score = float('-inf')
+        best_value = float('-inf')
 
         # Recurse through legal moves
         for move in legal_moves:
-            # calculate outputs of opponent's minimizing method
-            score = self.min_value(game.forecast_move(move), depth - 1)
+            # calculate value of opponent's minimizing method
+            value = self.min_value(game.forecast_move(move), depth - 1)
             # take max value from opponent's available moves
-            if score > best_score:
-                best_score = score
+            if value > best_value:
+                best_value = value
                 best_move = move
 
         return best_move
@@ -263,20 +263,20 @@ class MinimaxPlayer(IsolationPlayer):
         if depth == 0 or not legal_moves:
             return self.score(game, self)
 
-        # Otherwise, initialize the best move, lowest score
+        # Otherwise, initialize the best move, lowest value
         best_move = (-1, -1)
-        min_score = float('inf')
+        min_value = float('inf')
 
         # Recurse opponent's moves
         for move in legal_moves:
-            # calculate outputs from my maximizing method
-            score = self.max_value(game.forecast_move(move), depth -1)
-            # take min value from my available moves
-            if score < min_score:
-                min_score = score
+            # calculate value from my maximizing method
+            value = self.max_value(game.forecast_move(move), depth -1)
+            # take lowest value from my available moves
+            if value < min_value:
+                min_value = value
                 best_move = move
-        # Return lowest score
-        return min_score
+        # Return lowest value
+        return min_value
     
     def max_value(self, game, depth):
         """ Implements the MAX-VALUE method as described in the AIMA 
@@ -290,20 +290,20 @@ class MinimaxPlayer(IsolationPlayer):
         if depth == 0 or not legal_moves:
             return self.score(game, self)
 
-        # Otherwise, initialize the best move, highest score
+        # Otherwise, initialize the best move, highest value
         best_move = (-1, -1)
-        max_score = float('-inf')
+        max_value = float('-inf')
 
         # Recurse my moves
         for move in legal_moves:
-            # calculate score from my opponent's minimizing method
-            score = self.min_value(game.forecast_move(move), depth -1)
+            # calculate value from my opponent's minimizing method
+            value = self.min_value(game.forecast_move(move), depth -1)
             # take max value from possible opponent moves
-            if score > max_score:
-                max_score = score
+            if value > max_value:
+                max_value = value
                 best_move = move
-        # Return highest score
-        return max_score
+        # Return highest value
+        return max_value
 
 
 class AlphaBetaPlayer(IsolationPlayer):
@@ -416,18 +416,18 @@ class AlphaBetaPlayer(IsolationPlayer):
         if not legal_moves:
             return (-1, -1)
 
-        # Initialize the best move, best score
+        # Initialize the best move, best value
         best_move = legal_moves[0]
-        best_score = float('-inf')
+        best_value = float('-inf')
 
         # Recurse through legal moves
         for move in legal_moves:
-            # calculate score from my opponent's minimizing AB method
-            score = self.min_value_ab(game.forecast_move(move), depth - 1, alpha, beta)
+            # calculate value from my opponent's minimizing AB method
+            value = self.min_value_ab(game.forecast_move(move), depth - 1, alpha, beta)
             # take max value from possible opponent moves
-            if score > best_score:
-                best_score = score
-                alpha = score
+            if value > best_value:
+                best_value = value
+                alpha = value
                 best_move = move
 
         return best_move
@@ -444,24 +444,24 @@ class AlphaBetaPlayer(IsolationPlayer):
         if depth == 0 or not legal_moves:
             return self.score(game, self)
 
-        # Initialize best score for opponent
-        min_score = beta
+        # Initialize best value for opponent
+        min_value = beta
 
         # Recurse legal moves
         for move in legal_moves:
-            # calculate score for each of my opponent's moves
-            score = self.max_value_ab(game.forecast_move(move), depth -1, alpha, beta)
-            # return score if <= alpha
-            if score <= alpha:
-                return score
-            # update min_score
-            if score < min_score:
-                min_score = score
+            # calculate value for each of my opponent's moves
+            value = self.max_value_ab(game.forecast_move(move), depth -1, alpha, beta)
+            # return value if <= alpha
+            if value <= alpha:
+                return value
+            # update min_value
+            if value < min_value:
+                min_value = value
             # update beta
-            if score < beta:
-                beta = score
+            if value < beta:
+                beta = value
 
-        return min_score
+        return min_value
 
     def max_value_ab(self, game, depth,  alpha=float('-inf'), beta=float('inf')):
         """ Implements the MAX-VALUE method as described in the AIMA 
@@ -475,21 +475,21 @@ class AlphaBetaPlayer(IsolationPlayer):
         if depth == 0 or not legal_moves:
             return self.score(game, self)
 
-        # Initialize best score for me
-        max_score = alpha
+        # Initialize best value for me
+        max_value = alpha
 
         # Recurse my legal moves
         for move in legal_moves:
-            # calculate score from my opponent's minimizing method
-            score = self.min_value_ab(game.forecast_move(move), depth -1, alpha, beta)
-            # return score if >= beta
-            if score >= beta:
-                return score
-            # update max_score 
-            if score > max_score:
-                max_score = score
+            # calculate value from my opponent's minimizing method
+            value = self.min_value_ab(game.forecast_move(move), depth -1, alpha, beta)
+            # return value if >= beta
+            if value >= beta:
+                return value
+            # update max_value 
+            if value > max_value:
+                max_value = value
             # update alpha
-            if score > alpha:
-                alpha = score
+            if value > alpha:
+                alpha = value
 
-        return max_score
+        return max_value
