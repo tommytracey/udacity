@@ -3,8 +3,6 @@ test your agent's strength against a set of known agents using tournament.py
 and include the results in your report.
 """
 import random
-# from sample_players import open_move_score
-
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
@@ -35,7 +33,6 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
     if game.is_loser(player):
         return float("-inf")
 
@@ -67,8 +64,15 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(own_moves - opp_moves)
 
 
 def custom_score_3(game, player):
@@ -93,8 +97,15 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    return float((h - y)**2 + (w - x)**2)
 
 
 class IsolationPlayer:
@@ -169,10 +180,11 @@ class MinimaxPlayer(IsolationPlayer):
         try:
             # The try/except block will automatically catch the exception
             # raised when the timer is about to expire.
-            return self.minimax(game, self.search_depth)
+            best_move = self.minimax(game, self.search_depth)
 
         except SearchTimeout:
-            pass  # Handle any actions required after timeout as needed
+            # Handle any actions required after timeout as needed
+            return best_move
 
         # Return the best move from the last completed search iteration
         return best_move
@@ -284,9 +296,9 @@ class MinimaxPlayer(IsolationPlayer):
 
         # Recurse my moves
         for move in legal_moves:
-            # calculate outputs from opponent's minimizing method
+            # calculate score from my opponent's minimizing method
             score = self.min_value(game.forecast_move(move), depth -1)
-            # take max value from opponent's available moves
+            # take max value from possible opponent moves
             if score > max_score:
                 max_score = score
                 best_move = move
@@ -335,14 +347,18 @@ class AlphaBetaPlayer(IsolationPlayer):
         # Initialize the best move so that this function returns something
         # in case the search fails due to timeout
         best_move = (-1, -1)
+        depth = 0
 
         try:
             # The try/except block will automatically catch the exception
             # raised when the timer is about to expire.
-            return self.alphabeta(game, self.search_depth)
+            while True:
+                depth += 1
+                best_move = self.alphabeta(game, depth)
 
         except SearchTimeout:
-            pass  # Handle any actions required after timeout as needed
+            # Handle any actions required after timeout as needed
+            return best_move
 
         # Return the best move from the last completed search iteration
         return best_move
@@ -406,9 +422,9 @@ class AlphaBetaPlayer(IsolationPlayer):
 
         # Recurse through legal moves
         for move in legal_moves:
-            # calculate outputs of opponent's minimizing AB method
+            # calculate score from my opponent's minimizing AB method
             score = self.min_value_ab(game.forecast_move(move), depth - 1, alpha, beta)
-            # take max value from opponent's available moves
+            # take max value from possible opponent moves
             if score > best_score:
                 best_score = score
                 alpha = score
@@ -433,14 +449,17 @@ class AlphaBetaPlayer(IsolationPlayer):
 
         # Recurse legal moves
         for move in legal_moves:
-            # calculate my score for each of opponent's moves
+            # calculate score for each of my opponent's moves
             score = self.max_value_ab(game.forecast_move(move), depth -1, alpha, beta)
             # return score if <= alpha
             if score <= alpha:
                 return score
-            # update min_score if less than beta
-            if score < beta:
+            # update min_score
+            if score < min_score:
                 min_score = score
+            # update beta
+            if score < beta:
+                beta = score
 
         return min_score
 
@@ -461,13 +480,16 @@ class AlphaBetaPlayer(IsolationPlayer):
 
         # Recurse my legal moves
         for move in legal_moves:
-            # calculate outputs from opponent's minimizing method
+            # calculate score from my opponent's minimizing method
             score = self.min_value_ab(game.forecast_move(move), depth -1, alpha, beta)
             # return score if >= beta
             if score >= beta:
                 return score
-            # update max_score if greater than alpha
-            if score > alpha:
+            # update max_score 
+            if score > max_score:
                 max_score = score
+            # update alpha
+            if score > alpha:
+                alpha = score
 
         return max_score
