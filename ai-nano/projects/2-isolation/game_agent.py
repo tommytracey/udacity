@@ -8,6 +8,25 @@ class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
     pass
 
+##### Ideas for custom heuristics ########
+"""
+1a. penalize my moves that are in corner or along edges
+1b. reward opponent moves in corner or along edges
+2. reward moves with most number of blank spaces within 3x3 grid
+3. apply higher reward for limiting opponent moves
+4. reward moves that decrease distance with opponent
+5. reward moves that decrease distance to center of board (similar to #1 above)
+6. look at number of legal moves delta at next depth 
+7a. reward moves with shortest distance to opponent and center
+7b. penalize moves closer to corners and farthest from opponent
+
+x. apply different strategies at different points in the game
+
+
+
+"""
+
+
 
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -39,7 +58,72 @@ def custom_score(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    return float(len(game.get_legal_moves(player)))
+    ### board region heuristic
+
+    # get player location
+    
+    # get list of empty spaces
+    empty_spaces = game.get_blank_spaces()
+
+    # if len(empty_spaces) < 25:
+    #     ## modified version of 'improved_score' heuristic
+    #     own_moves = len(game.get_legal_moves(player))
+    #     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+        
+    #     return float(own_moves - opp_moves)
+
+    # # reward moves in center of board
+    # x, y = game.get_player_location(player)
+
+    # if (x >= 2 and x <= 4) and (y >= 2 and y <= 4):
+    #     score = 5
+    #     return score
+
+    ### empty spaces heuristic
+    # if len(empty_spaces) > 0:
+
+    ## count empty spaces for each player
+    # get each player's location
+    x_p1, y_p1 = game.get_player_location(player)
+    x_p2, y_p2 = game.get_player_location(game.get_opponent(player))
+
+    # calculate 5x5 grid for each player
+    grid_dim = 5
+    delta_xy = int((grid_dim - 1) / 2)
+
+    x_min_p1 = max((x_p1 - delta_xy), 0)
+    y_min_p1 = max((y_p1 - delta_xy), 0)
+    x_max_p1 = min((x_p1 + delta_xy), 6)
+    y_max_p1 = min((y_p1 + delta_xy), 6)
+    p1_corners = [(x_min_p1, y_min_p1), (x_min_p1, y_max_p1), \
+                    (x_max_p1, y_min_p1), (x_max_p1, y_max_p1)]
+
+    x_min_p2 = max((x_p2 - delta_xy), 0)
+    y_min_p2 = max((y_p2 - delta_xy), 0)
+    x_max_p2 = min((x_p2 + delta_xy), 6)
+    y_max_p2 = min((y_p2 + delta_xy), 6)
+    p2_corners = [(x_min_p2, y_min_p2), (x_min_p2, y_max_p2), \
+                    (x_max_p2, y_min_p2), (x_max_p2, y_max_p2)]
+
+    p1_grid = [(x, y) for x in range(x_min_p1, x_max_p1) for y in range(y_min_p1, y_max_p1)]
+    p2_grid = [(x, y) for x in range(x_min_p2, x_max_p2) for y in range(y_min_p2, y_max_p2)]
+
+    # subtract corners, which are unreachable in < 4 moves
+    p1_no_corn = set(p1_grid) - set(p1_corners)
+    p2_no_corn = set(p2_grid) - set(p2_corners)
+
+    # count number of empties
+    p1_count = len(set(empty_spaces).intersection(p1_no_corn))
+    p2_count = len(set(empty_spaces).intersection(p2_no_corn))
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
+    # return the difference
+    return float((2 * own_moves) - opp_moves) + (p1_count - p2_count)
+
+
+    # return float(len(game.get_legal_moves(player)))
 
 
 def custom_score_2(game, player):
@@ -70,9 +154,29 @@ def custom_score_2(game, player):
     if game.is_winner(player):
         return float("inf")
 
+    ### 'build a wall' heuristic
+
+    # divide board into quadrants
+    # identify which quadrant each player is in
+        # vertical wall if:
+            # I'm in 1, opp in 2
+            # I'm in 3, opp in 4
+        # if I
+
+
+    # reward moves in center of board
+    # x, y = game.get_player_location(player)
+
+    # if (x >= 2 and x <= 4) and (y >= 2 and y <= 4):
+    #     score = 25
+    #     return score
+
+    # else:
+    ## modified version of 'improved_score' heuristic
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(own_moves - opp_moves)
+    
+    return float((2 * own_moves) - opp_moves)
 
 
 def custom_score_3(game, player):
@@ -103,9 +207,35 @@ def custom_score_3(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    w, h = game.width / 2., game.height / 2.
-    y, x = game.get_player_location(player)
-    return float((h - y)**2 + (w - x)**2)
+    # ### board region heuristic
+
+    # x, y = game.get_player_location(player)
+    
+    # score = 1
+
+    # # reward moves in center of board
+    # if (x >= 2 and x <= 4) and (y >= 2 and y <= 4):
+    #     score = 10
+    #     return score
+
+    # # reward moves in 2nd ring of board
+    # # (row == 1 or row == 5) and (col >= 1 and col <=5)
+    # if (x == 1 or x == 5) and (y >= 1 and y <=5):
+    #     score = 5
+    #     return score
+
+    # # edges
+    # # ring_3 = # (row != 0 and row != 6) and (col != 0 and col != 6) 
+    #     # if move on edges, score += y 
+
+    # # if move on corner, score = 0
+    # corners = [(0, 0), (0, 6), (6, 0), (6, 6)]
+    # if (x, y) in corners:
+    #     score = 0
+
+    # return score
+
+    return float(len(game.get_legal_moves(player)))
 
 
 class IsolationPlayer:
