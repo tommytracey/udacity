@@ -1,20 +1,101 @@
 
-# Build a Game-playing Agent
+_Udacity Artificial Intelligence Nanodegree, June 2017_
+# Project 2: Build a Game-playing Agent
 
 ![Example game of isolation](viz.gif)
 
-## Synopsis
+### Synopsis
 
-In this project, students will develop an adversarial search agent to play the game "Isolation".  Isolation is a deterministic, two-player game of perfect information in which the players alternate turns moving a single piece from one cell to another on a board.  Whenever either player occupies a cell, that cell becomes blocked for the remainder of the game.  The first player with no remaining legal moves loses, and the opponent is declared the winner.  These rules are implemented in the `isolation.Board` class provided in the repository. 
+In this project, students develop an adversarial search agent to play the game "Isolation".  Isolation is a deterministic, two-player game of perfect information in which the players alternate turns moving a single piece from one cell to another on a board.  Whenever either player occupies a cell, that cell becomes blocked for the remainder of the game.  The first player with no remaining legal moves loses, and the opponent is declared the winner.  These rules are implemented in the `isolation.Board` class provided in the repository. 
 
 This project uses a version of Isolation where each agent is restricted to L-shaped movements (like a knight in chess) on a rectangular grid (like a chess or checkerboard).  The agents can move to any open cell on the board that is 2-rows and 1-column or 2-columns and 1-row away from their current position on the board. Movements are blocked at the edges of the board (the board does not wrap around), however, the player can "jump" blocked or occupied spaces (just like a knight in chess).
 
-Additionally, agents will have a fixed time limit each turn to search for the best move and respond.  If the time limit expires during a player's turn, that player forfeits the match, and the opponent wins.
+Additionally, agents have a fixed time limit each turn to search for the best move and respond.  If the time limit expires during a player's turn, that player forfeits the match, and the opponent wins.
 
 Students only need to modify code in the `game_agent.py` file to complete the project.  Additional files include example Player and evaluation functions, the game board class, and a template to develop local unit tests.  
 
+### Tournament
 
-## Instructions
+The `tournament.py` script is used to evaluate the effectiveness of the student's custom heuristics.  The script measures relative performance of the student's agent in a round-robin tournament against several other pre-defined agents.  The student's agent uses time-limited Iterative Deepening along with a set of three custom heuristics.
+
+__The student's goal is to develop at least one heuristic that outperforms AB_Improved. (NOTE: This can be _very_ challenging!)__
+
+The performance of time-limited iterative deepening search is hardware dependent (faster hardware is expected to search deeper than slower hardware in the same amount of time).  The script controls for these effects by also measuring the baseline performance of an agent called "ID_Improved" that uses Iterative Deepening and the improved_score heuristic defined in `sample_players.py`.  
+
+The tournament opponents are listed below. (See also: sample heuristics and players defined in sample_players.py)
+
+- Random: An agent that randomly chooses a move each turn.
+- MM_Open: MinimaxPlayer agent using the open_move_score heuristic with search depth 3
+- MM_Center: MinimaxPlayer agent using the center_score heuristic with search depth 3
+- MM_Improved: MinimaxPlayer agent using the improved_score heuristic with search depth 3
+- AB_Open: AlphaBetaPlayer using iterative deepening alpha-beta search and the open_move_score heuristic
+- AB_Center: AlphaBetaPlayer using iterative deepening alpha-beta search and the center_score heuristic
+- AB_Improved: AlphaBetaPlayer using iterative deepening alpha-beta search and the improved_score heuristic
+
+---
+## RESULTS
+Here is how the three custom heuristics that I created for this project peformed against the other agents:
+
+![results table](results.png)
+
+
+#### AB_Custom_3
+[link to code in game_agent.py](https://github.com/tommytracey/udacity/blob/master/ai-nano/projects/2-isolation/game_agent.py#L109)
+
+This was my original exploration of heuristics that exploit board position, albeit in a simpler way than AB_Custom_2. This function rewards moves toward the center of the board, since these squares have more legal moves available to them. Meanwhile, the function penalizes moves along the edges and corners, since these squares have fewer moves available to them. 
+
+To achieve this, the board is divided into four sections (see diagram below).
+
+![color coded board diagram](color-board.png)
+
+The scoring logic can be summarized as follows:
+- moves in the center portion of the board (green) receive a higher score of 5 throughout the game, and a score of 10 at the beginning of the game (first seven moves)
+- moves in the second ring of the board (yellow) receive a score of 3
+- moves along the edges receive a score of 1
+- moves in the corners receive a score of 0
+
+This heuristic does not outperform AB_Improved. However, it still managed a respectable 44% winning percentage in direct competion with AB_Improved. And, it does much better than the Random and Minimax agents, winning 80% of the time. Given these results, I continued iterating on this 'center is better' strategy and utilized elements of it when developing the subsequent function. 
+
+
+#### AB_Custom_2
+[link to code in game_agent.py](https://github.com/tommytracey/udacity/blob/master/ai-nano/projects/2-isolation/game_agent.py#L57)
+
+This was my second attempt to exploit board position, but this time I tried to do it more systematically. The goal of this heurisitic is to reduce the mobility of the opponent -- while simultaneously improving the active player's mobility. This would naturally favor positions in the middle of the board, but I wanted to get away from hard coding this into the strategy as I did with previously with AB_Custom_3.
+
+After many iterations on this concept, I eventually found a fairly simple tactic that performed well. The final heuristic function calculates the number of available squares each player could reach within two moves (see diagram below). It then rewards moves that increase the number of reachable squares for the active player, and decrease the number of squares reachable by the opponent. 
+
+![empty spaces diagram](empty-spaces.png) 
+
+This heuristic peforms as well as AB_Improved, maybe slightly better. However, after much testing, I wasn't able to consistently beat the AB_Improved heuristic by a significant margin. So, I concluded that since the game of Isolation is won by the player who makes the most moves, that focusing on the number of moves remaining (not the number of open spaces) would be the most best avenue to pursue if I wanted get over the hump. 
+
+#### AB_Custom
+[link to code in game_agent.py](https://github.com/tommytracey/udacity/blob/master/ai-nano/projects/2-isolation/game_agent.py#L13)
+
+If you can't beat them, join them. After many different permutations, my final AB_Custom heuristic is essentially an improved version of AB_Improved, but there is one big difference. The AB_Custom heuristic consistently adjusts its tactics throughout the match.
+
+In the beginning of the match, the function is more aggresive at reducing the number of opponent moves. But, as the game goes on, it becomes less concerned with minimizing opponent moves, and becomes increasingly aggressive at maximizing the active player's moves. To me this made intuitive sense, since you want to limit your opponents options as much as possible in the beggining of the match, but at some point you have to focus on creating the longest string of moves as possible for yourself. 
+
+You can see in the code snippet below that this is accomplished using a weight that is inversely proportional to the number of the moves in the match. This approach consistently outperformed AB_Improved, winning 73.3% of its matches (compared to 69.7% by AB_Improved).
+
+```python
+
+    # get current move count
+    move_count = game.move_count
+
+    # count number of moves available
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
+    # calculate weight
+    w = 10 / (move_count + 1)
+
+    # return weighted delta of available moves
+    return float(own_moves - (w * opp_moves))
+
+```
+---
+---
+## Project Instructions
 
 In order to complete the Isolation project, students must submit code that passes all test cases for the required functions in `game_agent.py` and complete a report as specified in the rubric.  Students can submit using the [Udacity Project Assistant]() command line utility.  Students will receive feedback on test case success/failure after each submission.
 
@@ -96,22 +177,6 @@ The primary mechanism for testing your code will be the Udacity Project Assistan
 
 0. Finally, pass the heuristic tests by implementing any heuristic in `custom_score()`, `custom_score_2()`, and `custom_score_3()`.  (These test cases only validate the return value type -- it does not check for "correctness" of your heuristic.)  You can see example heuristics in the `sample_players.py` file.
 
-
-### Tournament
-
-The `tournament.py` script is used to evaluate the effectiveness of your custom heuristics.  The script measures relative performance of your agent (named "Student" in the tournament) in a round-robin tournament against several other pre-defined agents.  The Student agent uses time-limited Iterative Deepening along with your custom heuristics.
-
-The performance of time-limited iterative deepening search is hardware dependent (faster hardware is expected to search deeper than slower hardware in the same amount of time).  The script controls for these effects by also measuring the baseline performance of an agent called "ID_Improved" that uses Iterative Deepening and the improved_score heuristic defined in `sample_players.py`.  Your goal is to develop a heuristic such that Student outperforms ID_Improved. (NOTE: This can be _very_ challenging!)
-
-The tournament opponents are listed below. (See also: sample heuristics and players defined in sample_players.py)
-
-- Random: An agent that randomly chooses a move each turn.
-- MM_Open: MinimaxPlayer agent using the open_move_score heuristic with search depth 3
-- MM_Center: MinimaxPlayer agent using the center_score heuristic with search depth 3
-- MM_Improved: MinimaxPlayer agent using the improved_score heuristic with search depth 3
-- AB_Open: AlphaBetaPlayer using iterative deepening alpha-beta search and the open_move_score heuristic
-- AB_Center: AlphaBetaPlayer using iterative deepening alpha-beta search and the center_score heuristic
-- AB_Improved: AlphaBetaPlayer using iterative deepening alpha-beta search and the improved_score heuristic
 
 ## Submission
 

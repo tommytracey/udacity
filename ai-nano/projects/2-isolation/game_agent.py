@@ -50,7 +50,7 @@ def custom_score(game, player):
     # calculate weight
     w = 10 / (move_count + 1)
 
-    # return weighted delta of available moves and empty space + location bonus
+    # return weighted delta of available moves
     return float(own_moves - (w * opp_moves))
 
 
