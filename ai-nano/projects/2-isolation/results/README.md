@@ -1,4 +1,4 @@
----
+
 ## RESULTS
 Here is how the three custom heuristics that I created for this project peformed against the other agents:
 
