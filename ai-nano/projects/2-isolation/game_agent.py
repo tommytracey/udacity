@@ -12,15 +12,12 @@ class SearchTimeout(Exception):
 
 def custom_score(game, player):
     """Calculates the heuristic value of a game state from the point of view
-    of the given player. This is the best performing heuristic function for the
-    project submission.
+    of the given player.
 
-    This function rewards moves that:
-    - are in the center of the board for the first five moves of the game
-    - decrease the number of empty board spaces within the opponent's proximity 
-      (while increasing the number of empty spaces for the active player)
-    - decrease the number of legal moves the opponent has remaining relative to 
-      the active player
+    This function is an improvement on the AB_Improved heuristic. In the 
+    beginning of the game, it tries aggresively to reduce the number of opponent 
+    moves. But, as the game goes on, it becomes increasingly aggressive at
+    maximizing its own moves.  
 
     Parameters
     ----------
@@ -43,172 +40,26 @@ def custom_score(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    # get list of empty spaces
-    empty_spaces = game.get_blank_spaces()
-
-    # get each player's location
-    x_p1, y_p1 = game.get_player_location(player)
-    x_p2, y_p2 = game.get_player_location(game.get_opponent(player))
-
-    # reward moves in center of board at the beginning of game
-    loc_bonus = 0
-    if (len(empty_spaces) > 42) and (x_p1 >= 2 and x_p1 <= 4) and (y_p1 >= 2 and y_p2 <= 4):
-        loc_bonus = 10
-
-    # calculate 5x5 grid for each player
-    grid_dim = 5
-    delta_xy = int((grid_dim - 1) / 2)
-
-    x_min_p1 = max((x_p1 - delta_xy), 0)
-    y_min_p1 = max((y_p1 - delta_xy), 0)
-    x_max_p1 = min((x_p1 + delta_xy), 6)
-    y_max_p1 = min((y_p1 + delta_xy), 6)
-
-    x_min_p2 = max((x_p2 - delta_xy), 0)
-    y_min_p2 = max((y_p2 - delta_xy), 0)
-    x_max_p2 = min((x_p2 + delta_xy), 6)
-    y_max_p2 = min((y_p2 + delta_xy), 6)
-    
-    p1_grid = [(x, y) for x in range(x_min_p1, x_max_p1) for y in range(y_min_p1, y_max_p1)]
-    p2_grid = [(x, y) for x in range(x_min_p2, x_max_p2) for y in range(y_min_p2, y_max_p2)]
-
-    # identify grid corners
-    p1_corners = [(x_min_p1, y_min_p1), (x_min_p1, y_max_p1), \
-                    (x_max_p1, y_min_p1), (x_max_p1, y_max_p1)]
-    p2_corners = [(x_min_p2, y_min_p2), (x_min_p2, y_max_p2), \
-                    (x_max_p2, y_min_p2), (x_max_p2, y_max_p2)]
-
-    # identify adjacent horizontal and vertical squares
-    p1_adjacents = [(x_p1, y_p1+1), (x_p1+1, y_p1), (x_p1, y_p1-1), (x_p1-1, y_p1)]
-    p2_adjacents = [(x_p2, y_p2+1), (x_p2+1, y_p2), (x_p2, y_p2-1), (x_p2-1, y_p2)]
-
-    # subtract adjacents and corners from grid since they're unreachable in 2 moves
-    p1_vicinity = set(p1_grid) - set(p1_corners) - set(p1_adjacents)
-    p2_vicinity = set(p2_grid) - set(p2_corners) - set(p2_adjacents)
-
-    # identify reachable squares via the 'extended' grid
-    p1_ex_corners = [(x_p1-3, y_p1-3), (x_p1-3, y_p1+3), (x_p1+3, y_p1-3), (x_p1+3, y_p1+3)]
-    p1_ex_bot = [(x_p1-1, y_p1-3), (x_p1+1, y_p1-3), (x_p1-2, y_p1-4), (x_p1, y_p1-4), (x_p1+2, y_p1-4)]
-    p1_ex_top = [(x_p1-1, y_p1+3), (x_p1+1, y_p1+3), (x_p1-2, y_p1+4), (x_p1, y_p1+4), (x_p1+2, y_p1+4)]
-    p1_ex_left = [(x_p1-3, y_p1-1), (x_p1-3, y_p1+1), (x_p1-4, y_p1-2), (x_p1-4, y_p1), (x_p1-4, y_p1+2)]
-    p1_ex_right = [(x_p1+3, y_p1-1), (x_p1+3, y_p1+1), (x_p1+4, y_p1-2), (x_p1+4, y_p1), (x_p1+4, y_p1+2)]
-    
-    p2_ex_corners = [(x_p2-3, y_p2-3), (x_p2-3, y_p2+3), (x_p2+3, y_p2-3), (x_p2+3, y_p2+3)]
-    p2_ex_bot = [(x_p2-1, y_p2-3), (x_p2+1, y_p2-3), (x_p2-2, y_p2-4), (x_p2, y_p2-4), (x_p2+2, y_p2-4)]
-    p2_ex_top = [(x_p2-1, y_p2+3), (x_p2+1, y_p2+3), (x_p2-2, y_p2+4), (x_p2, y_p2+4), (x_p2+2, y_p2+4)]
-    p2_ex_left = [(x_p2-3, y_p2-1), (x_p2-3, y_p2+1), (x_p2-4, y_p2-2), (x_p2-4, y_p2), (x_p2-4, y_p2+2)]
-    p2_ex_right = [(x_p2+3, y_p2-1), (x_p2+3, y_p2+1), (x_p2+4, y_p2-2), (x_p2+4, y_p2), (x_p2+4, y_p2+2)]
-
-    p1_ex_grid = set(p1_ex_corners + p1_ex_bot + p1_ex_top + p1_ex_left + p1_ex_right)
-    p2_ex_grid = set(p2_ex_corners + p2_ex_bot + p2_ex_top + p2_ex_left + p2_ex_right)
-
-    # add-up all spaces reachable for each player in 2 moves
-    p1_area = p1_vicinity | p1_ex_grid
-    p2_area = p2_vicinity | p2_ex_grid
-
-    # count total number of empty spaces within 2 moves for each player
-    p1_empties = len(set(empty_spaces).intersection(p1_area))
-    p2_empties = len(set(empty_spaces).intersection(p2_area))
+    # get current move count
+    move_count = game.move_count
 
     # count number of moves available
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
 
-    # return weighted delta of available moves and empty space + location bonus
-    return float((2 * (own_moves - (1.5 * opp_moves))) + (p1_empties - (1.5 * p2_empties)) + loc_bonus)
-
-
-def custom_score_1(game, player):
-    """Calculates the heuristic value of a game state from the point of view
-    of the given player. This is the best performing heuristic function for the
-    project submission.
-
-    This function rewards moves that:
-    - are in the center of the board for the first five moves of the game
-    - decrease the number of empty board spaces within the opponent's proximity 
-      (while increasing the number of empty spaces for the active player)
-    - decrease the number of legal moves the opponent has remaining relative to 
-      the active player
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    -------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-    if game.is_loser(player):
-        return float("-inf")
-
-    if game.is_winner(player):
-        return float("inf")
-
-    # get list of empty spaces
-    empty_spaces = game.get_blank_spaces()
-
-    # get each player's location
-    x_p1, y_p1 = game.get_player_location(player)
-    x_p2, y_p2 = game.get_player_location(game.get_opponent(player))
-
-    # reward moves in center of board at the beginning of game
-    loc_bonus = 0
-    if (len(empty_spaces) > 42) and (x_p1 >= 2 and x_p1 <= 4) and (y_p1 >= 2 and y_p2 <= 4):
-        loc_bonus = 10
-
-    # calculate 5x5 grid for each player
-    grid_dim = 5
-    delta_xy = int((grid_dim - 1) / 2)
-
-    x_min_p1 = max((x_p1 - delta_xy), 0)
-    y_min_p1 = max((y_p1 - delta_xy), 0)
-    x_max_p1 = min((x_p1 + delta_xy), 6)
-    y_max_p1 = min((y_p1 + delta_xy), 6)
-
-    x_min_p2 = max((x_p2 - delta_xy), 0)
-    y_min_p2 = max((y_p2 - delta_xy), 0)
-    x_max_p2 = min((x_p2 + delta_xy), 6)
-    y_max_p2 = min((y_p2 + delta_xy), 6)
-    
-    p1_grid = [(x, y) for x in range(x_min_p1, x_max_p1) for y in range(y_min_p1, y_max_p1)]
-    p2_grid = [(x, y) for x in range(x_min_p2, x_max_p2) for y in range(y_min_p2, y_max_p2)]
-
-    # identify grid corners
-    p1_corners = [(x_min_p1, y_min_p1), (x_min_p1, y_max_p1), \
-                    (x_max_p1, y_min_p1), (x_max_p1, y_max_p1)]
-    p2_corners = [(x_min_p2, y_min_p2), (x_min_p2, y_max_p2), \
-                    (x_max_p2, y_min_p2), (x_max_p2, y_max_p2)]
-
-    # subtract corners from grid since they're unreachable in < 4 moves
-    p1_no_corn = set(p1_grid) - set(p1_corners)
-    p2_no_corn = set(p2_grid) - set(p2_corners)
-
-    # count number of empty spaces for each player
-    p1_count = len(set(empty_spaces).intersection(p1_no_corn))
-    p2_count = len(set(empty_spaces).intersection(p2_no_corn))
-
-    # count number of moves available
-    own_moves = len(game.get_legal_moves(player))
-    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    # calculate weight
+    w = 10 / (move_count + 1)
 
     # return weighted delta of available moves and empty space + location bonus
-    return float((own_moves - (1.5 * opp_moves)) + (p1_count - (1.5 * p2_count)) + loc_bonus)
+    return float(own_moves - (w * opp_moves))
 
 
 def custom_score_2(game, player):
     """Calculates the heuristic value of a game state from the point of view
     of the given player.
 
-    This function seeks to reduce the number of empty spaces that could be 
-    reached by the opponent within the next two moves (while increasing this
-    number for the active player). 
+    This function seeks to increase the number of spaces the active player can
+    reach within two moves, while decreasing this number for the opponent.
 
     Parameters
     ----------
@@ -225,155 +76,34 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
         return float("inf")
 
-    # get list of empty spaces
-    empty_spaces = game.get_blank_spaces()
+    # player locations
+    own_x, own_y = game.get_player_location(player)
+    opp_x, opp_y = game.get_player_location(game.get_opponent(player))
 
-    # get each player's location
-    x_p1, y_p1 = game.get_player_location(player)
-    x_p2, y_p2 = game.get_player_location(game.get_opponent(player))
+    # relative coordinates player could reach within 2 moves
+    directions = [
+        (1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2),
+        (-2, 0), (2, 0), (1, 1), (1, -1), (0, -2), (0, 2), (-1, -1), (-1, 1),
+        (1, 3), (3, 3), (3, 1), (3, -1), (3, -3), (1, -3), (-1, -3), (-3, -3),
+        (-3, -1), (-3, 1), (-3, 3), (-1, 3), (-2, -4), (0, -4), (2, -4), (-2, 4), 
+        (0, 4), (2, 4), (-4, -2), (-4, 0), (-4, 2), (4, -2), (4, 0), (4, 2)
+        ]
 
-    # calculate 5x5 grid for each player
-    grid_dim = 5
-    delta_xy = int((grid_dim - 1) / 2)
+    # squares reachable within 2 moves 
+    own_space = [(own_x+xd, own_y+yd) for xd, yd in directions
+                          if game.move_is_legal((own_x+xd, own_y+yd))]
+    opp_space = [(opp_x+xd, opp_y+yd) for xd, yd in directions
+                          if game.move_is_legal((opp_x+xd, opp_y+yd))]
 
-    x_min_p1 = max((x_p1 - delta_xy), 0)
-    y_min_p1 = max((y_p1 - delta_xy), 0)
-    x_max_p1 = min((x_p1 + delta_xy), 6)
-    y_max_p1 = min((y_p1 + delta_xy), 6)
-
-    x_min_p2 = max((x_p2 - delta_xy), 0)
-    y_min_p2 = max((y_p2 - delta_xy), 0)
-    x_max_p2 = min((x_p2 + delta_xy), 6)
-    y_max_p2 = min((y_p2 + delta_xy), 6)
-    
-    p1_grid = [(x, y) for x in range(x_min_p1, x_max_p1) \
-                    for y in range(y_min_p1, y_max_p1)]
-    p2_grid = [(x, y) for x in range(x_min_p2, x_max_p2) \
-                    for y in range(y_min_p2, y_max_p2)]
-
-    # identify grid corners
-    p1_corners = [(x_min_p1, y_min_p1), (x_min_p1, y_max_p1), \
-                    (x_max_p1, y_min_p1), (x_max_p1, y_max_p1)]
-    p2_corners = [(x_min_p2, y_min_p2), (x_min_p2, y_max_p2), \
-                    (x_max_p2, y_min_p2), (x_max_p2, y_max_p2)]
-
-    # identify adjacent horizontal and vertical squares
-    p1_adjacents = [(x_p1, y_p1+1), (x_p1+1, y_p1), (x_p1, y_p1-1), (x_p1-1, y_p1)]
-    p2_adjacents = [(x_p2, y_p2+1), (x_p2+1, y_p2), (x_p2, y_p2-1), (x_p2-1, y_p2)]
-
-    # subtract adjacents and corners from grid since they're unreachable in 2 moves
-    p1_vicinity = set(p1_grid) - set(p1_corners) - set(p1_adjacents)
-    p2_vicinity = set(p2_grid) - set(p2_corners) - set(p2_adjacents)
-
-    # identify reachable squares via the 'extended' grid
-    p1_ex_corners = [(x_p1-3, y_p1-3), (x_p1-3, y_p1+3), (x_p1+3, y_p1-3), (x_p1+3, y_p1+3)]
-    p1_ex_bot = [(x_p1-1, y_p1-3), (x_p1+1, y_p1-3), (x_p1-2, y_p1-4), (x_p1, y_p1-4), (x_p1+2, y_p1-4)]
-    p1_ex_top = [(x_p1-1, y_p1+3), (x_p1+1, y_p1+3), (x_p1-2, y_p1+4), (x_p1, y_p1+4), (x_p1+2, y_p1+4)]
-    p1_ex_left = [(x_p1-3, y_p1-1), (x_p1-3, y_p1+1), (x_p1-4, y_p1-2), (x_p1-4, y_p1), (x_p1-4, y_p1+2)]
-    p1_ex_right = [(x_p1+3, y_p1-1), (x_p1+3, y_p1+1), (x_p1+4, y_p1-2), (x_p1+4, y_p1), (x_p1+4, y_p1+2)]
-    
-    p2_ex_corners = [(x_p2-3, y_p2-3), (x_p2-3, y_p2+3), (x_p2+3, y_p2-3), (x_p2+3, y_p2+3)]
-    p2_ex_bot = [(x_p2-1, y_p2-3), (x_p2+1, y_p2-3), (x_p2-2, y_p2-4), (x_p2, y_p2-4), (x_p2+2, y_p2-4)]
-    p2_ex_top = [(x_p2-1, y_p2+3), (x_p2+1, y_p2+3), (x_p2-2, y_p2+4), (x_p2, y_p2+4), (x_p2+2, y_p2+4)]
-    p2_ex_left = [(x_p2-3, y_p2-1), (x_p2-3, y_p2+1), (x_p2-4, y_p2-2), (x_p2-4, y_p2), (x_p2-4, y_p2+2)]
-    p2_ex_right = [(x_p2+3, y_p2-1), (x_p2+3, y_p2+1), (x_p2+4, y_p2-2), (x_p2+4, y_p2), (x_p2+4, y_p2+2)]
-
-    p1_ex_grid = set(p1_ex_corners + p1_ex_bot + p1_ex_top + p1_ex_left + p1_ex_right)
-    p2_ex_grid = set(p2_ex_corners + p2_ex_bot + p2_ex_top + p2_ex_left + p2_ex_right)
-
-    # add-up all spaces reachable for each player in 2 moves
-    p1_area = p1_vicinity | p1_ex_grid
-    p2_area = p2_vicinity | p2_ex_grid
-
-    # count total number of empty spaces within 2 moves for each player
-    p1_empties = len(set(empty_spaces).intersection(p1_area))
-    p2_empties = len(set(empty_spaces).intersection(p2_area))
-
-    # return weighted delta of empty space
-    return float(p1_empties - (2 * p2_empties))
-
-
-def custom_score_2b(game, player):
-    """Calculates the heuristic value of a game state from the point of view
-    of the given player.
-
-    This function seeks to reduce the number of empty spaces that could be 
-    reached by the opponent within the next two moves (while increasing this
-    number for the active player). 
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    -------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-    if game.is_loser(player):
-        return float("-inf")
-
-    if game.is_winner(player):
-        return float("inf")
-
-    # get list of empty spaces
-    empty_spaces = game.get_blank_spaces()
-
-    # get each player's location
-    x_p1, y_p1 = game.get_player_location(player)
-    x_p2, y_p2 = game.get_player_location(game.get_opponent(player))
-
-    # calculate 5x5 grid for each player
-    grid_dim = 5
-    delta_xy = int((grid_dim - 1) / 2)
-
-    x_min_p1 = max((x_p1 - delta_xy), 0)
-    y_min_p1 = max((y_p1 - delta_xy), 0)
-    x_max_p1 = min((x_p1 + delta_xy), 6)
-    y_max_p1 = min((y_p1 + delta_xy), 6)
-
-    x_min_p2 = max((x_p2 - delta_xy), 0)
-    y_min_p2 = max((y_p2 - delta_xy), 0)
-    x_max_p2 = min((x_p2 + delta_xy), 6)
-    y_max_p2 = min((y_p2 + delta_xy), 6)
-    
-    p1_grid = [(x, y) for x in range(x_min_p1, x_max_p1) \
-                    for y in range(y_min_p1, y_max_p1)]
-    p2_grid = [(x, y) for x in range(x_min_p2, x_max_p2) \
-                    for y in range(y_min_p2, y_max_p2)]
-
-    # identify grid corners
-    p1_corners = [(x_min_p1, y_min_p1), (x_min_p1, y_max_p1), \
-                    (x_max_p1, y_min_p1), (x_max_p1, y_max_p1)]
-    p2_corners = [(x_min_p2, y_min_p2), (x_min_p2, y_max_p2), \
-                    (x_max_p2, y_min_p2), (x_max_p2, y_max_p2)]
-
-    # identify adjacent horizontal and vertical squares
-    p1_adjacents = [(x_p1, y_p1+1), (x_p1+1, y_p1), (x_p1, y_p1-1), (x_p1-1, y_p1)]
-    p2_adjacents = [(x_p2, y_p2+1), (x_p2+1, y_p2), (x_p2, y_p2-1), (x_p2-1, y_p2)]
-
-    # subtract adjacents and corners from grid since they're unreachable in 2 moves
-    p1_vicinity = set(p1_grid) - set(p1_corners) - set(p1_adjacents)
-    p2_vicinity = set(p2_grid) - set(p2_corners) - set(p2_adjacents)
-
-    # count number of empty spaces for each player
-    p1_empties = len(set(empty_spaces).intersection(p1_vicinity)) - 1 # max is 16
-    p2_empties = len(set(empty_spaces).intersection(p2_vicinity)) - 1 # max is 16
-
-    # return weighted delta of empty space
-    return float(p1_empties - (2 * p2_empties))
+    # return delta of reachable squares
+    return float(len(own_space) - len(opp_space))
 
 
 def custom_score_3(game, player):
@@ -432,7 +162,7 @@ def custom_score_3(game, player):
     if (x, y) in corners:
         score = 0
 
-    return score
+    return float(score)
 
 
 class IsolationPlayer:
