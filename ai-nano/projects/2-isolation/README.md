@@ -75,7 +75,7 @@ If you can't beat 'em, join 'em. After many different permutations, my final AB_
 
 In the beginning of the match, the function is more aggresive at reducing the number of opponent moves. But, as the game goes on, it becomes less concerned with minimizing opponent moves, and becomes increasingly aggressive at maximizing the active player's moves. To me this made intuitive sense, since you want to limit your opponent's options as much as possible in the beggining of the match, but at some point you have to focus on creating the longest string of moves possible for yourself. 
 
-You can see in the code snippet below that this is accomplished using a weight that is inversely proportional to the number of the moves in the match. This approach consistently outperformed AB_Improved, winning 73.3% of its matches (compared to 69.7% by AB_Improved).
+You can see in the code snippet below that this is accomplished using a weight that is inversely proportional to the number of the moves in the match. 
 
 ```python
 
@@ -93,6 +93,15 @@ You can see in the code snippet below that this is accomplished using a weight t
     return float(own_moves - (w * opp_moves))
 
 ```
+#### Recommendation:
+AB_Custom is the recommended evaluation function for the following reasons:
+
+1. It outperformed all of the other heuristics, winning 73.3% of its matches, which is almost 3% higher than the runner-up (AB_Custom_2).
+2. It outperformed the benchmark heuristic (AB_Improved) in its head-to-head matchup, winning 52 matches vs 48. 
+3. It has great breadth of performance. AB_Custom had either the first or second highest score in matches against all other minimax and alpha-beta heuristics.
+4. By adjusting its strategy throughout the course of the match, it demonstrates a greater level of game awareness . The tactics of all other heuristics are relatively static.
+
+
 ---
 ---
 ## Project Instructions
