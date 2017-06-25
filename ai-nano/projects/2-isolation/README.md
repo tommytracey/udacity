@@ -1,6 +1,7 @@
 
 _Udacity Artificial Intelligence Nanodegree, June 2017_
-# Project 2: Build a Game-playing Agent
+# Project 2
+## Part 1 of Project: Build a Game-playing Agent
 
 ![Example game of isolation](viz.gif)
 
@@ -36,7 +37,7 @@ The tournament opponents are listed below. (See also: sample heuristics and play
 ## RESULTS
 Here is how the three custom heuristics that I created for this project peformed against the other agents:
 
-![results table](results.png)
+![results table](results/results.png)
 
 
 ### AB_Custom_3
@@ -46,7 +47,7 @@ This was my original exploration of heuristics that exploit board position. This
 
 To achieve this, the board is divided into four sections (see diagram below).
 
-<img src='color-board.png' width="65%"/>
+<img src='results/color-board.png' width="65%"/>
 
 The scoring logic can be summarized as follows:
 - Moves in the center portion of the board (green) receive a higher score of 5 throughout the game, and a score of 10 at the beginning of the game (first seven moves)
@@ -64,7 +65,7 @@ This was my second attempt to exploit board position, but this time I tried to d
 
 After many iterations on this concept, I eventually found a simple tactic that performed well. The final heuristic function calculates the number of available squares a player could reach within two moves (see diagram below). It then rewards moves that: (a) increase the number of reachable squares for the active player, and (b) decrease the number of squares reachable by the opponent. 
 
-<img src='empty-spaces.png' width="65%"/>
+<img src='results/empty-spaces.png' width="65%"/>
 
 This heuristic peforms as well as AB_Improved, maybe slightly better. However, after much testing, I wasn't able to consistently beat the AB_Improved heuristic by a significant margin. So, I concluded that since the game of Isolation is won by the player who makes the most moves, that focusing on the number of moves remaining (not the number of open spaces) would be the best avenue to pursue if I wanted get over the hump. 
 
@@ -101,10 +102,20 @@ AB_Custom is the recommended evaluation function for the following reasons:
 3. It has great breadth of performance. AB_Custom had either the first or second highest score in matches against all other minimax and alpha-beta heuristics.
 4. By adjusting its strategy throughout the course of the match, it demonstrates a greater level of game awareness . The tactics of all other heuristics are relatively static.
 
+## Part 2 of Project: Research Review
+### Instructions
+The field of Artificial lIntelligence is continually changing and advancing. To be an AI Engineer at the cutting edge of your field, you need to be able to read and communicate some of these advancements with your peers. In order to help you get comfortable with this, in the second part of this project you will read a seminal paper in the field of Game-Playing and write a simple one page summary on it. 
+
+Write a simple one page summary covering the paper's goals, the techniques introduced, and results (if any).
+
+### My Research Review
+[Here is a link](https://github.com/tommytracey/udacity/tree/master/ai-nano/projects/2-isolation/results/research_review.pdf) to a PDF version of my research review on [AlphaGo: Mastering the Game of Go with Deep Neural Networks and Tree Search](https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf), written by the team at Deep Mind. 
 
 ---
 ---
-## Project Instructions
+_Below are the guidelines given to students in order to complete Part 1 of the project._
+---
+## Part 1: Instructions
 
 In order to complete the Isolation project, students must submit code that passes all test cases for the required functions in `game_agent.py` and complete a report as specified in the rubric.  Students can submit using the [Udacity Project Assistant]() command line utility.  Students will receive feedback on test case success/failure after each submission.
 
