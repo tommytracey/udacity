@@ -1,7 +1,7 @@
 
 _Udacity Artificial Intelligence Nanodegree, June 2017_
 # Project 2
-## Part 1 of Project: Build a Game-playing Agent
+## Part 1: Build a Game-playing Agent
 
 ![Example game of isolation](viz.gif)
 
@@ -102,6 +102,8 @@ AB_Custom is the recommended evaluation function for the following reasons:
 3. It has great breadth of performance. AB_Custom had either the first or second highest score in matches against all other minimax and alpha-beta heuristics.
 4. By adjusting its strategy throughout the course of the match, it demonstrates a greater level of game awareness . The tactics of all other heuristics are relatively static.
 
+---
+
 ## Part 2 of Project: Research Review
 ### Instructions
 The field of Artificial lIntelligence is continually changing and advancing. To be an AI Engineer at the cutting edge of your field, you need to be able to read and communicate some of these advancements with your peers. In order to help you get comfortable with this, in the second part of this project you will read a seminal paper in the field of Game-Playing and write a simple one page summary on it. 
@@ -109,11 +111,12 @@ The field of Artificial lIntelligence is continually changing and advancing. To 
 Write a simple one page summary covering the paper's goals, the techniques introduced, and results (if any).
 
 ### My Research Review
-[Here is a link](https://github.com/tommytracey/udacity/tree/master/ai-nano/projects/2-isolation/results/research_review.pdf) to a PDF version of my research review on [AlphaGo: Mastering the Game of Go with Deep Neural Networks and Tree Search](https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf), written by the team at Deep Mind. 
+[Here is a link](https://github.com/tommytracey/udacity/tree/master/ai-nano/projects/2-isolation/results/research_review.pdf) to a PDF version of my research review on AlphaGo. The paper is titled, [Mastering the Game of Go with Deep Neural Networks and Tree Search](https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf), written by the team at Deep Mind and featured in the journal [Nature](https://www.nature.com/nature/journal/v529/n7587/full/nature16961.html) in January, 2016. 
 
 ---
 ---
-_Below are the guidelines given to students in order to complete Part 1 of the project._
+#### _Below are the guidelines given to students in order to complete Part 1 of the project._
+
 ---
 ## Part 1: Instructions
 
