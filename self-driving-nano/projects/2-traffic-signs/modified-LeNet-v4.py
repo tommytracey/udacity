@@ -11,45 +11,33 @@
 # 
 # You do not need to modify this section.
 
-# In[1]:
+# In[5]:
 
-from tensorflow.examples.tutorials.mnist import input_data
+# Load pickled data
+import pickle
 
-mnist = input_data.read_data_sets("MNIST_data/", reshape=False)
-X_train, y_train           = mnist.train.images, mnist.train.labels
-X_validation, y_validation = mnist.validation.images, mnist.validation.labels
-X_test, y_test             = mnist.test.images, mnist.test.labels
+training_file = 'data/train.p'
+validation_file= 'data/valid.p'
+testing_file = 'data/test.p'
 
-assert(len(X_train) == len(y_train))
-assert(len(X_validation) == len(y_validation))
-assert(len(X_test) == len(y_test))
-
-print()
-print("Image Shape: {}".format(X_train[0].shape))
-print()
-print("Training Set:   {} samples".format(len(X_train)))
-print("Validation Set: {} samples".format(len(X_validation)))
-print("Test Set:       {} samples".format(len(X_test)))
-
-
-# The MNIST data that TensorFlow pre-loads comes as 28x28x1 images.
-# 
-# However, the LeNet architecture only accepts 32x32xC images, where C is the number of color channels.
-# 
-# In order to reformat the MNIST data into a shape that LeNet will accept, we pad the data with two rows of zeros on the top and bottom, and two columns of zeros on the left and right (28+2+2 = 32).
-# 
-# You do not need to modify this section.
-
-# In[2]:
-
-import numpy as np
-
-# Pad images with 0s
-X_train      = np.pad(X_train, ((0,0),(2,2),(2,2),(0,0)), 'constant')
-X_validation = np.pad(X_validation, ((0,0),(2,2),(2,2),(0,0)), 'constant')
-X_test       = np.pad(X_test, ((0,0),(2,2),(2,2),(0,0)), 'constant')
+with open(training_file, mode='rb') as f:
+    train = pickle.load(f)
+with open(validation_file, mode='rb') as f:
+    valid = pickle.load(f)
+with open(testing_file, mode='rb') as f:
+    test = pickle.load(f)
     
-print("Updated Image Shape: {}".format(X_train[0].shape))
+X_train, y_train = train['features'], train['labels']
+X_valid, y_valid = valid['features'], valid['labels']
+X_test, y_test = test['features'], test['labels']
+
+
+# In[6]:
+
+print("\nImage Shape: {}".format(X_train[0].shape))
+print("\nTraining Set:   {} samples".format(len(X_train)))
+print("Validation Set: {} samples".format(len(X_valid)))
+print("Test Set:       {} samples".format(len(X_test)))
 
 
 # ## Visualize Data
@@ -58,7 +46,7 @@ print("Updated Image Shape: {}".format(X_train[0].shape))
 # 
 # You do not need to modify this section.
 
-# In[3]:
+# In[15]:
 
 import random
 import numpy as np
@@ -79,7 +67,7 @@ print(y_train[index])
 # 
 # You do not need to modify this section.
 
-# In[4]:
+# In[16]:
 
 from sklearn.utils import shuffle
 
@@ -91,7 +79,7 @@ X_train, y_train = shuffle(X_train, y_train)
 # 
 # You do not need to modify this section.
 
-# In[5]:
+# In[17]:
 
 import tensorflow as tf
 
@@ -134,7 +122,7 @@ BATCH_SIZE = 128
 # ### Output
 # Return the result of the 2nd fully connected layer.
 
-# In[ ]:
+# In[21]:
 
 from tensorflow.contrib.layers import flatten
 
@@ -143,8 +131,8 @@ def LeNet(x):
     mu = 0
     sigma = 0.1
     
-    # SOLUTION: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
-    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 1, 6), mean = mu, stddev = sigma))
+    # SOLUTION: Layer 1: Convolutional. Input = 32x32x3. Output = 28x28x6.
+    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 3, 6), mean = mu, stddev = sigma))
     conv1_b = tf.Variable(tf.zeros(6))
     conv1   = tf.nn.conv2d(x, conv1_W, strides=[1, 1, 1, 1], padding='VALID') + conv1_b
 
@@ -184,9 +172,9 @@ def LeNet(x):
     # SOLUTION: Activation.
     fc2    = tf.nn.relu(fc2)
 
-    # SOLUTION: Layer 5: Fully Connected. Input = 84. Output = 10.
-    fc3_W  = tf.Variable(tf.truncated_normal(shape=(84, 10), mean = mu, stddev = sigma))
-    fc3_b  = tf.Variable(tf.zeros(10))
+    # SOLUTION: Layer 5: Fully Connected. Input = 84. Output = 43.
+    fc3_W  = tf.Variable(tf.truncated_normal(shape=(84, 43), mean = mu, stddev = sigma))
+    fc3_b  = tf.Variable(tf.zeros(43))
     logits = tf.matmul(fc2, fc3_W) + fc3_b
     
     return logits
@@ -200,11 +188,11 @@ def LeNet(x):
 # 
 # You do not need to modify this section.
 
-# In[ ]:
+# In[19]:
 
-x = tf.placeholder(tf.float32, (None, 32, 32, 1))
+x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 y = tf.placeholder(tf.int32, (None))
-one_hot_y = tf.one_hot(y, 10)
+one_hot_y = tf.one_hot(y, 43)
 
 
 # ## Training Pipeline
@@ -212,7 +200,7 @@ one_hot_y = tf.one_hot(y, 10)
 # 
 # You do not need to modify this section.
 
-# In[ ]:
+# In[22]:
 
 rate = 0.001
 
@@ -228,7 +216,7 @@ training_operation = optimizer.minimize(loss_operation)
 # 
 # You do not need to modify this section.
 
-# In[ ]:
+# In[23]:
 
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
 accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -256,7 +244,7 @@ def evaluate(X_data, y_data):
 # 
 # You do not need to modify this section.
 
-# In[ ]:
+# In[25]:
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
@@ -271,7 +259,7 @@ with tf.Session() as sess:
             batch_x, batch_y = X_train[offset:end], y_train[offset:end]
             sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
             
-        validation_accuracy = evaluate(X_validation, y_validation)
+        validation_accuracy = evaluate(X_valid, y_valid)
         print("EPOCH {} ...".format(i+1))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
