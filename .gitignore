@@ -4,6 +4,8 @@ intro-machine-learning
 
 **/archive
 **/class-repo
+**/checkpoints
+**/**checkpoints
 
 **/data
 **/MNIST_data
@@ -14,10 +16,16 @@ intro-machine-learning
 
 **/images
 !/ai-nano/projects/1-sudoku/images
+!**/results/images
 **/**images
 **/flower_photos
 **/photos
 **/**photos
+
+**/logs
+**/**logs
+**/models
+**/**models
 
 **/reading
 
