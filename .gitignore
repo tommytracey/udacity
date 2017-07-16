@@ -22,9 +22,7 @@ intro-machine-learning
 **/photos
 **/**photos
 
-**/**logs**
-**/**models**
-**/.outdir
+**/models
 
 **/reading
 
