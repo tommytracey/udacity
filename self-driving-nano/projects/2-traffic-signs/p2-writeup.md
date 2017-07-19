@@ -1,4 +1,4 @@
-<img src='images/writeup/' width="60%"/>
+<img src='images/writeup/collage-1.jpg'>
 
 ##### Udacity Self-Driving Car Nanodegree
 # **Project 2: Traffic Sign Recognition** 
@@ -24,22 +24,21 @@ My code and a detailed view of the outputs for each step are outlined here in th
 In the write-up below, I consider the project's [rubric points](https://review.udacity.com/#!/rubrics/481/view) and describe how I addressed each point wihin my implementation.  
 ### 
 ---
-## Project Summary
 ### 
-### Data Set Summary & Exploration
+## Data Summary & Exploration
 
 Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to explore and visualize the traffic signs data set. 
 
-##### Data Size & Shape
+### Data Size & Shape
 * Size of training set: 
 * Size of the validation set:
 * Size of test set:
 * Shape of a traffic sign image:
 * Number of unique classes/labels: 43
 
-<img src='images/writeup/' width="60%"/>
+[link to source code]()
 
-##### Data Visualization
+### Data Visualization
 Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any). 
 
 There are a few fundamental ways I used visualizations to inform my decisions:
@@ -55,7 +54,7 @@ There are a few fundamental ways I used visualizations to inform my decisions:
    
    How balanced is the dataset? Are there certain classes that dominate the dataset? Are there others that are under represented? 
 
-###### Sample of Images & Labels
+### Sample of Images & Labels
 Here is a sample of original images (one per class) before they undergo any preprocessing. Overall, the image quality is good and the labels make intuitive sense. However, immediately you can notice a few things we'll want to adjust during preprocessing:
 * Many of the signs are hard to recognize because the image is dark with low contrast.
 * There is little variation in the sign shape and viewing angle. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles. 
@@ -63,16 +62,15 @@ Here is a sample of original images (one per class) before they undergo any prep
 
 <img src='images/writeup/original-signs.jpg' width="100%"/>
 
-# 
-# 
-### Data Preprocessing
+###
+---
+## Data Preprocessing
 Given the issues identified above, I decided to explore the following preprocessing operations (in addition to the standard practice of _normalization_):
 
 * __Normalization__ (standard)
 * __Contrast enhancement__
-  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image.
-  
-   [link to source code]()
+  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image. [link to source code]()
+
    <img src='images/writeup/orig_vs_norm.jpg' width="25%"/>
 
 * __Augmentation__
@@ -85,12 +83,13 @@ Given the issues identified above, I decided to explore the following preprocess
     * _Grayscaling_ -- This was performed separately _after_ all of the above transformations. Due to the high darkness and low contrast issues, applying grayscale before the other transformations didn't make sense. It would only make them worse. I decided to test the grayscale versions as a separate data set to see if it boosted performance (spoiler aleart: it didn't).
 
 [link to source code]()
+
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
-<img src='images/writeup/aug-function.jpg' width="80%"/>
+<img src='images/writeup/aug-function.jpg' width="90%"/>
 
 
-#### Examples
+### Augmented Image Samples
 Here is a sample of a traffic sign images after the complete set of **normalization, contrast enhancement, and augmentation** listed above.
 
 <img src='images/writeup/augmented-sample.jpg' width="100%"/>
@@ -101,8 +100,8 @@ Here is a sample of images with **grayscaling** applied
 <img src='images/writeup/grayscale-sample.jpg' width="90%"/>
 
 
-###
-### Model Architecture
+---
+## Model Architecture
 
 I tested a variety of models (more than 25 different variations). Ultimately, I settled on a simple and efficient architecture that didn't take forever to train and still delivered great performance. My final model consisted of the following layers:
 
@@ -119,7 +118,7 @@ To train the model, I used an ....
 
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
-#### Final model results:
+### Final model results:
 * training set accuracy of **100%**
 * validation set accuracy of **99.4%**
 * test set accuracy of **98.2%**
@@ -135,9 +134,9 @@ If a well known architecture was chosen:
 * What architecture was chosen?
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
-
-### Test a Model on New Images
+###
+---
+## Test a Model on New Images
 
 ####1. Choose at least five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
