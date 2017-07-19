@@ -1,8 +1,9 @@
----
+<img src='images/writeup/' width="60%"/>
+
 ##### Udacity Self-Driving Car Nanodegree
 # **Project 2: Traffic Sign Recognition** 
-#
----
+###
+
 The goal of this project is to build a neural network that recognizes traffic signs in Germany. 
 
 Udacity's benchmark for the project is to achieve at least 93% accuracy (on the validation set). However, my personal goal was to surpass the human level performance benchmark of 98.8% accuracy identified in [this paper](https://arxiv.org/pdf/1511.02992.pdf) by Mrinal Haloi from the Indian Institute of Technology.
@@ -18,17 +19,13 @@ The basic steps of the project are as follows:
 ##### Project Notebook
 My code and a detailed view of the outputs for each step are outlined here in this [Jupyter Notebook](). You can also view just the python code via the notebook's corresponding [.py export file](). 
 
-[//]: # (Image References)
-[image1]: ./examples/visualization.jpg "Visualization"
 
 ##### Rubric Points
 In the write-up below, I consider the project's [rubric points](https://review.udacity.com/#!/rubrics/481/view) and describe how I addressed each point wihin my implementation.  
-# 
-#
-## Project Summary
-# 
+### 
 ---
-# 
+## Project Summary
+### 
 ### Data Set Summary & Exploration
 
 Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to explore and visualize the traffic signs data set. 
@@ -40,19 +37,23 @@ Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to ex
 * Shape of a traffic sign image:
 * Number of unique classes/labels: 43
 
-![alt text][image1]
+<img src='images/writeup/' width="60%"/>
 
 ##### Data Visualization
 Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any). 
 
 There are a few fundamental ways I used visualizations to inform my decisions:
 1. **Preview a sample of images (duh!)**
--- Do the images correspond with the expected number of color channels? -- i.e., if channels=3 then images should be color/RGB not grayscale.
--- How clear are the images? Is there anything that makes the signs hard to recognize (e.g. bad weather, darkness, glare, occlusions)?
+   
+   Do the images correspond with the expected number of color channels? -- i.e., if channels=3 then images should be color/RGB not grayscale.
+   
+   How clear are the images? Is there anything that makes the signs hard to recognize (e.g. bad weather, darkness, glare, occlusions)?
 2. **Look at a sample of the labels**
--- Do the labels make sense? Do they accurately correspond with images in the data set?
+   
+   Do the labels make sense? Do they accurately correspond with images in the data set?
 3. **Histogram showing the distribution of classes/labels**
--- How balanced is the dataset? Are there certain classes that dominate the dataset? Are there others that are under represented? 
+   
+   How balanced is the dataset? Are there certain classes that dominate the dataset? Are there others that are under represented? 
 
 ###### Sample of Images & Labels
 Here is a sample of original images (one per class) before they undergo any preprocessing. Overall, the image quality is good and the labels make intuitive sense. However, immediately you can notice a few things we'll want to adjust during preprocessing:
@@ -60,60 +61,57 @@ Here is a sample of original images (one per class) before they undergo any prep
 * There is little variation in the sign shape and viewing angle. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles. 
 * The signs are void of any visual damage or occlusions. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. 
 
-![alt text][image1]
-/images/writeup/original-signs.png
+<img src='images/writeup/original-signs.jpg' width="100%"/>
 
 # 
 # 
 ### Data Preprocessing
 Given the issues identified above, I decided to explore the following preprocessing operations (in addition to the standard practice of _normalization_):
-* **Normalization** (standard)
-* **Contrast enhancement**
-  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image.  
-  * ![alt text][image1]: orig_vs_norm.jpg
-  * [link to source code]()
-* **Augmentation**
-  * **Increase total number of images**, so that the model has more training examples to learn from. 
-  * **Create an equal distribution of images** (i.e., same number of images per class) so that the model has a sufficient number of training examples in each class. I initially tested models on sets of 3k and 5k images per class, and found that models performed better with more images. I ultimately generated a set of 6k images per class for the final model. 
-  * **Apply affine transformations**. Used to generate images with various sets of perturbations. Specifically: rotation, shift, shearing, and zoom. But, I decided _not_ to apply horizontal/vertical flipping as this didn't seem pertinent to real-life use cases. 
-  * **Apply ZCA whitening** to accentuate edges.
-  * **Apply color transformations**
+
+* __Normalization__ (standard)
+* __Contrast enhancement__
+  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image.
+  
+   [link to source code]()
+   <img src='images/writeup/orig_vs_norm.jpg' width="25%"/>
+
+* __Augmentation__
+  * __Increase total number of images__, so that the model has more training examples to learn from. 
+  * __Create an equal distribution of images__ (i.e., same number of images per class) so that the model has a sufficient number of training examples in each class. I initially tested models on sets of 3k and 5k images per class, and found that models performed better with more images. I ultimately generated a set of 6k images per class for the final model. 
+  * __Apply affine transformations__. Used to generate images with various sets of perturbations. Specifically: rotation, shift, shearing, and zoom. But, I decided _not_ to apply horizontal/vertical flipping as this didn't seem pertinent to real-life use cases. 
+  * __Apply ZCA whitening__ to accentuate edges.
+  * __Apply color transformations__
     * _Color channel shifts_ -- This was done to create slight color derivations, to prevent the model from overfitting specific color shades. This intuitively seemed like a better strategy than grayscaling. 
     * _Grayscaling_ -- This was performed separately _after_ all of the above transformations. Due to the high darkness and low contrast issues, applying grayscale before the other transformations didn't make sense. It would only make them worse. I decided to test the grayscale versions as a separate data set to see if it boosted performance (spoiler aleart: it didn't).
 
 [link to source code]()
-![alt text][image1]
+<img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
-##### Examples
+<img src='images/writeup/aug-function.jpg' width="80%"/>
+
+
+#### Examples
 Here is a sample of a traffic sign images after the complete set of **normalization, contrast enhancement, and augmentation** listed above.
 
-![alt text][image1]
+<img src='images/writeup/augmented-sample.jpg' width="100%"/>
+
 
 Here is a sample of images with **grayscaling** applied 
 
-![alt text][image1]
+<img src='images/writeup/grayscale-sample.jpg' width="90%"/>
 
-#
+
+###
 ### Model Architecture
-_Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model._
 
 I tested a variety of models (more than 25 different variations). Ultimately, I settled on a simple and efficient architecture that didn't take forever to train and still delivered great performance. My final model consisted of the following layers:
 
-![architecture diagram][/images/writeup/architecture-diagram.png]
+<img src='images/writeup/architecture-diagram.png' width="60%"/>
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
 
+---
+---
+_in progress..._
 
 ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
@@ -121,7 +119,7 @@ To train the model, I used an ....
 
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
-###### Final model results:
+#### Final model results:
 * training set accuracy of **100%**
 * validation set accuracy of **99.4%**
 * test set accuracy of **98.2%**
