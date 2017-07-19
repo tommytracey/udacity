@@ -1,4 +1,4 @@
-<img src='images/writeup/collage-1.jpg'>
+<img src='images/writeup/collage-1b.jpg'>
 
 ##### Udacity Self-Driving Car Nanodegree
 # **Project 2: Traffic Sign Recognition** 
