@@ -1,10 +1,10 @@
 <img src='images/writeup/collage-1b.jpg'>
 
 ##### Udacity Self-Driving Car Nanodegree
-# **Project 2: Traffic Sign Recognition** 
+# **Project 2: Traffic Sign Recognition**
 ###
 
-The goal of this project is to build a neural network that recognizes traffic signs in Germany. 
+The goal of this project is to build a neural network that recognizes traffic signs in Germany.
 
 Udacity's benchmark for the project is to achieve at least 93% accuracy (on the validation set). However, **my personal goal was to surpass the human level performance benchmark of 98.8% accuracy** identified in [this paper](https://arxiv.org/pdf/1511.02992.pdf) by Mrinal Haloi from the Indian Institute of Technology.
 
@@ -17,17 +17,17 @@ The basic steps of the project are as follows:
 1. Summarize the results with a written report
 
 ##### Project Notebook
-My code and a detailed view of the outputs for each step are outlined here in this [Jupyter Notebook](). You can also view just the python code via the notebook's corresponding [.py export file](). 
+My code and a detailed view of the outputs for each step are outlined here in this [Jupyter Notebook](). You can also view just the python code via the notebook's corresponding [.py export file]().
 
 
 ##### Rubric Points
 In the write-up below, I consider the project's [rubric points](https://review.udacity.com/#!/rubrics/481/view) and describe how I addressed each point wihin my implementation.  
-### 
+###
 ---
-### 
+###
 ## Data Summary & Exploration
 
-Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to explore and visualize the traffic signs data set. 
+Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to explore and visualize the traffic signs data set.
 
 ### Data Size & Shape
 I used the default testing splits provided by Udacity.
@@ -41,31 +41,31 @@ I used the default testing splits provided by Udacity.
 [(link to source code)]()
 
 ### Data Visualization
-Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any). 
+Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any).
 
 There are a few fundamental ways I used visualizations to inform my decisions:
 1. **Inspect a sample of images**
-   
+
    Do the images correspond with the expected number of color channels? -- i.e., if channels=3 then images should be color/RGB not grayscale.
-   
+
    How clear are the images? Is there anything that makes the signs hard to recognize (e.g. bad weather, darkness, glare, occlusions)?
 2. **Review a sample of the labels**
-   
+
    Do the labels make sense? Do they accurately correspond with images in the data set?
 3. **Create a histogram showing the distribution of classes/labels**
-   
-   How balanced is the dataset? Are there certain classes that dominate the dataset? Are there others that are under represented? 
+
+   How balanced is the dataset? Are there certain classes that dominate the dataset? Are there others that are under represented?
 
 ### Sample of Images & Labels
 Here is a sample of original images (one per class) before they undergo any preprocessing. Overall, the image quality is good and the labels make intuitive sense. However, immediately you can notice a few things we'll want to adjust during preprocessing:
 * Many of the signs are hard to recognize because the **images are dark and have low contrast**.
-* There is **little variation in the sign shape and viewing angle**. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles. 
-* The **signs are void of any deformations or occlusions**. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. Essentially, we want the model to recognize signs even when the shape is in someway distorted, much like humans can. So, augmenting the training set with distortions is important. 
+* There is **little variation in the sign shape and viewing angle**. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles.
+* The **signs are void of any deformations or occlusions**. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. Essentially, we want the model to recognize signs even when the shape is in someway distorted, much like humans can. So, augmenting the training set with distortions is important.
 
 <img src='images/writeup/original-signs.jpg' width="100%"/>
 
 ### Class/Label Distribution
-As you can see, the distribution is not uniform. The largest classes have 10x the number of traffic sign images than the smallest classes. This is expected given that in real-life there are certain signs which appear more often than others. However, when training the model, I wanted a more uniform distribution so that each class has the same number of training examples (and the model therefore has an equal number of opportunities to learn each sign). 
+As you can see, the distribution is not uniform. The largest classes have 10x the number of traffic sign images than the smallest classes. This is expected given that in real-life there are certain signs which appear more often than others. However, when training the model, I wanted a more uniform distribution so that each class has the same number of training examples (and the model therefore has an equal number of opportunities to learn each sign).
 
 <img src='images/writeup/distribution.png' width="100%"/>
 
@@ -82,15 +82,15 @@ Given the issues identified above, I decided to explore the following preprocess
    <img src='images/writeup/orig_vs_norm.jpg' width="25%"/>
 
 * __Augmentation__
-  * __Increase total number of images__, so that the model has more training examples to learn from. 
-  * __Create an equal distribution of images__ (i.e., same number of images per class) so that the model has a sufficient number of training examples in each class. I initially tested models on sets of 3k and 5k images per class, and found that models performed better with more images. I ultimately generated a set of 6k images per class for the final model. 
-  * __Apply affine transformations__. Used to generate images with various sets of perturbations. Specifically: rotation, shift, shearing, and zoom. But, I decided _not_ to apply horizontal/vertical flipping as this didn't seem pertinent to real-life use cases. 
+  * __Increase total number of images__, so that the model has more training examples to learn from.
+  * __Create an equal distribution of images__ (i.e., same number of images per class) so that the model has a sufficient number of training examples in each class. I initially tested models on sets of 3k and 5k images per class, and found that models performed better with more images. I ultimately generated a set of 6k images per class for the final model.
+  * __Apply affine transformations__. Used to generate images with various sets of perturbations. Specifically: rotation, shift, shearing, and zoom. But, I decided _not_ to apply horizontal/vertical flipping as this didn't seem pertinent to real-life use cases.
   * __Apply ZCA whitening__ to accentuate edges.
   * __Apply color transformations__
-    * _Color channel shifts_ -- This was done to create slight color derivations, to prevent the model from overfitting specific color shades. This intuitively seemed like a better strategy than grayscaling. 
+    * _Color channel shifts_ -- This was done to create slight color derivations, to prevent the model from overfitting specific color shades. This intuitively seemed like a better strategy than grayscaling.
     * _Grayscaling_ -- This was performed separately _after_ all of the above transformations. Due to the high darkness and low contrast issues, applying grayscale before the other transformations didn't make sense. It would only make them worse. I decided to test the grayscale versions as a separate data set to see if it boosted performance (spoiler aleart: it didn't).
 
-Here is the snippet of code that takes the already normalized images (with contrast enhanced) and applies the transformations listed above. It outputs a new training set with 6k images per class, including the set of normalized training images. 
+Here is the snippet of code that takes the already normalized images (with contrast enhanced) and applies the transformations listed above. It outputs a new training set with 6k images per class, including the set of normalized training images.
 [(link to source code)]()
 
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
@@ -150,13 +150,13 @@ Here is the output when I construct the graph. I use print statements to verify 
 
 ###
 ### Model Iteration & Tuning
-I'll try to summarize the approach I took to find a solution that exceeded the benchmark validation set accuracy of 0.93. Although some of the details got lost in the fog of war. I battled with these models for too many days. If you're curious, you can view a fairly complete list of the models I tested [here](data/model-performance-summary-v2.xlsx). 
+I'll try to summarize the approach I took to find a solution that exceeded the benchmark validation set accuracy of 0.93. Although some of the details got lost in the fog of war. I battled with these models for too many days. If you're curious, you can view a fairly complete list of the models I tested [here](data/model-performance-summary-v2.xlsx).
 
 #### Phase 1
 The first steps were to get the most basic version of LeNet's CNN running and begin tuning it. I got 83% accuracy without any modifications to the model or preprocssing of the training data. Adding regularization and tuning the hyperparameters made the performance worse. So, I started to explore different types of architectures.
 
 #### Phase 2
-This is where I started making mistakes that cost me a lot of time (although I learned a lot in the process). In hindsight, I should have done two simple things: (1) start applying some basic preprocessing to the data and testing the performance impact, and (2) keep iterating on the LeNet architecture by incrementally adding and deepening the layers. 
+This is where I started making mistakes that cost me a lot of time (although I learned a lot in the process). In hindsight, I should have done two simple things: (1) start applying some basic preprocessing to the data and testing the performance impact, and (2) keep iterating on the LeNet architecture by incrementally adding and deepening the layers.
 
 Instead, I started explore different architectures such as [DenseNets](https://arxiv.org/abs/1608.06993). Just look at this diagram from [the paper](); how hard could it be, right? Wrong.
 
@@ -167,15 +167,15 @@ DenseNets didn't seem overly complex at the time, and I probably could have gott
 I then tried to implement the (much simpler) inception framework discussed by Vincent during the lectures. After some trial and error, I got an inception network running. But, I couldn't get them to perform better than 80% validation accuracy, so I abandoned this path as well. I believe this approach could have worked, but by this point, I wanted to get back to the basics. So, I decided to focus on data preprocessing and iterating on the basic LeNet architecture (which I should have done from the beginning! Arg.)
 
 #### Phase 3
-After a day of sleep, yoga, and meditation to clear my head...I got back to basics. 
+After a day of sleep, yoga, and meditation to clear my head...I got back to basics.
 
-I started by applying simple transformations to the data and testing simple adjustments to the LeNet architecture. Model performance started to improve, but I still had a bias problem. In the beginning, my models were consistently overfitting the training data and therefore my training accuracy was high but my validation accuracy was still low. 
+I started by applying simple transformations to the data and testing simple adjustments to the LeNet architecture. Model performance started to improve, but I still had a bias problem. In the beginning, my models were consistently overfitting the training data and therefore my training accuracy was high but my validation accuracy was still low.
 
 This is a summary of the tactics I deployed to improve performance.
 
-| Model			        |     Validation Accuracy	        					| 
-|:---------------------|:----------------------------------------------:| 
-| Basic LeNet      		                                    | 82.6%   	| 
+| Model			        |     Validation Accuracy	        					|
+|:---------------------|:----------------------------------------------:|
+| Basic LeNet      		                                    | 82.6%   	|
 | LeNet + bias init =0 (instead of 0.01)    			         | 85.2%		|
 | LeNet + bias init + contrast enhancement					   | 92.9%		|
 | LeNet + bias init + contrast + augmentation v1 	         | 94.9%		|
@@ -184,13 +184,14 @@ This is a summary of the tactics I deployed to improve performance.
 | LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning		| 99.0%   |
 | LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning + grayscale		| 95.8%  |
 | LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning + more training images	+ more epochs	| 99.4%  |
-
+###
 ###
 Here are more details regarding the tactics above (in order of greatest impact on the model):
 
-* __Contrast enhancement__ &mdash; Pound for pound, this tactic had the greatest impact on performance. It was easy to implement and my validation accuracy immediately jumped more than 7%. I only wish I'd done it sooner. As discussed in my initial exploration of the data, I predicted that the low contrast of many of the original images would make it difficult for the model to recognize the distinct characteristics of each sign. This is obvious even to the human eye! But for some reason I didn't implement this tactic until halfway through the project. **Lesson learned: design and test your pipeline around simple observations and intuitions BEFORE you pursue more complicated strategies.** Keep it simple stupid! 
-* __Augmentation v1 vs v2__ &mdash; The first iteration of my augmentation function boosted performance by 2% (which was great!). However, my range settings for the affine and color transformations were a little too aggressive. This made the training images overly distorted (this was obvious simply by looking at the images). Because of these distortions, the model kept overfitting (i.e., it achieved high training accuracy but wasn't able to generalize to the validation set). 
-   In v2 of my augmentation function, I dialed down the range settings and got a 1% performance boost. Then I added ZCA whitening to improve edge detection and got another 1% lift. In my very last optimization, I then increased the number of images being produced by this function so that there were 6k images per class (instead of 4k). This tactic compbined with longer training time yielded the final (and elusive!) 0.4% lift to bring the final validation accuracy to 99.4%. Then I slept. 
+* __Contrast enhancement__ &mdash; Pound for pound, this tactic had the greatest impact on performance. It was easy to implement and my validation accuracy immediately jumped more than 7%. I only wish I'd done it sooner. As discussed in my initial exploration of the data, I predicted that the low contrast of many of the original images would make it difficult for the model to recognize the distinct characteristics of each sign. This is obvious even to the human eye! But for some reason I didn't implement this tactic until halfway through the project. **Lesson learned: design and test your pipeline around simple observations and intuitions BEFORE you pursue more complicated strategies.** Keep it simple stupid!
+* __Augmentation v1 vs v2__ &mdash; The first iteration of my augmentation function boosted performance by 2% (which was great!). However, my range settings for the affine and color transformations were a little too aggressive. This made the training images overly distorted (this was obvious simply by looking at the images). Because of these distortions, the model kept overfitting (i.e., it achieved high training accuracy but wasn't able to generalize to the validation set).
+
+   In v2 of my augmentation function, I dialed down the range settings and got a 1% performance boost. Then I added ZCA whitening to improve edge detection and got another 1% lift. In my very last optimization, I then increased the number of images being produced by this function so that there were 6k images per class (instead of 4k). This tactic compbined with longer training time yielded the final (and elusive!) 0.4% lift to bring the final validation accuracy to 99.4%. Then I slept.
 * __More layers and deeper layers__ &mdash; Surprisingly, and after many iterations, I learned that it doesn't take a high number of layers or incredibly deep layers to achieve human level performance. That said, some modest increases in the size of the model were critical to breaking the 95% accuracy plateau. You can see from the [model diagram](/images/writeup/architecture-diagram.png) that I ended up with seven convolutional layers (five more than LeNet) and that my convolutional and fully connected layers are deeper than LeNet as well. Of course, to mitigate this extra learning power, I had to employ regularization tactics.
 * __Regularization__ &mdash; Both dropout and L2 regularization proved critical. I made an initial mistake of adding these to the model too early in the process, or had them set too high, which caused the model to underfit. I then removed them altogether until I had a model that was starting to fit and generate high training accuracies. At that point, I added regularization back into the model and started to increase it whenever my model was overfitting (i.e., higher dropout and L2 decay values). After a few overcorrections, I ultimately landed on a dropout of 0.5 and decay of 0.0003.
 * __Bias initialization__ &mdash; Initially, I was initializing my biases at 0.01 (using tf.constant). Once I started intializing the biases at zero, my accuracy jumped more than 2%. Even after doing more research on the issue, I'm still not exactly sure why this small bias initializeing negatively affected the model. My best guess is even this small amount of bias was not self correcting enough during back propogation, and given that the data was normalized with a mean of zero, that extra bias was causing additional overfitting in the model. [(link to source code)]()
@@ -201,24 +202,32 @@ Here are more details regarding the tactics above (in order of greatest impact o
 
 ###
 ---
-## Test a Model on New Images
+## Test the Model on New Images
 
-####1. Choose at least five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+I gathered a set of 30 new images for this phase of testing: 11 of the images were pulled from the internet, and 19 of the images I shot myself around the streets of Prague, which uses the same traffic signs as Germany. Overall, I made the test set quite challenging in order to learn about the strengths and weaknesses of the model.
 
-Here are five German traffic signs that I found on the web:
+Here is the complete set of cropped test images and the corresponding originals.
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+<img src='images/writeup/test-signs.png' width="90%"/>
 
-The first image might be difficult to classify because ...
+Within this set, these images are particularly challenging.
+
+| Image			        |     Challenges	        					|
+|:---------------------:|:---------------------------------------------:|
+| <img src='images/new-signs/challenging/13-yield.jpg' width="20%"/>
+     		| two signs are visible  									|
+| U-turn     			| U-turn 										|
+| Yield					| Yield											|
+| 100 km/h	      		| Bumpy Road					 				|
+| Slippery Road			| Slippery Road      							|
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
+| Image			        |     Prediction	        					|
+|:---------------------:|:---------------------------------------------:|
+| Stop Sign      		| Stop sign   									|
 | U-turn     			| U-turn 										|
 | Yield					| Yield											|
 | 100 km/h	      		| Bumpy Road					 				|
@@ -233,17 +242,16 @@ The code for making predictions on my final model is located in the 11th cell of
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
+| Probability         	|     Prediction	        					|
+|:---------------------:|:---------------------------------------------:|
+| .60         			| Stop sign   									|
 | .20     				| U-turn 										|
 | .05					| Yield											|
 | .04	      			| Bumpy Road					 				|
 | .01				    | Slippery Road      							|
 
 
-For the second image ... 
+For the second image ...
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 ####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
-

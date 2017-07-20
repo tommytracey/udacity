@@ -915,7 +915,35 @@ with tf.Session() as sess:
 
 # ### Load and Output the Images
 
-# In[68]:
+# In[25]:
+
+
+# Import and display the set of NEW images
+
+import os
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+get_ipython().magic('matplotlib inline')
+
+plt.close("all")
+for file in sorted(os.listdir(image_dir)):
+    if '.jpg' in file:
+        plt.figure(figsize=(0.1,0.1))
+        plt.axis('off')
+        plt.text(0, 0, '------------------ {} ------------------'.format(file))
+        
+        plt.figure(figsize=(2,2))
+        plt.title('Test Image')
+        plt.axis('off')
+        plt.imshow(mpimg.imread(image_dir + '/' + file))
+        
+        plt.figure()
+        plt.title('Original')
+        plt.axis('off')
+        plt.imshow(mpimg.imread(image_dir + '/originals/' + file))
+
+
+# In[26]:
 
 
 # Import and display the set of NEW images
@@ -926,16 +954,17 @@ import matplotlib.image as mpimg
 get_ipython().magic('matplotlib inline')
 
 # show cropped images
-fig = plt.figure(figsize=(20, 80), tight_layout={'h_pad':2})
+# fig = plt.figure(figsize=(20, 80), tight_layout={'h_pad':2})
 i = 0
 image_dir = 'images/new-signs'
 for file in os.listdir(image_dir):
     if '.jpg' in file:
-        ax = fig.add_subplot(15,4,i+1) 
+#         ax = fig.add_subplot(15,4,i+1) 
+        plt.figure(figsize=(2,2))
         img_crop = mpimg.imread(image_dir + '/' + file)
         plt.title('CROP ------>', {'verticalalignment': 'baseline', 'horizontalalignment': 'left'})
 #         plt.axis('off')
-        ax.imshow(img_crop)
+        plt.imshow(img_crop)
         i+=1
 
         ax = fig.add_subplot(15,4,i+1)
@@ -943,6 +972,48 @@ for file in os.listdir(image_dir):
         plt.title('------> ORIGINAL', {'verticalalignment': 'baseline', 'horizontalalignment': 'right'})
         plt.axis('off')
         ax.imshow(img_orig)
+        i+=1
+        
+plt.show()
+
+
+# In[46]:
+
+
+# Import and display the set of NEW images
+
+import os
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import numpy as np
+get_ipython().magic('matplotlib inline')
+
+# show cropped images
+fig = plt.figure(figsize=(20, 80))#, tight_layout={'h_pad':2})
+i = 0
+image_dir = 'images/new-signs'
+for file in os.listdir(image_dir):
+    if '.jpg' in file:
+        ax = fig.add_subplot(15,4,i+1) 
+        img_crop = mpimg.imread(image_dir + '/' + file)
+        plt.title('TEST IMAGE ------>', {'verticalalignment': 'baseline', 'horizontalalignment': 'center'})
+        plt.axis('off')
+        ax.set_xlim([0,32])
+        ax.set_ylim([0,90])
+#         ax.set_autoscaley_on(False)
+        plt.gca().invert_yaxis()
+        ax.imshow(img_crop, origin='upper')
+        i+=1
+
+        ax = fig.add_subplot(15,4,i+1)
+        img_orig = mpimg.imread(image_dir + '/originals/' + file)
+        plt.title('------> ORIGINAL', {'verticalalignment': 'baseline', 'horizontalalignment': 'right'})
+        plt.axis('off')
+#         ax.set_xlim([0,300])
+#         ax.set_ylim([0,200])
+#         ax.set_autoscaley_on(False)
+#         plt.gca().invert_yaxis()
+        ax.imshow(img_orig, origin='upper')
         i+=1
         
 plt.show()
