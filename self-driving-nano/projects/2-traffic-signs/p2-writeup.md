@@ -67,7 +67,7 @@ Here is a sample of original images (one per class) before they undergo any prep
 ### Class/Label Distribution
 As you can see, the distribution is not very uniform. The largest classes have 10x the number of traffic sign images than the smallest classes. This is expected given that in real-life there are certain signs which appear more often than others. However, when training the model, I wanted a more uniform distribution so that each class has the same number of training examples (and the model therefore has an equal number of opportunities to learn each sign). 
 
-<img src='images/writeup/distribution.pnpg' width="100%"/>
+<img src='images/writeup/distribution.png' width="100%"/>
 
 
 ###
@@ -77,7 +77,7 @@ Given the issues identified above, I decided to explore the following preprocess
 
 * __Normalization__ (standard)
 * __Contrast enhancement__ (done as part of normalization process)
-  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image. [(link to source code)]()
+  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist), which not only normalizes the images, but also enhances local contrast details in regions that are darker or lighter than most of the image. You can see from the image sample below this also inherently increases the brightness of the image. [(link to source code)]()
 
    <img src='images/writeup/orig_vs_norm.jpg' width="25%"/>
 
