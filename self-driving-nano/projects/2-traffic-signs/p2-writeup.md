@@ -58,14 +58,14 @@ There are a few fundamental ways I used visualizations to inform my decisions:
 
 ### Sample of Images & Labels
 Here is a sample of original images (one per class) before they undergo any preprocessing. Overall, the image quality is good and the labels make intuitive sense. However, immediately you can notice a few things we'll want to adjust during preprocessing:
-* Many of the signs are hard to recognize because the **images are dark and has low contrast**.
+* Many of the signs are hard to recognize because the **images are dark and have low contrast**.
 * There is **little variation in the sign shape and viewing angle**. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles. 
-* The **signs are void of any deformations or occlusions**. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. Essentially, we want our model to recognize signs even when the shape is in someway distorted, much like humans can. So, augmenting our training set with distortions is important. 
+* The **signs are void of any deformations or occlusions**. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. Essentially, we want the model to recognize signs even when the shape is in someway distorted, much like humans can. So, augmenting the training set with distortions is important. 
 
 <img src='images/writeup/original-signs.jpg' width="100%"/>
 
 ### Class/Label Distribution
-As you can see, the distribution is not very uniform. The largest classes have 10x the number of traffic sign images than the smallest classes. This is expected given that in real-life there are certain signs which appear more often than others. However, when training the model, I wanted a more uniform distribution so that each class has the same number of training examples (and the model therefore has an equal number of opportunities to learn each sign). 
+As you can see, the distribution is not uniform. The largest classes have 10x the number of traffic sign images than the smallest classes. This is expected given that in real-life there are certain signs which appear more often than others. However, when training the model, I wanted a more uniform distribution so that each class has the same number of training examples (and the model therefore has an equal number of opportunities to learn each sign). 
 
 <img src='images/writeup/distribution.png' width="100%"/>
 
@@ -90,13 +90,14 @@ Given the issues identified above, I decided to explore the following preprocess
     * _Color channel shifts_ -- This was done to create slight color derivations, to prevent the model from overfitting specific color shades. This intuitively seemed like a better strategy than grayscaling. 
     * _Grayscaling_ -- This was performed separately _after_ all of the above transformations. Due to the high darkness and low contrast issues, applying grayscale before the other transformations didn't make sense. It would only make them worse. I decided to test the grayscale versions as a separate data set to see if it boosted performance (spoiler aleart: it didn't).
 
+Here is the snippet of code that takes the already normalized images (with contrast enhanced) and applies the transformations listed above. It outputs a new training set with 6k images per class, including the set of normalized training images. 
 [(link to source code)]()
 
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
-<img src='images/writeup/aug-function.jpg' width="90%"/>
+<img src='images/writeup/aug-function.jpg' width="95%"/>
 
-<img src='images/writeup/aug-count.jpg' width="60%"/>
+<img src='images/writeup/aug-count.jpg' width="55%"/>
 
 
 ### Augmented Image Samples
@@ -117,6 +118,27 @@ Here is a sample of images with **grayscaling** then applied. At first glance, i
 I tested a variety of models (more than 25 different combinations). Ultimately, I settled on a relatively small and simple architecture that was easy to train and still delivered great performance. My final model consisted of the following layers:
 
 <img src='images/writeup/architecture-diagram.png' width="60%"/>
+
+Here is a snapshot of the code. You can see that I use: (a) a relu activation on every layer, (b) maxpooling on the alternating convolutional layers with a 5x5 filter, and (c) dropouts on the two fully connected layers with a 0.5 keep probability.
+
+[(link to full source code)]()
+
+<img src='images/writeup/final-model-code.jpg' width="90%"/>
+
+
+Here are the training and loss functions. You can see that I use L2 regularization.
+
+<img src='images/writeup/training-and-loss-functions.jpg' width="90%"/>
+
+
+Here are the hyperparameters I used.
+
+<img src='images/writeup/hyperparams.jpg' width="40%"/>
+
+
+Here is the output when I construct the graph. I use print statements to verify that the model structure matches my expectations. I find this very useful as it's easy to get confused when you're tweaking and testing lots of different models. Especially at 3am.  =)
+
+<img src='images/writeup/final-graph-output.jpg' width="90%"/>
 
 
 ---
