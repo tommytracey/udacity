@@ -128,14 +128,14 @@ Here is a snapshot of the code. You can see that I use: (a) a relu activation on
 <img src='images/writeup/final-model-code.jpg' width="100%"/>
 
 ###
-Here are my training and loss functions. You can see that I use the AdamOptimizer to take advantage of its built-in hyperparameter tuning, which varies the learning rate based on moving averages (momentum) to help the model converge faster, without having to manually tune it myself. You'll notice that I also use L2 regularization to help prevent overfitting.
+Here are my **training and loss functions**. You can see that I use the AdamOptimizer to take advantage of its built-in hyperparameter tuning, which varies the learning rate based on moving averages (momentum) to help the model converge faster, without having to manually tune it myself. You'll notice that I also use L2 regularization to help prevent overfitting.
 
 <img src='images/writeup/training-and-loss-functions.jpg' width="100%"/>
 
 ###
-Here are the hyperparameters I used. My goal was to get the model to converge in less than 50 epochs. Essentially, given time constraints, I didn't want to spend more than two hours training the model. Everything else is pretty standard. Although, I did decrease my L2 decay rate (i.e. lower penalty on weights) during the tuning process, which yielded an incremental lift in performance.  
+Here are the **hyperparameters** I used. My goal was to get the model to converge in less than 50 epochs. Essentially, given time constraints, I didn't want to spend more than two hours training the model. Everything else is pretty standard. Although, I did decrease my L2 decay rate (i.e. lower penalty on weights) during the tuning process, which yielded an incremental lift in performance.  
 
-<img src='images/writeup/hyperparams.jpg' width="45%"/>
+<img src='images/writeup/hyperparams.jpg' width="37%"/>
 
 ###
 Here is the output when I construct the graph. I use print statements to verify that the model structure matches my expectations. I find this very useful as it's easy to get confused when you're tweaking and testing lots of different models. Especially at 3am.  =)
@@ -148,11 +148,12 @@ Here is the output when I construct the graph. I use print statements to verify 
 * validation set accuracy of **99.4%**
 * test set accuracy of **98.2%**
 
+###
 ### Model Iteration & Tuning
 I'll try to summarize the approach I took to find a solution that exceeded the benchmark validation set accuracy of 0.93. Although some of the details got lost in the fog of war. I battled with these models for too many days. If you're curious, you can view a fairly complete list of the models I tested [here](data/model-performance-summary-v2.xlsx). 
 
 #### Phase 1
-The first steps were to get the most basic version of LeNet's CNN running and begin tuning it. I got 82% accuracy without any modifications to the model or preprocssing of the training data. Adding regularization and tuning the hyperparameters made the performance worse. So, I started to explore different types of architectures.
+The first steps were to get the most basic version of LeNet's CNN running and begin tuning it. I got 83% accuracy without any modifications to the model or preprocssing of the training data. Adding regularization and tuning the hyperparameters made the performance worse. So, I started to explore different types of architectures.
 
 #### Phase 2
 This is where I started making mistakes that cost me a lot of time (although I learned a lot in the process). In hindsight, I should have done two simple things: (1) start applying some basic preprocessing to the data and testing the performance impact, and (2) keep iterating on the LeNet architecture by incrementally adding and deepening the layers. 
@@ -163,7 +164,36 @@ Instead, I started explore different architectures such as [DenseNets](https://a
 
 DenseNets didn't seem overly complex at the time, and I probably could have gotten them working if I'd just focused on this. However, in parallel, I tried to get Tensorboard working. Trying to both of these at once was a disaster. In short, creating DenseNets requires a lot of nested functions to create all of the various blocks of convuloutional layers. Getting the Tensorboard namespaces to work, getting all of your variables to initialize properly, and getting all of the data to flow properly in and out of these blocks was a huge challenge. After a ton of research and trial and error, I ultimately abandoned this path. ¯\_(ツ)_/¯
 
-I then tried to implement the (much simpler) inception framework discussed by Vincent during the lectures. After some trial and error, I got an inception network running. But, I couldn't get them to perform better than 80% validation accuracy, so I abandoned this path as well. I believe this approach could have worked, but by this point, I wanted to get back to the basics. So, I decided to focus on data preprocessing and iterating on the basic LeNet architecture (i.e., the things I should have been doing from the beginning! Arg.)
+I then tried to implement the (much simpler) inception framework discussed by Vincent during the lectures. After some trial and error, I got an inception network running. But, I couldn't get them to perform better than 80% validation accuracy, so I abandoned this path as well. I believe this approach could have worked, but by this point, I wanted to get back to the basics. So, I decided to focus on data preprocessing and iterating on the basic LeNet architecture (which I should have done from the beginning! Arg.)
+
+#### Phase 3
+After a day of sleep, yoga, and meditation to clear my head...I got back to basics. 
+
+I started by applying simple transformations to the data and testing simple adjustments to the LeNet architecture. Model performance started to improve, but I still had a bias problem. In the beginning, my models were consistently overfitting the training data and therefore my training accuracy was high but my validation accuracy was still low. 
+
+This is a summary of the tactics I deployed to improve performance.
+
+| Model			        |     Validation Accuracy	        					| 
+|:---------------------|:----------------------------------------------:| 
+| Basic LeNet      		                                    | 82.6%   	| 
+| LeNet + bias init =0 (instead of 0.01)    			         | 85.2%		|
+| LeNet + bias init + contrast enhancement					   | 92.9%		|
+| LeNet + bias init + contrast + augmentation v1 	         | 94.9%		|
+| LeNet + bias init + contrast + aug_v1 + deeper layers		| 97.5%     |
+| LeNet + bias init + contrast + aug_v1 + more layers	+ regularization		| 98.1%     |
+| LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning		| 99.0%   |
+| LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning + grayscale		| 95.8%  |
+| LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning + more training images	+ more epochs	| 99.4%  |
+
+More details regarding the tactics above:
+
+* __bias initialization__ &mdash;
+* __contrast enhancement__ &mdash;
+* __augmentation v1 vs v2__ &mdash;
+* __regularization__ &mdash;
+* __grayscale__ &mdash;
+* __more training images + more epochs__ &mdash;
+
 
 ---
 Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
