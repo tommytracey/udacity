@@ -30,13 +30,15 @@ In the write-up below, I consider the project's [rubric points](https://review.u
 Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to explore and visualize the traffic signs data set. 
 
 ### Data Size & Shape
-* Size of training set: 
-* Size of the validation set:
-* Size of test set:
-* Shape of a traffic sign image:
+I used the default testing splits provided by Udacity.
+
+* Size of training set: 34,799
+* Size of the validation set: 4,410
+* Size of test set: 12,630
+* Shape of a traffic sign image: (32, 32, 3)
 * Number of unique classes/labels: 43
 
-[link to source code]()
+[(link to source code)]()
 
 ### Data Visualization
 Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any). 
@@ -56,11 +58,17 @@ There are a few fundamental ways I used visualizations to inform my decisions:
 
 ### Sample of Images & Labels
 Here is a sample of original images (one per class) before they undergo any preprocessing. Overall, the image quality is good and the labels make intuitive sense. However, immediately you can notice a few things we'll want to adjust during preprocessing:
-* Many of the signs are hard to recognize because the image is dark with low contrast.
-* There is little variation in the sign shape and viewing angle. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles. 
-* The signs are void of any visual damage or occlusions. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. 
+* Many of the signs are hard to recognize because the **images are dark and has low contrast**.
+* There is **little variation in the sign shape and viewing angle**. Most of the pictures are taken with straight on view of the sign, which is good for the core data set. However, in real life, signs are viewed from different angles. 
+* The **signs are void of any deformations or occlusions**. Again, this is good because we need a clean set of training samples, but in real life, signs are sometimes damaged, vandalized, or only partially visible. Essentially, we want our model to recognize signs even when the shape is in someway distorted, much like humans can. So, augmenting our training set with distortions is important. 
 
 <img src='images/writeup/original-signs.jpg' width="100%"/>
+
+### Class/Label Distribution
+As you can see, the distribution is not very uniform. The largest classes have 10x the number of traffic sign images than the smallest classes. This is expected given that in real-life there are certain signs which appear more often than others. However, when training the model, I wanted a more uniform distribution so that each class has the same number of training examples (and the model therefore has an equal number of opportunities to learn each sign). 
+
+<img src='images/writeup/distribution.pnpg' width="100%"/>
+
 
 ###
 ---
@@ -68,8 +76,8 @@ Here is a sample of original images (one per class) before they undergo any prep
 Given the issues identified above, I decided to explore the following preprocessing operations (in addition to the standard practice of _normalization_):
 
 * __Normalization__ (standard)
-* __Contrast enhancement__
-  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image. [link to source code]()
+* __Contrast enhancement__ (done as part of normalization process)
+  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist) to enhance local contrast details of the image in regions that are darker or lighter than most of the image. You can see that this not only boosts the contrast, but inherently increases the overall brightness of the image. [(link to source code)]()
 
    <img src='images/writeup/orig_vs_norm.jpg' width="25%"/>
 
@@ -82,11 +90,13 @@ Given the issues identified above, I decided to explore the following preprocess
     * _Color channel shifts_ -- This was done to create slight color derivations, to prevent the model from overfitting specific color shades. This intuitively seemed like a better strategy than grayscaling. 
     * _Grayscaling_ -- This was performed separately _after_ all of the above transformations. Due to the high darkness and low contrast issues, applying grayscale before the other transformations didn't make sense. It would only make them worse. I decided to test the grayscale versions as a separate data set to see if it boosted performance (spoiler aleart: it didn't).
 
-[link to source code]()
+[(link to source code)]()
 
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
 <img src='images/writeup/aug-function.jpg' width="90%"/>
+
+<img src='images/writeup/aug-count.jpg' width="60%"/>
 
 
 ### Augmented Image Samples
@@ -95,7 +105,8 @@ Here is a sample of a traffic sign images after the complete set of **normalizat
 <img src='images/writeup/augmented-sample.jpg' width="100%"/>
 
 
-Here is a sample of images with **grayscaling** applied 
+### Grayscaling
+Here is a sample of images with **grayscaling** then applied. At first glance, it doesn't appear that grayscaling improves the images in any meaningful way. So, my hypothesis was that the grayscaled versions would perform the same or worse than the augmented images (this turned out to be correct).
 
 <img src='images/writeup/grayscale-sample.jpg' width="90%"/>
 
@@ -103,7 +114,7 @@ Here is a sample of images with **grayscaling** applied
 ---
 ## Model Architecture
 
-I tested a variety of models (more than 25 different variations). Ultimately, I settled on a simple and efficient architecture that didn't take forever to train and still delivered great performance. My final model consisted of the following layers:
+I tested a variety of models (more than 25 different combinations). Ultimately, I settled on a relatively small and simple architecture that was easy to train and still delivered great performance. My final model consisted of the following layers:
 
 <img src='images/writeup/architecture-diagram.png' width="60%"/>
 
