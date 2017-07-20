@@ -32,11 +32,11 @@ Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to ex
 ### Data Size & Shape
 I used the default testing splits provided by Udacity.
 
-* Size of training set: 34,799
-* Size of the validation set: 4,410
-* Size of test set: 12,630
-* Shape of a traffic sign image: (32, 32, 3)
-* Number of unique classes/labels: 43
+* Size of training set: **34,799**
+* Size of the validation set: **4,410**
+* Size of test set: **12,630**
+* Shape of a traffic sign image: **(32, 32, 3)**
+* Number of unique classes/labels: **43**
 
 [(link to source code)]()
 
@@ -95,9 +95,9 @@ Here is the snippet of code that takes the already normalized images (with contr
 
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
-<img src='images/writeup/aug-function.jpg' width="100%"/>
+<img src='images/writeup/aug-function.jpg' width="96%"/>
 
-<img src='images/writeup/aug-count.jpg' width="60%"/>
+<img src='images/writeup/aug-count.jpg' width="62%"/>
 
 
 ### Augmented Image Samples
@@ -119,6 +119,7 @@ I tested a variety of models (more than 25 different combinations). Ultimately, 
 
 <img src='images/writeup/architecture-diagram.png' width="60%"/>
 
+
 ###
 Here is a snapshot of the code. You can see that I use: (a) a relu activation on every layer, (b) maxpooling on the alternating convolutional layers with a 5x5 filter, and (c) dropouts on the two fully connected layers with a 0.5 keep probability.
 
@@ -134,28 +135,39 @@ Here are my training and loss functions. You can see that I use the AdamOptimize
 ###
 Here are the hyperparameters I used. My goal was to get the model to converge in less than 50 epochs. Essentially, given time constraints, I didn't want to spend more than two hours training the model. Everything else is pretty standard. Although, I did decrease my L2 decay rate (i.e. lower penalty on weights) during the tuning process, which yielded an incremental lift in performance.  
 
-<img src='images/writeup/hyperparams.jpg' width="35%"/>
+<img src='images/writeup/hyperparams.jpg' width="45%"/>
 
-
+###
 Here is the output when I construct the graph. I use print statements to verify that the model structure matches my expectations. I find this very useful as it's easy to get confused when you're tweaking and testing lots of different models. Especially at 3am.  =)
 
-<img src='images/writeup/final-graph-output.jpg' width="40%"/>
+<img src='images/writeup/final-graph-output.jpg' width="50%"/>
 
-
----
----
-_in progress..._
-
-####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
-
-To train the model, I used an ....
-
-####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
-
+###
 ### Final model results:
 * training set accuracy of **100%**
 * validation set accuracy of **99.4%**
 * test set accuracy of **98.2%**
+
+### Model Iteration & Tuning
+I'll try to summarize the approach I took to find a solution that exceeded the benchmark validation set accuracy of 0.93. Although some of the details got lost in the fog of war. I battled with these models for too many days. If you're curious, you can view a fairly complete list of the models I tested [here](data/model-performance-summary-v2.xlsx). 
+
+#### Phase 1
+The first steps were to get the most basic version of LeNet's CNN running and begin tuning it. I got 82% accuracy without any modifications to the model or preprocssing of the training data. Adding regularization and tuning the hyperparameters made the performance worse. So, I started to explore different types of architectures.
+
+#### Phase 2
+This is where I started making mistakes that cost me a lot of time (although I learned a lot in the process). In hindsight, I should have done two simple things: (1) start applying some basic preprocessing to the data and testing the performance impact, and (2) keep iterating on the LeNet architecture by incrementally adding and deepening the layers. 
+
+Instead, I started explore different architectures such as [DenseNets](https://arxiv.org/abs/1608.06993). 
+
+<img src='images/writeup/densenet.jpg' width="45%"/>
+
+DenseNets didn't seem overly complex at the time, and I probably could have gotten them working if I'd just focused on this. However, in parallel, I tried to get Tensorboard working. Trying to both of these at once was a disaster. In short, creating DenseNets requires a lot of nested functions to create all of the various blocks of convuloutional layers. Getting the Tensorboard namespaces to work, getting all of your variables to initialize properly, and getting all of the data to flow properly in and out of these blocks was a huge challenge. After a ton of research and trial and error, I ultimately abandoned this path. ¯\_(ツ)_/¯
+
+I then tried to implement the (much simpler) inception framework discussed by Vincent during the lectures. After some trial and error, I got an inception network running. But, I couldn't get them to perform better than 80% validation accuracy, so I abandoned this path as well. I believe this approach could have worked, but by this point, I wanted to get back to the basics. So, I decided to focus on data preprocessing and iterating on the basic LeNet architecture (i.e., the things I should have been doing from the beginning! Arg.)
+
+---
+Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
