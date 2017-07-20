@@ -95,9 +95,9 @@ Here is the snippet of code that takes the already normalized images (with contr
 
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
-<img src='images/writeup/aug-function.jpg' width="95%"/>
+<img src='images/writeup/aug-function.jpg' width="100%"/>
 
-<img src='images/writeup/aug-count.jpg' width="55%"/>
+<img src='images/writeup/aug-count.jpg' width="60%"/>
 
 
 ### Augmented Image Samples
@@ -109,7 +109,7 @@ Here is a sample of a traffic sign images after the complete set of **normalizat
 ### Grayscaling
 Here is a sample of images with **grayscaling** then applied. At first glance, it doesn't appear that grayscaling improves the images in any meaningful way. So, my hypothesis was that the grayscaled versions would perform the same or worse than the augmented images (this turned out to be correct).
 
-<img src='images/writeup/grayscale-sample.jpg' width="90%"/>
+<img src='images/writeup/grayscale-sample.jpg' width="85%"/>
 
 
 ---
@@ -119,26 +119,27 @@ I tested a variety of models (more than 25 different combinations). Ultimately, 
 
 <img src='images/writeup/architecture-diagram.png' width="60%"/>
 
+###
 Here is a snapshot of the code. You can see that I use: (a) a relu activation on every layer, (b) maxpooling on the alternating convolutional layers with a 5x5 filter, and (c) dropouts on the two fully connected layers with a 0.5 keep probability.
 
-[(link to full source code)]()
+[(link to source code)]()
 
-<img src='images/writeup/final-model-code.jpg' width="90%"/>
+<img src='images/writeup/final-model-code.jpg' width="100%"/>
 
+###
+Here are my training and loss functions. You can see that I use the AdamOptimizer to take advantage of its built-in hyperparameter tuning, which varies the learning rate based on moving averages (momentum) to help the model converge faster, without having to manually tune it myself. You'll notice that I also use L2 regularization to help prevent overfitting.
 
-Here are the training and loss functions. You can see that I use L2 regularization.
+<img src='images/writeup/training-and-loss-functions.jpg' width="100%"/>
 
-<img src='images/writeup/training-and-loss-functions.jpg' width="90%"/>
+###
+Here are the hyperparameters I used. My goal was to get the model to converge in less than 50 epochs. Essentially, given time constraints, I didn't want to spend more than two hours training the model. Everything else is pretty standard. Although, I did decrease my L2 decay rate (i.e. lower penalty on weights) during the tuning process, which yielded an incremental lift in performance.  
 
-
-Here are the hyperparameters I used.
-
-<img src='images/writeup/hyperparams.jpg' width="40%"/>
+<img src='images/writeup/hyperparams.jpg' width="35%"/>
 
 
 Here is the output when I construct the graph. I use print statements to verify that the model structure matches my expectations. I find this very useful as it's easy to get confused when you're tweaking and testing lots of different models. Especially at 3am.  =)
 
-<img src='images/writeup/final-graph-output.jpg' width="90%"/>
+<img src='images/writeup/final-graph-output.jpg' width="40%"/>
 
 
 ---
