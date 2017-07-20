@@ -158,9 +158,9 @@ The first steps were to get the most basic version of LeNet's CNN running and be
 #### Phase 2
 This is where I started making mistakes that cost me a lot of time (although I learned a lot in the process). In hindsight, I should have done two simple things: (1) start applying some basic preprocessing to the data and testing the performance impact, and (2) keep iterating on the LeNet architecture by incrementally adding and deepening the layers. 
 
-Instead, I started explore different architectures such as [DenseNets](https://arxiv.org/abs/1608.06993). 
+Instead, I started explore different architectures such as [DenseNets](https://arxiv.org/abs/1608.06993). Just look at this diagram from [the paper](); how hard could it be, right? Wrong.
 
-<img src='images/writeup/densenet.jpg' width="45%"/>
+<img src='images/writeup/densenet.jpg' width="90%"/>
 
 DenseNets didn't seem overly complex at the time, and I probably could have gotten them working if I'd just focused on this. However, in parallel, I tried to get Tensorboard working. Trying to both of these at once was a disaster. In short, creating DenseNets requires a lot of nested functions to create all of the various blocks of convuloutional layers. Getting the Tensorboard namespaces to work, getting all of your variables to initialize properly, and getting all of the data to flow properly in and out of these blocks was a huge challenge. After a ton of research and trial and error, I ultimately abandoned this path. ¯\_(ツ)_/¯
 
