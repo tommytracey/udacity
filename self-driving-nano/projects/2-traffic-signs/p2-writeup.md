@@ -6,10 +6,10 @@
 
 The goal of this project is to build a neural network that recognizes traffic signs in Germany. 
 
-Udacity's benchmark for the project is to achieve at least 93% accuracy (on the validation set). However, my personal goal was to surpass the human level performance benchmark of 98.8% accuracy identified in [this paper](https://arxiv.org/pdf/1511.02992.pdf) by Mrinal Haloi from the Indian Institute of Technology.
+Udacity's benchmark for the project is to achieve at least 93% accuracy (on the validation set). However, **my personal goal was to surpass the human level performance benchmark of 98.8% accuracy** identified in [this paper](https://arxiv.org/pdf/1511.02992.pdf) by Mrinal Haloi from the Indian Institute of Technology.
 
 The basic steps of the project are as follows:
-1. Load the data set (see below for links to the project data set)
+1. Load the data set provided by Udacity
 1. Explore, summarize and visualize the data set
 1. Design, train and test a model architecture
 1. Use the model to make predictions on new images
@@ -32,11 +32,11 @@ Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to ex
 ### Data Size & Shape
 I used the default testing splits provided by Udacity.
 
-* Size of training set: **34,799**
-* Size of the validation set: **4,410**
-* Size of test set: **12,630**
-* Shape of a traffic sign image: **(32, 32, 3)**
-* Number of unique classes/labels: **43**
+* Size of __training set__: 34,799 (67%)
+* Size of the __validation set__: 4,410 (9%)
+* Size of __test set__: 12,630 (24%)
+* __Shape__ of a traffic sign image: (32, 32, 3)
+* Number of __unique classes/labels__: 43
 
 [(link to source code)]()
 
@@ -44,15 +44,15 @@ I used the default testing splits provided by Udacity.
 Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any). 
 
 There are a few fundamental ways I used visualizations to inform my decisions:
-1. **Preview a sample of images (duh!)**
+1. **Inspect a sample of images**
    
    Do the images correspond with the expected number of color channels? -- i.e., if channels=3 then images should be color/RGB not grayscale.
    
    How clear are the images? Is there anything that makes the signs hard to recognize (e.g. bad weather, darkness, glare, occlusions)?
-2. **Look at a sample of the labels**
+2. **Review a sample of the labels**
    
    Do the labels make sense? Do they accurately correspond with images in the data set?
-3. **Histogram showing the distribution of classes/labels**
+3. **Create a histogram showing the distribution of classes/labels**
    
    How balanced is the dataset? Are there certain classes that dominate the dataset? Are there others that are under represented? 
 
@@ -143,7 +143,7 @@ Here is the output when I construct the graph. I use print statements to verify 
 <img src='images/writeup/final-graph-output.jpg' width="50%"/>
 
 ###
-### Final model results:
+### Final Model Results:
 * training set accuracy of **100%**
 * validation set accuracy of **99.4%**
 * test set accuracy of **98.2%**
@@ -185,31 +185,19 @@ This is a summary of the tactics I deployed to improve performance.
 | LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning + grayscale		| 95.8%  |
 | LeNet + bias init + contrast + aug_v2 + more layers	+ reg tuning + more training images	+ more epochs	| 99.4%  |
 
-More details regarding the tactics above:
+More details regarding the tactics above (in order of greatest impact on the model):
 
-* __bias initialization__ &mdash;
-* __contrast enhancement__ &mdash;
-* __augmentation v1 vs v2__ &mdash;
-* __regularization__ &mdash;
-* __grayscale__ &mdash;
-* __more training images + more epochs__ &mdash;
+* __contrast enhancement__ &mdash; Pound for pound, this tactic had the greatest impact on performance. It was easy to implement and my validation accuracy immediately jumped more than 7%. I only wish I'd done it sooner. As discussed in my initial exploration of the data, I predicted that the low contrast of many of the original images would make it difficult for the model to recognize the distinct characteristics of each sign. This is obvious even to the human eye! But for some reason I didn't implement this tactic until halfway through the project. **Lesson learned: design and test your pipeline around simple observations and intuitions BEFORE you pursue more complicated strategies.** Keep it simple stupid! (KISS)
+* __augmentation v1 vs v2__ &mdash; The first iteration of my augmentation function boosted performance by 2% (which was great!). However, my range settings for the affine and color transformations were a little too aggressive. This made the training images overly distorted (this was obvious simply by looking at the images). Because of these distortions, the model kept overfitting (i.e., it achieved high training accuracy but wasn't able to generalize to the validation set). 
+   In v2 of my augmentation function, I dialed down the range settings and got a 1% performance boost. Then I added ZCA whitening to improve edge detection and got another 1% lift. In my very last optimization, I then increased the number of images being produced by this function so that there were 6k images per class (instead of 4k). This tactic compbined with longer training time yielded the final (and elusive!) 0.4% lift to bring the final validation accuracy to 99.4%. Then I slept. 
+* __more layers and deeper layers__ &mdash; Surprisingly, and after many iterations, I learned that it doesn't take a high number of layers or incredibly deep layers to achieve human level performance. That said, some modest increases in the size of the model were critical to breaking the 95% accuracy plateau. You can see from the [model diagram](/images/writeup/architecture-diagram.png) that I ended up with seven convolutional layers (five more than LeNet) and that my convolutional and fully connected layers are deeper than LeNet as well. Of course, to mitigate this extra learning power, I had to employ regularization tactics.
+* __regularization__ &mdash; Both dropout and L2 regularization proved critical. I made an initial mistake of adding these to the model too early in the process, or had them set too high, which caused the model to underfit. I then removed them altogether until I had a model that was starting to fit and generate high training accuracies. At that point, I added regularization back into the model and started to increase it whenever my model was overfitting (i.e., higher dropout and L2 decay values). After a few overcorrections, I ultimately landed on a dropout of 0.5 and decay of 0.0003.
+* __bias initialization__ &mdash; Initially, I was initializing my biases at 0.01 (using tf.constant). Once I started intializing the biases at zero, my accuracy jumped more than 2%. Even after doing more research on the issue, I'm still not exactly sure why this small bias initializeing negatively affected the model. My best guess is even this small amount of bias was not self correcting enough during back propogation, and given that the data was normalized with a mean of zero, that extra bias was causing additional overfitting in the model. [(link to source code)]()
+* __grayscale__ &mdash; Just for shits and giggles, I ran a test on a grayscaled version of the augmented image set. The grayscale set still performed well with a validation accuracy of 95.8%. But, this test turned out to be more trouble than it's worth. The big problem was that there are a bunch of tools out there to help you convert RGB images to grayscale. The problem is that none of them (as far as I can tell) provide the correct shape. To feed grayscale images into the network, they need to be rank 4 (batch_size, 32, 32, 1). So, you have to convert each RGB image from (32, 32, 3) to (32, 32, 1). Seems simple enough. But all of the scripts I tested strip out the third dimension, yielding an image with shape (32, 32). And, there wasn't much help for this issue on StackOverflow, etc. After lots of troubleshooting, I finally discovered the underlying problem and used a simple matrix multiplication to apply the grayscale conversion while mainting the right shape. [(link to source code)]()
+
+<img src='images/writeup/grayscale-function.jpg' width="70%"/>
 
 
----
-Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
-
-
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
-
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
 ###
 ---
 ## Test a Model on New Images
