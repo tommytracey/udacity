@@ -204,22 +204,81 @@ Here are more details regarding the tactics above (in order of greatest impact o
 ---
 ## Test the Model on New Images
 
+### Test Set
 I gathered a set of 30 new images for this phase of testing: 11 of the images were pulled from the internet, and 19 of the images I shot myself around the streets of Prague, which uses the same traffic signs as Germany. Overall, I made the test set quite challenging in order to learn about the strengths and weaknesses of the model.
 
 Here is the complete set of cropped test images and the corresponding originals.
 
 <img src='images/writeup/test-signs.png' width="90%"/>
 
-Within this set, these images are particularly challenging.
+#### Challenges
+Within this set, these images pose distinct challenges for the model. My hypothesis was that the model would get less than 50% of these correct, while scoring above 80% on the remaining test images. In particular, the combination signs I found on the streets of Prague seem particularly challenging. How would the model react when it sees two signs in the same image? Keep reading to find out!
 
-| Image			        |     Challenges	        					|
-|:---------------------:|:---------------------------------------------:|
-| <img src='images/new-signs/challenging/13-yield.jpg' width="20%"/>
-     		| two signs are visible  									|
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+1. **Large Vehicles Prohibited** &mdash; like many signs that I encountered on the streets of Prague, a single traffic sign includes a combination of two or more signs/symbols. 
+<img src='images/new-signs/challenging/16-large_vehicles_prohibited_prg_a.jpg' width="10%"/> 
+
+2. **No Trucks or Motorcycles** &mdash; again, what are normally two signs are incorporated into one
+<img src='images/new-signs/challenging/16-no_trucks_or_motorcycles.jpg' width="10%"/> 
+
+3. **Yield** &mdash; yet again, the image includes two signs (this one is from the internet)
+<img src='images/new-signs/challenging/13-yield.jpg' width="10%"/> 
+
+4. **No Entry** &mdash; the bracket holding up this sign is damaged, so the sign is heavily tilted 
+<img src='images/new-signs/challenging/17-no_entry_tilt_prg.jpg' width="10%"/> 
+
+5. **Turn Right** &mdash; sign is partially occluded by a parked van
+<img src='images/new-signs/challenging/33-turn_right_occluded_prg.jpg' width="10%"/> 
+
+6. **50 km/h** &mdash; viewing angle makes the image heavily sheared
+<img src='images/new-signs/challenging/02-a-50kmh_shear.jpg' width="10%"/> 
+
+7. **No Entry** &mdash; sign has graffiti on it
+<img src='images/new-signs/challenging/17-b-no_entry_graffiti.jpg' width="10%"/> 
+
+8. **Ahead Only** &mdash; sign is only partially visible
+<img src='images/new-signs/challenging/35-ahead_only_occluded.jpg' width="10%"/> 
+
+
+### New Image Test Results
+
+| Image difficulty level|   Correct    |   Out of	 |     Accuracy	  	|
+|:---------------------:|:------------:|:-----------:|:-----------------:|
+| normal     	         |     20   		|		22     |			91%	      |
+| hard     			      |     3			|	  	8		 |        38%        |
+| **total				  	|     23			|		30		 |			77% **   |
+
+
+<img src='images/notebook-outputs/output_72_1.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_2.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_3.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_4.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_5.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_6.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_7.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_8.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_9.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_10.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_11.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_12.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_13.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_14.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_15.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_16.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_17.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_18.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_19.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_20.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_21.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_22.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_23.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_24.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_25.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_26.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_27.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_28.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_29.png' width="100%"/> 
+<img src='images/notebook-outputs/output_72_30.png' width="100%"/> 
+
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
