@@ -305,7 +305,7 @@ Here are the worst performing classes among the **original test images**.
 
 
 ### Precision & Recall &mdash; New Images
-Here are the worst performing classes for the **new image set**. Not surprisingly, the worst performing class from the original test set (`label 27: Pedestrians`) is also one of the poorest performers on the new image list.
+Here are the worst performing classes for the **new image set**. Not surprisingly, the worst performing class from the original test set (label `27: Pedestrians`) is also one of the poorest performers on the new image list.
 
 | Class ID|   Sign Label                      | Precision| Recall	|  F1 Score  |  Count |
 |:-------:|:----------------------------------|:--------:|:------:|:----------:|:------:|  
@@ -326,7 +326,7 @@ Given this, one future improvement to our pipeline would be to review how each t
 
 ###
 ###
-However, the most revealing insight is `label 15: No Vehicles`. If we look at image samples from this class (below), it is arguably the simplest sign and should be one of the easiest to recognize. But upon further inspection, we can see that the contrast boosting function that was so helpful to improving performance actually hurts us in this case. This is because any minor spots or shadows on the sign get exacerbated by the function and can appear like symbols to the model. Again, this is another way we could improve our preprocessing pipeline.
+However, the most revealing insight is label `15: No Vehicles`. If we look at image samples from this class (below), it is arguably the simplest sign and should be one of the easiest to recognize. But upon further inspection, we can see that the contrast boosting function that was so helpful to improving performance actually hurts us in this case. This is because any minor spots or shadows on the sign get exacerbated by the function and can appear like symbols to the model. Again, this is another way we could improve our preprocessing pipeline.
 
 <img src='images/writeup/15-no-vehicles.jpg' width="100%"/> 
 
