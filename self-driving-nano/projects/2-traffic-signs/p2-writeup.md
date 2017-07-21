@@ -202,17 +202,17 @@ Here are more details regarding the tactics above (in order of greatest impact o
 
 ###
 ---
-## Test the Model on New Images
+## Test the Model with New Images
 
 ### Test Set
-I gathered a set of 30 new images for this phase of testing: 11 of the images were pulled from the internet, and 19 of the images I shot myself around the streets of Prague, which uses the same traffic signs as Germany. Overall, I made the test set quite challenging in order to learn about the strengths and weaknesses of the model.
+I gathered a set of **30 new images** for this phase of testing: 11 of the images were pulled from the internet, and 19 of the images I shot myself around the streets of Prague, which uses the same traffic signs as Germany. Overall, I made the new image set quite challenging in order to learn about the strengths and weaknesses of the model.
 
-Here is the complete set of cropped test images and the corresponding originals.
+Here is the complete set of new images and their corresponding originals.
 
 <img src='images/writeup/test-signs.png' width="90%"/>
 
 ### Challenges
-Within the new test set, the images below pose distinct challenges for the model. My hypothesis was that the model would get less than 50% of these correct, while scoring above 80% on the "normal" test images. In particular, the combination signs I found on the streets of Prague seem particularly challenging. How would the model react when it sees two signs in the same image? Keep reading to find out!
+Within the new image set, the ones below pose distinct challenges for the model. My hypothesis was that the model would get less than 50% of these correct, while scoring above 80% on the "normal" test images. In particular, the combination signs I found on the streets of Prague seem particularly challenging. How would the model react when it sees two signs in the same image? Keep reading to find out!
 
 1. **Large Vehicles Prohibited** &mdash; like many signs that I encountered on the streets of Prague, a single traffic sign includes a combination of two or more signs/symbols. 
 <img src='images/new-signs/challenging/16-large_vehicles_prohibited_prg_a.jpg' width="10%"/> 
@@ -240,7 +240,7 @@ Within the new test set, the images below pose distinct challenges for the model
 
 
 ### New Image Test Results
-The overall accuracy dropped considerably to 77%, although the model performed pretty well on the "normal" test set with an accuracy of 91%. Still, you can see how quickly accuracy can drop off when the model encounters new "real-life" patterns it hasn't seen in the training set. 
+The overall accuracy dropped considerably to 77%, although the model performed pretty well on the new images of "normal" difficulty with 91% accuracy. However, this is still well below the 98.2% accuracy achieved on the original test set. This indicates just how quickly accuracy can drop off when a model encounters new "real-life" patterns it hasn't yet seen in the training set. 
 
 | Image difficulty level|   Correct    |   Out of	 |     Accuracy	  	|
 |:---------------------:|:------------:|:-----------:|:-----------------:|
@@ -284,19 +284,38 @@ Below you can see the top 5 predictions and the corresponding softmax probabilit
 <img src='images/notebook-outputs/output_72_30.png' width="100%"/> 
 
 
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+### Precision & Recall -- Original Test Images
+Listed below are the precision, recall, and F1 scores for the original set of test images.
 
-Here are the results of the prediction:
-
-| Image			        |     Prediction	        					|
-|:---------------------:|:---------------------------------------------:|
-| Stop Sign      		| Stop sign   									|
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+<img src='images/writeup/precision-recall-table.jpg' width="100%"/> 
 
 
+Here are the worst performing classes.
+
+| Class ID|   Sign Label           |   Precision	 |     Recall	  	|   F1 Score     |
+|:-------:|:----------------------|:--------------:|:-----------:|:-----------------:|         
+ |    27  |Pedestrians              |     0.61     |     0.52   |   0.56     |   
+ |   24   |Road narrows on the right|    0.57       |   0.86   |   0.68     |   
+ |    21  |Double curve             |     0.73     |    0.73   |   0.73     |   
+ |    37  |Go straight or left      |     0.59      |    1.00   |   0.74     |   
+|      0  |Speed limit (20km/h)     |     0.62      |    0.95   |   0.75     |   
+ |   29   |Bicycles crossing        |    0.64      |    0.96   |   0.77     |   
+
+
+
+### Precision & Recall -- New Images
+Here are the worst performing classes for the new image set. Not surprisingly, the worst performing class from the original test set (label 27: Pedestrians) is also one of the poorest performers on the new image list. 
+
+
+| Class ID|   Sign Label           |   Precision	 |  Recall 	|  F1 Score  |  Count |
+|:-------:|:----------------------|:--------------:|:-----------:|:-----------------:|  
+|  13|   Yield                                |  0.00   |  0.00    |  0.00     |    1   |
+|  15|   No vehicles                          |  0.00   |   0.00   |   0.00    |     1  |
+|  16|Vehicles over 3.5 metric tons prohibited|  1.00   |   0.33   |   0.50    |     3  |
+|   2|   Speed limit (50km/h)                 |  1.00   |   0.50   |   0.67    |     2  |
+|  27|   Pedestrians                          |  1.00   |   0.50   |   0.67    |     2  |
+|  11|Right-of-way at next intersection       |  0.50   |   1.00   |   0.67    |     1  |
+|  14|   Sign Label                           |  0.50   |   1.00   |   0.67    |     1  |
 
 
 ---
