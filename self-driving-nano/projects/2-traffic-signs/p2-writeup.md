@@ -17,7 +17,7 @@ The basic steps of the project are as follows:
 1. Summarize the results with a written report
 
 ##### Project Notebook
-My code and a detailed view of the outputs for each step are outlined here in this [Jupyter Notebook](). You can also view just the python code via the notebook's corresponding [.py export file]().
+My code and a detailed view of the outputs for each step are outlined here in this [Jupyter Notebook](Traffic_Sign_Classifier-final-v5.ipynb). You can also view just the python code via the notebook's corresponding [.py export file](Traffic_Sign_Classifier-final-v5.py).
 
 
 ##### Rubric Points
@@ -32,13 +32,12 @@ Throughout this section, I use the Numpy, Pandas, and Matplotlib libraries to ex
 ### Data Size & Shape
 I used the default testing splits provided by Udacity.
 
-* Size of __training set__: 34,799 (67%)
-* Size of the __validation set__: 4,410 (9%)
-* Size of __test set__: 12,630 (24%)
-* __Shape__ of a traffic sign image: (32, 32, 3)
-* Number of __unique classes/labels__: 43
+* Size of training set: 34,799 (67%)
+* Size of the validation set: 4,410 (9%)
+* Size of test set: 12,630 (24%)
+* Shape of a traffic sign image: (32, 32, 3)
+* Number of unique classes/labels: 43
 
-[(link to source code)]()
 
 ### Data Visualization
 Before designing the neural network, I felt it was important to visualize the data in varoius ways to gain some intuition for what the model will "see." This not only informs the model structure and parameters, but it also helps me determine what types of preprocessing operations should be applied to the data (if any).
@@ -77,7 +76,7 @@ Given the issues identified above, I decided to explore the following preprocess
 
 * __Normalization__ (standard)
 * __Contrast enhancement__ (done as part of normalization process)
-  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist), which not only normalizes the images, but also enhances local contrast details in regions that are darker or lighter than most of the image. You can see from the image sample below this also inherently increases the brightness of the image. [(link to source code)]()
+  * I used this Scikit [histogram equalization function](http://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.equalize_adapthist), which not only normalizes the images, but also enhances local contrast details in regions that are darker or lighter than most of the image. You can see from the image sample below this also inherently increases the brightness of the image. [(link to source code)](Traffic_Sign_Classifier-final-v5.py#L231)
 
    <img src='images/writeup/orig_vs_norm.jpg' width="25%"/>
 
@@ -91,7 +90,8 @@ Given the issues identified above, I decided to explore the following preprocess
     * _Grayscaling_ -- This was performed separately _after_ all of the above transformations. Due to the high darkness and low contrast issues, applying grayscale before the other transformations didn't make sense. It would only make them worse. I decided to test the grayscale versions as a separate data set to see if it boosted performance (spoiler aleart: it didn't).
 
 Here is the snippet of code that takes the already normalized images (with contrast enhanced) and applies the transformations listed above. It outputs a new training set with 6k images per class, including the set of normalized training images.
-[(link to source code)]()
+
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L285)
 
 <img src='images/writeup/keras-aug-function.jpg' width="60%"/>
 
@@ -123,24 +123,34 @@ I tested a variety of models (more than 25 different combinations). Ultimately, 
 ###
 Here is a snapshot of the code. You can see that I use: (a) a relu activation on every layer, (b) maxpooling on the alternating convolutional layers with a 5x5 filter, and (c) dropouts on the two fully connected layers with a 0.5 keep probability.
 
-[(link to source code)]()
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L633)
 
 <img src='images/writeup/final-model-code.jpg' width="100%"/>
+
 
 ###
 Here are my **training and loss functions**. You can see that I use the AdamOptimizer to take advantage of its built-in hyperparameter tuning, which varies the learning rate based on moving averages (momentum) to help the model converge faster, without having to manually tune it myself. You'll notice that I also use L2 regularization to help prevent overfitting.
 
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L713)
+
 <img src='images/writeup/training-and-loss-functions.jpg' width="100%"/>
+
 
 ###
 Here are the **hyperparameters** I used. My goal was to get the model to converge in less than 50 epochs. Essentially, given time constraints, I didn't want to spend more than two hours training the model. Everything else is pretty standard. Although, I did decrease my L2 decay rate (i.e. lower penalty on weights) during the tuning process, which yielded an incremental lift in performance.  
 
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L545)
+
 <img src='images/writeup/hyperparams.jpg' width="37%"/>
+
 
 ###
 Here is the output when I construct the graph. I use print statements to verify that the model structure matches my expectations. I find this very useful as it's easy to get confused when you're tweaking and testing lots of different models. Especially at 3am.  =)
 
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L772)
+
 <img src='images/writeup/final-graph-output.jpg' width="50%"/>
+
 
 ###
 ### Final Model Results:
@@ -150,7 +160,7 @@ Here is the output when I construct the graph. I use print statements to verify 
 
 ###
 ### Model Iteration & Tuning
-I'll try to summarize the approach I took to find a solution that exceeded the benchmark validation set accuracy of 0.93. Although some of the details got lost in the fog of war. I battled with these models for too many days. If you're curious, you can view a fairly complete list of the models I tested [here](data/model-performance-summary-v2.xlsx).
+I'll try to summarize the approach I took to find a solution that exceeded the benchmark validation set accuracy of 0.93. Although some of the details got lost in the fog of war. I battled with these models for too many days. If you're curious, you can view a fairly exhaustive list of the models I tested [here](data/model-performance-summary-v2.xlsx).
 
 #### Phase 1
 The first steps were to get the most basic version of LeNet's CNN running and begin tuning it. I got 83% accuracy without any modifications to the model or preprocssing of the training data. Adding regularization and tuning the hyperparameters made the performance worse. So, I started to explore different types of architectures.
@@ -194,8 +204,8 @@ Here are more details regarding the tactics above (in order of greatest impact o
    In v2 of my augmentation function, I dialed down the range settings and got a 1% performance boost. Then I added ZCA whitening to improve edge detection and got another 1% lift. In my very last optimization, I then increased the number of images being produced by this function so that there were 6k images per class (instead of 4k). This tactic compbined with longer training time yielded the final (and elusive!) 0.4% lift to bring the final validation accuracy to 99.4%. Then I slept.
 * __More layers and deeper layers__ &mdash; Surprisingly, and after many iterations, I learned that it doesn't take a high number of layers or incredibly deep layers to achieve human level performance. That said, some modest increases in the size of the model were critical to breaking the 95% accuracy plateau. You can see from the [model diagram](/images/writeup/architecture-diagram.png) that I ended up with seven convolutional layers (five more than LeNet) and that my convolutional and fully connected layers are deeper than LeNet as well. Of course, to mitigate this extra learning power, I had to employ regularization tactics.
 * __Regularization__ &mdash; Both dropout and L2 regularization proved critical. I made an initial mistake of adding these to the model too early in the process, or had them set too high, which caused the model to underfit. I then removed them altogether until I had a model that was starting to fit and generate high training accuracies. At that point, I added regularization back into the model and started to increase it whenever my model was overfitting (i.e., higher dropout and L2 decay values). After a few overcorrections, I ultimately landed on a dropout of 0.5 and decay of 0.0003.
-* __Bias initialization__ &mdash; Initially, I was initializing my biases at 0.01 (using tf.constant). Once I started intializing the biases at zero, my accuracy jumped more than 2%. Even after doing more research on the issue, I'm still not exactly sure why this small bias initializeing negatively affected the model. My best guess is even this small amount of bias was not self correcting enough during back propogation, and given that the data was normalized with a mean of zero, that extra bias was causing additional overfitting in the model. [(link to source code)]()
-* __Grayscale__ &mdash; Just for shits and giggles, I ran a test on a grayscaled version of the augmented image set. The grayscale set still performed well with a validation accuracy of 95.8%. But, this test turned out to be more trouble than it's worth. The big problem was that there are a bunch of tools out there to help you convert RGB images to grayscale. The problem is that none of them (as far as I can tell) provide the correct shape. To feed grayscale images into the network, they need to be rank 4 `(batch_size, 32, 32, 1)`. So, you have to convert each RGB image from `(32, 32, 3)` to `(32, 32, 1)`. Seems simple enough. But all of the scripts I tested strip out the third dimension, yielding an image with shape `(32, 32)`. And, there wasn't much help for this issue on StackOverflow, etc. After lots of troubleshooting, I finally discovered the underlying problem and used a simple matrix multiplication to apply the grayscale conversion while mainting the right shape. [(link to source code)]()
+* __Bias initialization__ &mdash; Initially, I was initializing my biases at 0.01 (using tf.constant). Once I started intializing the biases at zero, my accuracy jumped more than 2%. Even after doing more research on the issue, I'm still not exactly sure why this small bias initializeing negatively affected the model. My best guess is even this small amount of bias was not self correcting enough during back propogation, and given that the data was normalized with a mean of zero, that extra bias was causing additional overfitting in the model. [(link to source code)](Traffic_Sign_Classifier-final-v5.py#L576)
+* __Grayscale__ &mdash; Just for shits and giggles, I ran a test on a grayscaled version of the augmented image set. The grayscale set still performed well with a validation accuracy of 95.8%. But, this test turned out to be more trouble than it's worth. The big problem was that there are a bunch of tools out there to help you convert RGB images to grayscale. The problem is that none of them (as far as I can tell) provide the correct shape. To feed grayscale images into the network, they need to be rank 4 `(batch_size, 32, 32, 1)`. So, you have to convert each RGB image from `(32, 32, 3)` to `(32, 32, 1)`. Seems simple enough. But all of the scripts I tested strip out the third dimension, yielding an image with shape `(32, 32)`. And, there wasn't much help for this issue on StackOverflow, etc. After lots of troubleshooting, I finally discovered the underlying problem and used a simple matrix multiplication to apply the grayscale conversion while mainting the right shape. [(link to source code)](Traffic_Sign_Classifier-final-v5.py#L1191)
 
 <img src='images/writeup/grayscale-function.jpg' width="70%"/>
 
@@ -208,6 +218,8 @@ Here are more details regarding the tactics above (in order of greatest impact o
 I gathered a set of **30 new images** for this phase of testing: 11 of the images were pulled from the internet, and 19 of the images I shot myself around the streets of Prague, which uses the same traffic signs as Germany. Overall, I made the new image set quite challenging in order to learn about the strengths and weaknesses of the model.
 
 Here is the complete set of new images and their corresponding originals.
+
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L916)
 
 <img src='images/writeup/test-signs.png' width="90%"/>
 
@@ -252,6 +264,8 @@ The overall accuracy dropped considerably to 77%, although the model performed p
 ### Top 5 Predictions
 Below you can see the top 5 predictions and the corresponding softmax probability for each test image.  
 
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L1078)
+
 <img src='images/notebook-outputs/output_72_1.png' width="100%"/> 
 <img src='images/notebook-outputs/output_72_2.png' width="100%"/> 
 <img src='images/notebook-outputs/output_72_3.png' width="100%"/> 
@@ -286,6 +300,8 @@ Below you can see the top 5 predictions and the corresponding softmax probabilit
 
 ### Precision & Recall &mdash; Original Test Images
 Listed below are the precision, recall, and F1 scores for the original set of test images.
+
+[(link to source code)](Traffic_Sign_Classifier-final-v5.py#L1136)
 
 <img src='images/writeup/precision-recall-results.jpg' width="60%"/> 
 
