@@ -1164,6 +1164,52 @@ with tf.Session() as sess:
     print(report)
 
 
+# #### Worst Performing Images
+
+# | Class ID|   Sign Label           |   Precision	 |     Recall	  	|   F1 Score     |
+# |:-------:|:----------------------|:--------------:|:-----------:|:-----------------:|         
+#  |    27  |Pedestrians              |     0.61     |     0.52   |   0.56     |   
+#  |   24   |Road narrows on the right|    0.57       |   0.86   |   0.68     |   
+#  |    21  |Double curve             |     0.73     |    0.73   |   0.73     |   
+#  |    37  |Go straight or left      |     0.59      |    1.00   |   0.74     |   
+# |      0  |Speed limit (20km/h)     |     0.62      |    0.95   |   0.75     |   
+#  |   29   |Bicycles crossing        |    0.64      |    0.96   |   0.77     | 
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+# index = random.randint(0, len(X_train_norm))
+
+image_orig = X_train[index].squeeze()
+image_norm = X_train_norm[index].squeeze()
+image_gray = np.dot(X_train_norm[index], [[0.2125], [0.7154], [0.0721]]).squeeze()
+
+plt.figure(figsize=(5,5))
+
+plt.subplot2grid((1, 3), (0, 0));
+plt.axis('off')
+plt.title('original')
+plt.imshow(image_orig, cmap="gray")
+
+plt.subplot2grid((1, 3), (0, 1));
+plt.axis('off')
+plt.title('normalized')
+plt.imshow(image_norm, cmap="gray")
+
+plt.subplot2grid((1, 3), (0, 2));
+plt.axis('off')
+plt.title('grayscale')
+plt.imshow(image_gray, cmap="gray")
+
+print('label index: ', y_train[index])
+
+
 # ### Precision & Recall for New Images
 
 # In[74]:
