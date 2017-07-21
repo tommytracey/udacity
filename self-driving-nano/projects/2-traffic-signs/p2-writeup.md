@@ -287,7 +287,9 @@ Below you can see the top 5 predictions and the corresponding softmax probabilit
 ### Precision & Recall -- Original Test Images
 Listed below are the precision, recall, and F1 scores for the original set of test images.
 
-<img src='images/writeup/precision-recall-table.jpg' width="100%"/> 
+<img src='images/writeup/precision-recall-table.jpg' width="60%"/> 
+
+<img src='images/writeup/confusion-matrix.jpg' width="40%"/> 
 
 
 Here are the worst performing classes.
@@ -301,14 +303,19 @@ Here are the worst performing classes.
 |      0  |Speed limit (20km/h)     |     0.62      |    0.95   |   0.75     |   
  |   29   |Bicycles crossing        |    0.64      |    0.96   |   0.77     |   
 
+If we look at the images for 4 of the worst performers, we can see that they all look quite similar, which would explain the high occurence of false positives. 
 
+
+
+##### Precision Recall Reference Diagram
+<img src='images/writeup/precision-recall.png' width="40%"/> 
+https://en.wikipedia.org/wiki/Precision_and_recall
 
 ### Precision & Recall -- New Images
-Here are the worst performing classes for the new image set. Not surprisingly, the worst performing class from the original test set (label 27: Pedestrians) is also one of the poorest performers on the new image list. 
+Here are the worst performing classes for the new image set. Not surprisingly, the worst performing class from the original test set (`label 27: Pedestrians`) is also one of the poorest performers on the new image list.
 
-
-| Class ID|   Sign Label           |   Precision	 |  Recall 	|  F1 Score  |  Count |
-|:-------:|:----------------------|:--------------:|:-----------:|:-----------------:|  
+| Class ID|   Sign Label                      | Precision| Recall	|  F1 Score  |  Count |
+|:-------:|:----------------------------------|:--------:|:------:|:----------:|:------:|  
 |  13|   Yield                                |  0.00   |  0.00    |  0.00     |    1   |
 |  15|   No vehicles                          |  0.00   |   0.00   |   0.00    |     1  |
 |  16|Vehicles over 3.5 metric tons prohibited|  1.00   |   0.33   |   0.50    |     3  |
@@ -316,6 +323,12 @@ Here are the worst performing classes for the new image set. Not surprisingly, t
 |  27|   Pedestrians                          |  1.00   |   0.50   |   0.67    |     2  |
 |  11|Right-of-way at next intersection       |  0.50   |   1.00   |   0.67    |     1  |
 |  14|   Sign Label                           |  0.50   |   1.00   |   0.67    |     1  |
+
+However, the most revealing insight is `label 15: No Vehicles`. If we look at this image, it is arguably the simplest sign and should be one of the easiest to recognize. But upon further inspection, we can see that the contrast boosting function that was so helpful to improving performance actually hurts us in this case. This is because any minor spots or shadows on the sign get exacerbated by the function and can appear like symbols to the model. 
+
+
+Given this, one future improvement to our preprocessing pipeline would be to review how our various transformations affect the various classes, and adjust them on a class-by-class basis if necessary. 
+
 
 
 ---
