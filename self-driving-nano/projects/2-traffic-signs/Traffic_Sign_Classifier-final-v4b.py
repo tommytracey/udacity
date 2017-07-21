@@ -22,7 +22,7 @@
 # ---
 # ## Step 0: Load The Data
 
-# In[1]:
+# In[47]:
 
 
 ## Load pickled data
@@ -225,7 +225,7 @@ labels_pd
 # ---
 # ### Normalization
 
-# In[10]:
+# In[69]:
 
 
 # Function that applies normalization and local contrast enhancement
@@ -539,7 +539,7 @@ print("Number of labels/classes =", n_gray_labels)
 # ## Model Architecture
 # ---
 
-# In[84]:
+# In[57]:
 
 
 ## Global variables and parameters
@@ -560,7 +560,7 @@ sigma = 0.1        # normalized stdev
 
 # The series of functions below are designed to make the model more modular. This reduces the amount of hard-coding and makes it much easier to experiment with different model architectures.
 
-# In[18]:
+# In[60]:
 
 
 # Creates convolutional layer
@@ -611,7 +611,7 @@ def fc_layer(input, n_inputs, n_outputs, name="fc"):
         return act
 
 
-# In[19]:
+# In[61]:
 
 
 # Applies max pooling
@@ -627,7 +627,7 @@ def max_pool(input, kernel_size=(1,1), strides=[1,1,1,1], name="maxpool"):
 
 # ### Modified LeNet Models
 
-# In[21]:
+# In[59]:
 
 
 # Model for AUGMENTED images
@@ -712,7 +712,7 @@ def LeNet_5_gray(x):
 
 # #### Training & Loss Functions
 
-# In[22]:
+# In[62]:
 
 
 # cross entropy
@@ -747,7 +747,7 @@ def l2_reg(decay):
         return l2
 
 
-# In[23]:
+# In[63]:
 
 
 # Calculates accuracy over entire input data set
@@ -766,7 +766,7 @@ def evaluate(x_data, y_data):
 
 # #### Construct the Graph
 
-# In[85]:
+# In[64]:
 
 
 ## The graph for training on AUGMENTED images
@@ -915,68 +915,6 @@ with tf.Session() as sess:
 
 # ### Load and Output the Images
 
-# In[25]:
-
-
-# Import and display the set of NEW images
-
-import os
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-get_ipython().magic('matplotlib inline')
-
-plt.close("all")
-for file in sorted(os.listdir(image_dir)):
-    if '.jpg' in file:
-        plt.figure(figsize=(0.1,0.1))
-        plt.axis('off')
-        plt.text(0, 0, '------------------ {} ------------------'.format(file))
-        
-        plt.figure(figsize=(2,2))
-        plt.title('Test Image')
-        plt.axis('off')
-        plt.imshow(mpimg.imread(image_dir + '/' + file))
-        
-        plt.figure()
-        plt.title('Original')
-        plt.axis('off')
-        plt.imshow(mpimg.imread(image_dir + '/originals/' + file))
-
-
-# In[26]:
-
-
-# Import and display the set of NEW images
-
-import os
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-get_ipython().magic('matplotlib inline')
-
-# show cropped images
-# fig = plt.figure(figsize=(20, 80), tight_layout={'h_pad':2})
-i = 0
-image_dir = 'images/new-signs'
-for file in os.listdir(image_dir):
-    if '.jpg' in file:
-#         ax = fig.add_subplot(15,4,i+1) 
-        plt.figure(figsize=(2,2))
-        img_crop = mpimg.imread(image_dir + '/' + file)
-        plt.title('CROP ------>', {'verticalalignment': 'baseline', 'horizontalalignment': 'left'})
-#         plt.axis('off')
-        plt.imshow(img_crop)
-        i+=1
-
-        ax = fig.add_subplot(15,4,i+1)
-        img_orig = mpimg.imread(image_dir + '/originals/' + file)
-        plt.title('------> ORIGINAL', {'verticalalignment': 'baseline', 'horizontalalignment': 'right'})
-        plt.axis('off')
-        ax.imshow(img_orig)
-        i+=1
-        
-plt.show()
-
-
 # In[46]:
 
 
@@ -1038,7 +976,7 @@ plt.show()
 ### For example, if the model predicted 1 out of 5 signs correctly, it's 20% accurate on these new images.
 
 
-# In[69]:
+# In[72]:
 
 
 ## Preprocess the NEW images
@@ -1051,7 +989,7 @@ import matplotlib.image as mpimg
 # Create labels
 dir = 'images/new-signs'
 new_filenames = os.listdir(dir)
-y_new = [n.partition("-")[0] for n in new_filenames if '.jpg' in n]
+y_new = [int(n.partition("-")[0]) for n in new_filenames if '.jpg' in n]
 
 print('{} new labels created:\n{}'.format(len(y_new), y_new))
 
@@ -1195,6 +1133,63 @@ with tf.Session() as sess:
     
 
 
+# ### Precision & Recall for Original Test Images
+
+# In[67]:
+
+
+from sklearn.metrics import confusion_matrix, classification_report
+import tensorflow as tf
+import numpy as np
+
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver()
+    saver.restore(sess, MODEL_DIR)
+    sess = tf.get_default_session()
+    total_predictions = None
+    num_examples = len(X_test)
+    for offset in range(0, num_examples, BATCH_SIZE):
+        batch_x, batch_y = X_test[offset:offset+BATCH_SIZE], y_test[offset:offset+BATCH_SIZE]
+        predictions = sess.run(tf.argmax(logits, 1),feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
+        if(total_predictions is None):
+            total_predictions = predictions
+        else:
+            total_predictions = np.hstack([total_predictions,predictions])
+            
+    mat = confusion_matrix(y_test,total_predictions)
+    plt.imshow(mat, interpolation='nearest')
+    report = classification_report(y_test,total_predictions)
+    print(report)
+
+
+# ### Precision & Recall for New Images
+
+# In[74]:
+
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver()
+    saver.restore(sess, MODEL_DIR)
+    sess = tf.get_default_session()
+    total_predictions = None
+    num_examples = len(X_test)
+    for offset in range(0, num_examples, BATCH_SIZE):
+        batch_x, batch_y = X_new_norm[offset:offset+BATCH_SIZE], y_new[offset:offset+BATCH_SIZE]
+        predictions = sess.run(tf.argmax(logits, 1),feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
+        if(total_predictions is None):
+            total_predictions = predictions
+        else:
+            total_predictions = np.hstack([total_predictions,predictions])
+            
+    mat = confusion_matrix(y_new,total_predictions)
+    plt.imshow(mat, interpolation='nearest')
+    report = classification_report(y_new,total_predictions)
+    print(report)
+
+
 # ### Project Writeup
 # 
 # Once you have completed the code implementation, document your results in a project writeup using this [template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) as a guide. The writeup can be in a markdown or pdf file. 
@@ -1221,89 +1216,6 @@ with tf.Session() as sess:
 # </figure>
 #  <p></p> 
 # 
-
-# In[6]:
-
-
-import os
-import matplotlib.pyplot as plt 
-import matplotlib.image as mpimg
-
-
-plt.figure(figsize = (2,2))
-
-image_dir = 'images/weight-visualization'
-for file in os.listdir(image_dir):
-    test_image = mpimg.imread(image_dir + '/' + file)
-    plt.axis('off')
-    plt.imshow(test_image)
-
-plt.show()
-    
-# ####
-# fig = plt.figure(figsize=(20, 80), tight_layout={'h_pad':2})
-# i = 0
-# image_dir = 'images/new-signs'
-# for file in os.listdir(image_dir):
-#     if '.jpg' in file:
-#         ax = fig.add_subplot(15,4,i+1) 
-#         img_crop = mpimg.imread(image_dir + '/' + file)
-#         plt.title('CROP ------>', {'verticalalignment': 'baseline', 'horizontalalignment': 'left'})
-# #         plt.axis('off')
-#         ax.imshow(img_crop)
-
-# ###
-    
-#         plt.figure(figsize = (10,1.75))
-        
-#         plt.subplot2grid((1, 3), (0, 0));
-#         plt.title('[{}]  {}'.format(y_new[i], labels_pd['SignName'][int(y_new[i])]), \
-#                   {'verticalalignment': 'baseline', 'horizontalalignment': 'left'})        
-#         plt.axis('off');
-        
-#         plt.subplot2grid((1, 3), (0, 1));
-#         plt.imshow(X_new[i], interpolation='none');
-#         plt.axis('off');
-
-
-# In[116]:
-
-
-### Visualize your network's feature maps here.
-### Feel free to use as many code cells as needed.
-
-# image_input: the test image being fed into the network to produce the feature maps
-# tf_activation: should be a tf variable name used during your training procedure that represents the calculated state of a specific weight layer
-# activation_min/max: can be used to view the activation contrast in more detail, by default matplot sets min and max to the actual min and max values of the output
-# plt_num: used to plot out multiple different weight feature map sets on the same block, just extend the plt number for each new feature map entry
-
-def outputFeatureMap(image_input, tf_activation, activation_min=-1, activation_max=-1 ,plt_num=1):
-    # Here make sure to preprocess your image_input in a way your network expects
-    # with size, normalization, ect if needed
-    # image_input =
-    # Note: x should be the same name as your network's tensorflow data placeholder variable
-    # If you get an error tf_activation is not defined it may be having trouble accessing the variable from inside a function
-    activation = tf_activation.eval(session=sess,feed_dict={x : image_input})
-    featuremaps = activation.shape[3]
-    plt.figure(plt_num, figsize=(15,15))
-    for featuremap in range(featuremaps):
-        plt.subplot(6,8, featuremap+1) # sets the number of feature maps to show on each row and column
-        plt.title('FeatureMap ' + str(featuremap)) # displays the feature map number
-        if activation_min != -1 & activation_max != -1:
-            plt.imshow(activation[0,:,:, featuremap], interpolation="nearest", vmin =activation_min, vmax=activation_max, cmap="gray")
-        elif activation_max != -1:
-            plt.imshow(activation[0,:,:, featuremap], interpolation="nearest", vmax=activation_max, cmap="gray")
-        elif activation_min !=-1:
-            plt.imshow(activation[0,:,:, featuremap], interpolation="nearest", vmin=activation_min, cmap="gray")
-        else:
-            plt.imshow(activation[0,:,:, featuremap], interpolation="nearest", cmap="gray")
-
-
-# In[ ]:
-
-
-
-
 
 # In[ ]:
 
