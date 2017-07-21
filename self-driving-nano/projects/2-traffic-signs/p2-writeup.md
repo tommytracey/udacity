@@ -284,7 +284,7 @@ Below you can see the top 5 predictions and the corresponding softmax probabilit
 <img src='images/notebook-outputs/output_72_30.png' width="100%"/> 
 
 
-### Precision & Recall -- Original Test Images
+### Precision & Recall &mdash; Original Test Images
 Listed below are the precision, recall, and F1 scores for the original set of test images.
 
 <img src='images/writeup/precision-recall-table.jpg' width="60%"/> 
@@ -311,7 +311,7 @@ If we look at the images for 4 of the worst performers, we can see that they all
 <img src='images/writeup/precision-recall.png' width="40%"/> 
 https://en.wikipedia.org/wiki/Precision_and_recall
 
-### Precision & Recall -- New Images
+### Precision & Recall &mdash; New Images
 Here are the worst performing classes for the new image set. Not surprisingly, the worst performing class from the original test set (`label 27: Pedestrians`) is also one of the poorest performers on the new image list.
 
 | Class ID|   Sign Label                      | Precision| Recall	|  F1 Score  |  Count |
@@ -329,9 +329,11 @@ However, the most revealing insight is `label 15: No Vehicles`. If we look at th
 
 Given this, one future improvement to our preprocessing pipeline would be to review how our various transformations affect the various classes, and adjust them on a class-by-class basis if necessary. 
 
-
-
+###
+###
 ---
+---
+###
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 _Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?_
 
