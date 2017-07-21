@@ -246,7 +246,7 @@ The overall accuracy dropped considerably to 77%, although the model performed p
 |:---------------------:|:------------:|:-----------:|:-----------------:|
 | normal     	         |     20   		|		22     |			91%	      |
 | hard     			      |     3			|	  	8		 |        38%        |
-| **total				  	|     23			|		30		 |			77% **      |
+| **total**			   	|     **23**	|	**30**    |	    **77%**       |
 
 ###
 ### Top 5 Predictions
