@@ -287,7 +287,7 @@ Below you can see the top 5 predictions and the corresponding softmax probabilit
 ### Precision & Recall &mdash; Original Test Images
 Listed below are the precision, recall, and F1 scores for the original set of test images.
 
-<img src='images/writeup/precision-recall-table.jpg' width="60%"/> 
+<img src='images/writeup/precision-recall-results.jpg' width="60%"/> 
 
 <img src='images/writeup/confusion-matrix.jpg' width="40%"/> 
 
