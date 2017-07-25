@@ -10,7 +10,7 @@ The project includes basic skeletons for the classes and functions needed, but s
 
 #### TODO - Implement methods and functions in `my_air_cargo_problems.py`
 
-* `AirCargoProblem.get_actions` method including `load_actions` and `unload_actions` sub-functions
+* __1.a__ `AirCargoProblem.get_actions` method including `load_actions` and `unload_actions` sub-functions
 
 _Create concrete Action objects based on the domain action schema for: Load, Unload, and Fly. A concrete action is a specific literal action that does not include variables as with the schema. For example, the action schema `Load(c, p, a)` can represent the concrete actions `Load(C1, P1, SFO)` or `Load(C2, P2, JFK)`. The actions for the planning problem must be concrete because the problems in forward search and planning graphs must use propositional logic._
 
@@ -43,13 +43,13 @@ def load_actions():
             return loads
 ```
 
-* `AirCargoProblem.actions` method [(link to my code)]()
+* __1.b__ `AirCargoProblem.actions` method [(link to my code)]()
 
-* `AirCargoProblem.result` method [(link to my code)]()
+* __1.c__ `AirCargoProblem.result` method [(link to my code)]()
 
-* `air_cargo_p2` function [(link to my code)]()
+* __1.d__ `air_cargo_p2` function [(link to my code)]()
 
-* `air_cargo_p3` function ([link to my code]() and snippet below)
+* __1.e__ `air_cargo_p3` function ([link to my code]() and snippet below)
 
 ```python
 def air_cargo_p3():
@@ -118,13 +118,13 @@ def air_cargo_p3():
 
 #### TODO - Implement heuristic method in `my_air_cargo_problems.py`
 
-* `AirCargoProblem.h_ignore_preconditions` method [(link to my code)]()
+* __2.a__ `AirCargoProblem.h_ignore_preconditions` method [(link to my code)]()
 
 <p>&nbsp;</p>
 
 #### TODO - Implement a Planning Graph with automatic heuristics in `my_planning_graph.py` 
 
-* `PlanningGraph.add_action_level` method [(link to my code)]()
+* __2.b__ `PlanningGraph.add_action_level` method [(link to my code)]()
 
    _Add action A level to the planning graph as described in the Russell-Norvig text_
    
@@ -134,7 +134,7 @@ def air_cargo_p3():
    
    _For example, the A0 level will iterate through all possible actions for the problem and add a PgNode_a to a_levels[0] set if all prerequisite literals for the action hold in S0.  This can be accomplished by testing to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an action node is added, it MUST be connected to the S node instances in the appropriate s_level set._
 
-My solution:
+__My solution:__
 ```python
     def add_action_level(self, level):
         """ add an A (action) level to the Planning Graph
@@ -170,13 +170,13 @@ My solution:
 
 [(link to my code for the remaining methods below)]()
 
-* `PlanningGraph.add_literal_level` method 
-* `PlanningGraph.inconsistent_effects_mutex` method
-* `PlanningGraph.interference_mutex` method
-* `PlanningGraph.competing_needs_mutex` method
-* `PlanningGraph.negation_mutex` method
-* `PlanningGraph.inconsistent_support_mutex` method
-* `PlanningGraph.h_levelsum` method
+* __2.c__ `PlanningGraph.add_literal_level` method 
+* __2.d__ `PlanningGraph.inconsistent_effects_mutex` method
+* __2.e__ `PlanningGraph.interference_mutex` method
+* __2.f__ `PlanningGraph.competing_needs_mutex` method
+* __2.g__ `PlanningGraph.negation_mutex` method
+* __2.h__ `PlanningGraph.inconsistent_support_mutex` method
+* __2.i__ `PlanningGraph.h_levelsum` method
 
 
 ---
@@ -198,7 +198,7 @@ Init(At(C1, SFO) ∧ At(C2, JFK)
 	∧ Airport(JFK) ∧ Airport(SFO))
 Goal(At(C1, JFK) ∧ At(C2, SFO))
 ```
-Here are the results from all the searches that I performed: uninformed searches (#1-7), and heuristic searches (#8-10).  
+Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
 
 ![problem 1](problem-1.jpg)
 
@@ -215,7 +215,7 @@ Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL)
 Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
 ```
 
-Here are the results from all the searches that I performed: uninformed searches (#1-7), and heuristic searches (#8-10).  
+Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
 
 ![problem 2](problem-2.jpg)
 
@@ -232,7 +232,7 @@ Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD)
 Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
 ```
 
-Here are the results from all the searches that I performed: uninformed searches (#1-7), and heuristic searches (#8-10). Although note that some of the searches did not finish in the allotted 10 minutes. 
+Here are the results from all the searches that I performed, including both uninformed and heuristic searches. Although, note that some of the searches did not finish in the allotted 10-minute timeframe. 
 
 
 ![problem 3](problem-3.jpg)
@@ -240,6 +240,7 @@ Here are the results from all the searches that I performed: uninformed searches
 
 
 <p>&nbsp;</p>
+
 ---
 ## Part 4: Research Review
 ### Instructions
