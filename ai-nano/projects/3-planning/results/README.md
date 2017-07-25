@@ -5,10 +5,16 @@ The **goal** of this project is to build a planning search agent that finds the 
 
 The project includes basic skeletons for the classes and functions needed, but students must complete the missing pieces described below.
 
+<p>&nbsp;</p>
+
 ---
 ## Part 1: Planning Problems
 
+<p>&nbsp;</p>
+
 #### TODO - Implement methods and functions in `my_air_cargo_problems.py`
+
+<p>&nbsp;</p>
 
 * __1.a__ `AirCargoProblem.get_actions` method including `load_actions` and `unload_actions` sub-functions
 
@@ -111,10 +117,13 @@ def air_cargo_p3():
     return AirCargoProblem(cargos, planes, airports, init, goal)
 
 ```
- 
+
+<p>&nbsp;</p>
 
 ---
 ## Part 2: Domain-Independent Heuristics
+
+<p>&nbsp;</p>
 
 #### TODO - Implement heuristic method in `my_air_cargo_problems.py`
 
@@ -178,6 +187,7 @@ __My solution:__
 * __2.h__ `PlanningGraph.inconsistent_support_mutex` method
 * __2.i__ `PlanningGraph.h_levelsum` method
 
+<p>&nbsp;</p>
 
 ---
 ## Part 3: Written Analysis
@@ -186,6 +196,8 @@ __My solution:__
 * _Compare and contrast heuristic search result metrics using A* with the "ignore preconditions" and "level-sum" heuristics for Problems 1, 2, and 3._
 * _What was the best heuristic used in these problems? Was it better than non-heuristic search planning methods for all problems? Why or why not?_
 * _Provide tables or other visual aids as needed for clarity in your discussion._
+
+<p>&nbsp;</p>
 
 ### Problem 1
 Below are the initial goal and state for Problem 1. This problem is relatively simple as it only involves 2 cargos, 2 airplanes, and 2 airports (JFK, SFO). 
@@ -202,6 +214,7 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 1](problem-1.jpg)
 
+<p>&nbsp;</p>
 
 ### Problem 2
 Below are the initial goal and state for Problem 2. This problem is slightly more complex as it now involves 3 cargos, 3 airplanes, and 3 airports (ATL, JFK, SFO). 
@@ -219,6 +232,7 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 2](problem-2.jpg)
 
+<p>&nbsp;</p>
 
 ### Problem 3
 Below are the initial goal and state for Problem 3. As you can see, this problem is more complex as it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes to haul everything. 
