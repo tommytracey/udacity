@@ -185,12 +185,47 @@ My solution:
 * _What was the best heuristic used in these problems? Was it better than non-heuristic search planning methods for all problems? Why or why not?_
 * _Provide tables or other visual aids as needed for clarity in your discussion._
 
+### Problem 1
+Here is the initial goal and state.
+
+```
+Init(At(C1, SFO) ∧ At(C2, JFK) 
+	∧ At(P1, SFO) ∧ At(P2, JFK) 
+	∧ Cargo(C1) ∧ Cargo(C2) 
+	∧ Plane(P1) ∧ Plane(P2)
+	∧ Airport(JFK) ∧ Airport(SFO))
+Goal(At(C1, JFK) ∧ At(C2, SFO))
+```
 
 ![problem 1](problem-1.jpg)
 
 
+### Problem 2
+Here is the initial goal and state.
+
+```
+Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) 
+	∧ At(P1, SFO) ∧ At(P2, JFK) ∧ At(P3, ATL) 
+	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3)
+	∧ Plane(P1) ∧ Plane(P2) ∧ Plane(P3)
+	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL))
+Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
+```
+
 ![problem 2](problem-2.jpg)
 
+
+### Problem 3
+Here is the initial goal and state.
+
+```
+Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD) 
+	∧ At(P1, SFO) ∧ At(P2, JFK) 
+	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3) ∧ Cargo(C4)
+	∧ Plane(P1) ∧ Plane(P2)
+	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL) ∧ Airport(ORD))
+Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
+```
 
 ![problem 3](problem-3.jpg)
 
