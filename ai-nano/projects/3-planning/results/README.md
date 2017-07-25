@@ -1,9 +1,15 @@
 
 _Udacity Artificial Intelligence Nanodegree, July 2017_
 # Project 3: Implement a Planning Search
-The **goal** of this project is to build a planning search agent that finds the optimal shipping routes for an air cargo transport system.
+The **goal** of this project is to build a planning search agent that finds the optimal shipping routes for an air cargo transport system. This is a classical planning problem. 
 
 The project includes basic skeletons for the classes and functions needed, but students must complete the missing pieces described below.
+
+In Part 1 of the project, we implement non-heuristics planning methods. We then run uninformed planning searches on the Air Cargo planning problems using breadth first search (BFS), depth first graph search, uniform cost search, and few other variations. 
+
+In Part 2 of the project, we implement domain-independent heuristics to guide the search. And we analyze the results in Part 3.
+
+Part 4 is a separate reseach paper highlighting important historic milestones in the development of AI planned search techniques. 
 
 <p>&nbsp;</p>
 
@@ -83,29 +89,34 @@ def air_cargo_p3():
             expr('At(C1, ATL)'),
             expr('At(C1, JFK)'),
             expr('At(C1, ORD)'),
+            expr('In(C1, P1)'),
+            expr('In(C1, P2)'),
+            #
             expr('At(C2, ATL)'),
             expr('At(C2, ORD)'),
             expr('At(C2, SFO)'),
+            expr('In(C2, P1)'),
+            expr('In(C2, P2)'),
+            #
             expr('At(C3, JFK)'),
             expr('At(C3, ORD)'),
             expr('At(C3, SFO)'),
+            expr('In(C3, P1)'),
+            expr('In(C3, P2)'),
+            #
             expr('At(C4, ATL)'),
             expr('At(C4, JFK)'),
             expr('At(C4, SFO)'),
+            expr('In(C4, P1)'),
+            expr('In(C4, P2)'),
+            #
             expr('At(P1, ATL)'),
             expr('At(P1, JFK)'),
             expr('At(P1, ORD)'),
+            #
             expr('At(P2, ATL)'),
             expr('At(P2, ORD)'),
             expr('At(P2, SFO)'),
-            expr('In(C1, P1)'),
-            expr('In(C1, P2)'),
-            expr('In(C2, P1)'),
-            expr('In(C2, P2)'),
-            expr('In(C3, P1)'),
-            expr('In(C3, P2)'),
-            expr('In(C4, P1)'),
-            expr('In(C4, P2)'),
            ]
     init = FluentState(pos, neg)
     goal = [
@@ -226,6 +237,10 @@ Load(C2, P2, JFK)
 Fly(P2, JFK, SFO)
 Unload(C2, P2, SFO)
 ```
+
+Given the results above, the `greedy_best_first_graph_search h_1` method is the best choice. While there are several search methods which produce an optimal plan, the `greedy_best_first` does it more efficiently than the others. As highlighted during the lectures, The Greedy Best First approach works by expanding nodes closest to the goal first and therefore minimizes the number of fluents it needs to process.
+
+The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. Even though they're not as efficient, they yield optimal paths without the added complexity of a heuristic. 
 
 <p>&nbsp;</p>
 
