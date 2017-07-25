@@ -225,7 +225,7 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 1](problem-1c.jpg)
 
-Here is the optimal plan (6 steps total). The two sets of actions are done in parallel.
+Here is the optimal plan (6 steps total), and presumably the two sets of actions could be done in parallel.
 
 ```
 Load(C1, P1, SFO)
@@ -240,7 +240,9 @@ Unload(C2, P2, SFO)
 
 Given the results above, the `greedy_best_first_graph_search h_1` method is the best choice. While there are several search methods which produce an optimal plan, the `greedy_best_first` does it more efficiently than the others. As highlighted during the lectures, The Greedy Best First approach works by expanding nodes closest to the goal first and therefore minimizes the number of fluents it needs to process.
 
-The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. They provide reasonable efficiency and yield optimal paths without the added complexity of a heuristic. 
+The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. They provide reasonable efficiency and yield optimal paths without the added complexity of a heuristic.
+
+Among the heuristic methods, it's worth noting that all of them produced optimal paths, with `A*_ignore_preconditions` being the most efficient. But, given the small search space, it's hard to tell which of the heuristic search methods will perform best as the Air Cargo plans increase in complexity. 
 
 <p>&nbsp;</p>
 
@@ -260,7 +262,8 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 2](problem-2c.jpg)
 
-Here is the optimal plan (9 steps total). The three sets of actions are done in parallel.
+Here is the optimal plan (9 steps total), and presumably the three sets of actions could be done in parallel.
+
 
 ```
 Load(C3, P3, ATL)
@@ -278,7 +281,7 @@ Fly(P1, SFO, JFK)
 Unload(C1, P1, JFK)
 ```
 
-Once again, we see that the `greedy_best_first` algorithm produces an optimal path with the greatest efficiency. What's more, the gain in efficiency is now much more noticable compared to `breadth_first_search` and `uniform_cost_search`. The added complexity of Problem 2 (adding 1 cargo, 1 plane, and 1 airport) makes these non-heuristic methods less viable as evidenced by longer execution time and higher number of nodes. In fact, the added complexity of this problem cause four of the other search algorithms to timeout. This demonstrates how important the size of the search space is when choosing and configuring a planning algorithm.
+Once again, we see that `greedy_best_first` is the recommeded algorithm since it produces an optimal path with the greatest efficiency. What's more, the gain in efficiency is now much more noticable compared to `breadth_first_search` and `uniform_cost_search`. The added complexity of Problem 2 (adding 1 cargo, 1 plane, and 1 airport) makes these non-heuristic methods less viable as evidenced by longer execution time and higher number of nodes. In fact, the added complexity of this problem caused four of the other search algorithms to timeout, including both heuristic and non-heuristic methods. This demonstrates how important the size of the search space is when choosing and configuring a planning algorithm. Specifically, at this stage it's now clear that the `A*_levelsum` algorithm is too inefficent to be useful moving forward. 
 
 <p>&nbsp;</p>
 
@@ -299,7 +302,7 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 3](problem-3.jpg)
 
-Here is the optimal plan (12 steps total). The two sets of actions are done in parallel.
+Here is the optimal plan (12 steps total), and presumably the two sets of actions could be done in parallel.
 
 ```
 Load(C1, P1, SFO)
@@ -317,6 +320,12 @@ Fly(P2, ORD, SFO)
 Unload(C4, P2, SFO)
 Unload(C2, P2, SFO)
 ```
+
+Once again, we see that the larger search space causes the same four algorithms to timeout: `breadth_first_tree_search`, `depth_limited_search`, `recursive_best_first_search_h_1`, and `A*_h_pg_levelsum`. And, it appears that the added complexity now prevents the `greedy_best_first` method from producing an optimal path. 
+
+By this point we see an interesting pattern emerge: the `uniform_cost_search` and `A*_search_h_1` algorithms perform almost exactly the same across all three problems. This makes sense given the lecture discussion on how both of these methods are based on cost. Uniform Cost Search focuses on optimal path cost and will always find an optimal solution unless it gets stuck in an infinite loop. A* heuristic search expands the node of the lowest f-cost, adding nodes concentrically from the start node. 
+
+With all that said, `A*_ignore_preconditions` is now the recommended algorithm since it does yield an optimal path with the greatest efficiency. 
 
 <p>&nbsp;</p>
 
