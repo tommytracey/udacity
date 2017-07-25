@@ -124,7 +124,7 @@ def air_cargo_p3():
 
 * `PlanningGraph.add_action_level` method [(link to my code)]()
 
-   _TODO - add action A level to the planning graph as described in the Russell-Norvig text_
+   _Add action A level to the planning graph as described in the Russell-Norvig text_
    
    _1. determine what actions to add and create those PgNode_a objects_
    
