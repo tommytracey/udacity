@@ -2,8 +2,12 @@
 _Udacity Artificial Intelligence Nanodegree, July 2017_
 # Project 3: Implement a Planning Search
 
+<p>&nbsp;</p>
+
 ## Results & Analysis
-My results for this project can be viewed [here](/results). 
+My results for this project can be viewed [here](results). 
+
+<p>&nbsp;</p>
 
 ## Synopsis
 
