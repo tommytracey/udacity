@@ -8,7 +8,7 @@ The project includes basic skeletons for the classes and functions needed, but s
 ---
 ## Part 1: Planning Problems
 
-#### Implement methods and functions in `my_air_cargo_problems.py`
+#### TODO - Implement methods and functions in `my_air_cargo_problems.py`
 
 * `AirCargoProblem.get_actions` method including `load_actions` and `unload_actions` sub-functions
 
@@ -116,11 +116,11 @@ def air_cargo_p3():
 ---
 ## Part 2: Domain-Independent Heuristics
 
-#### Implement heuristic method in `my_air_cargo_problems.py`
+#### TODO - Implement heuristic method in `my_air_cargo_problems.py`
 
 * `AirCargoProblem.h_ignore_preconditions` method [(link to my code)]()
 
-#### Implement a Planning Graph with automatic heuristics in `my_planning_graph.py` 
+#### TODO - Implement a Planning Graph with automatic heuristics in `my_planning_graph.py` 
 
 * `PlanningGraph.add_action_level` method [(link to my code)]()
 
