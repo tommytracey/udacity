@@ -323,20 +323,19 @@ Unload(C2, P2, SFO)
 
 Once again, we see that the larger search space causes the same four algorithms to timeout: `breadth_first_tree_search`, `depth_limited_search`, `recursive_best_first_search_h_1`, and `A*_h_pg_levelsum`. And, it appears that the added complexity now prevents the `greedy_best_first` method from producing an optimal path. 
 
-By this point we see an interesting pattern emerge: the `uniform_cost_search` and `A*_search_h_1` algorithms perform almost exactly the same across all three problems. This makes sense given the lecture discussion on how both of these methods are based on cost. Uniform Cost Search focuses on optimal path cost and will always find an optimal solution unless it gets stuck in an infinite loop. A* heuristic search expands the node of the lowest f-cost, adding nodes concentrically from the start node. 
+By this point we see an interesting pattern emerge: the `uniform_cost_search` and `A*_search_h_1` algorithms perform almost exactly the same across all three problems. This makes sense given the lecture discussion on how both of these methods are based on cost. Uniform Cost Search focuses on optimal path cost and will always find an optimal solution unless it gets stuck in an infinite loop. A* heuristic search expands the node of the lowest f-cost, adding nodes concentrically from the start node. However, as the search space expands, neither of these algorithms is very efficient. 
 
-With all that said, `A*_ignore_preconditions` is now the recommended algorithm since it does yield an optimal path with the greatest efficiency. 
+With all that said, `A*_ignore_preconditions` is now the recommended algorithm since it does yield an optimal path with the greatest efficiency. And, overall, we can see that using informed search algorithms with well-designed heuristics is the best strategy.
 
 <p>&nbsp;</p>
 
 ---
 ## Part 4: Research Review
 ### Instructions
-The field of Artificial lIntelligence is continually changing and advancing. To be an AI Engineer at the cutting edge of your field, you need to be able to read and communicate some of these advancements with your peers. In order to help you get comfortable with this, in the second part of this project you will read a seminal paper in the field of Game-Playing and write a simple one page summary on it.
+_Read up on important historical developments in the field of AI planning and search. Write a one-page report on three of these developments, highlighting the relationships between the developments and their impact on the field of AI as a whole._
 
-Write a simple one page summary covering the paper's goals, the techniques introduced, and results (if any).
 
 ### My Research Review
-[Here is a link](https://github.com/tommytracey/udacity/tree/master/ai-nano/projects/2-isolation/results/research_review.pdf) to a PDF version of my research review on AlphaGo. The paper is titled, [Mastering the Game of Go with Deep Neural Networks and Tree Search](https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf), written by the team at Deep Mind and featured in the journal [Nature](https://www.nature.com/nature/journal/v529/n7587/full/nature16961.html) in January, 2016.
+[Here is a link]() to a PDF version of my research review on XYZ. 
 
 ---
