@@ -243,7 +243,7 @@ Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
 
 Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
 
-![problem 2](problem-2.jpg)
+![problem 2](problem-2b.jpg)
 
 Here is the optimal plan (9 steps total). The three sets of actions are done in parallel. 
 
