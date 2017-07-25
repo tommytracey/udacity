@@ -120,6 +120,8 @@ def air_cargo_p3():
 
 * `AirCargoProblem.h_ignore_preconditions` method [(link to my code)]()
 
+<p>&nbsp;</p>
+
 #### TODO - Implement a Planning Graph with automatic heuristics in `my_planning_graph.py` 
 
 * `PlanningGraph.add_action_level` method [(link to my code)]()
@@ -166,7 +168,7 @@ My solution:
                 
 ```
 
-[(link to my code for all methods below)]()
+[(link to my code for the remaining methods below)]()
 
 * `PlanningGraph.add_literal_level` method 
 * `PlanningGraph.inconsistent_effects_mutex` method
@@ -186,7 +188,7 @@ My solution:
 * _Provide tables or other visual aids as needed for clarity in your discussion._
 
 ### Problem 1
-Here is the initial goal and state.
+Below are the initial goal and state for Problem 1. This problem is relatively simple as it only involves 2 cargos, 2 airplanes, and 2 airports (JFK, SFO). 
 
 ```
 Init(At(C1, SFO) ∧ At(C2, JFK) 
@@ -196,12 +198,13 @@ Init(At(C1, SFO) ∧ At(C2, JFK)
 	∧ Airport(JFK) ∧ Airport(SFO))
 Goal(At(C1, JFK) ∧ At(C2, SFO))
 ```
+Here are the results from all the searches that I performed: uninformed searches (#1-7), and heuristic searches (#8-10).  
 
 ![problem 1](problem-1.jpg)
 
 
 ### Problem 2
-Here is the initial goal and state.
+Below are the initial goal and state for Problem 2. This problem is slightly more complex as it now involves 3 cargos, 3 airplanes, and 3 airports (ATL, JFK, SFO). 
 
 ```
 Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) 
@@ -212,11 +215,13 @@ Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL)
 Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
 ```
 
+Here are the results from all the searches that I performed: uninformed searches (#1-7), and heuristic searches (#8-10).  
+
 ![problem 2](problem-2.jpg)
 
 
 ### Problem 3
-Here is the initial goal and state.
+Below are the initial goal and state for Problem 3. As you can see, this problem is more complex as it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes to haul everything. 
 
 ```
 Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD) 
@@ -227,11 +232,14 @@ Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD)
 Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
 ```
 
+Here are the results from all the searches that I performed: uninformed searches (#1-7), and heuristic searches (#8-10). Although note that some of the searches did not finish in the allotted 10 minutes. 
+
+
 ![problem 3](problem-3.jpg)
 
 
 
-
+<p>&nbsp;</p>
 ---
 ## Part 4: Research Review
 ### Instructions
