@@ -8,7 +8,7 @@ The project includes basic skeletons for the classes and functions needed, but s
 ---
 ## Part 1: Planning Problems
 
-#### 1. Implement methods and functions in `my_air_cargo_problems.py`
+#### Implement methods and functions in `my_air_cargo_problems.py`
 
 * `AirCargoProblem.get_actions` method including `load_actions` and `unload_actions` sub-functions
 
@@ -116,14 +116,59 @@ def air_cargo_p3():
 ---
 ## Part 2: Domain-Independent Heuristics
 
-#### 2. Implement heuristic method in `my_air_cargo_problems.py`
+#### Implement heuristic method in `my_air_cargo_problems.py`
 
-* `AirCargoProblem.h_ignore_preconditions` method
+* `AirCargoProblem.h_ignore_preconditions` method [(link to my code)]()
 
-#### 3. Implement a Planning Graph with automatic heuristics in `my_planning_graph.py`
+#### Implement a Planning Graph with automatic heuristics in `my_planning_graph.py` 
 
-* `PlanningGraph.add_action_level` method
-* `PlanningGraph.add_literal_level` method
+* `PlanningGraph.add_action_level` method [(link to my code)]()
+
+   _TODO - add action A level to the planning graph as described in the Russell-Norvig text_
+   
+   _1. determine what actions to add and create those PgNode_a objects_
+   
+   _2. connect the nodes to the previous S literal level_
+   
+   _For example, the A0 level will iterate through all possible actions for the problem and add a PgNode_a to a_levels[0] set if all prerequisite literals for the action hold in S0.  This can be accomplished by testing to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an action node is added, it MUST be connected to the S node instances in the appropriate s_level set._
+
+My solution:
+```python
+    def add_action_level(self, level):
+        """ add an A (action) level to the Planning Graph
+
+        :param level: int
+            the level number alternates S0, A0, S1, A1, S2, .... etc the level number is also used as the
+            index for the node set lists self.a_levels[] and self.s_levels[]
+        :return:
+            adds A nodes to the current level in self.a_levels[level]
+        """
+        
+        # Create empty set in level to store actions
+        self.a_levels.append(set())
+
+        # Loop through actions and determine which ones to add
+        for action in self.all_actions:
+            # create an action node
+            node_a = PgNode_a(action)
+            # For the action node to be reachable, its preconditions must be
+            # satisfied by (i.e. a subset of) the previous state level
+            level_s = self.s_levels[level]
+            if node_a.prenodes.issubset(level_s):
+                # connect nodes to the previous S literal level
+                for node_s in level_s:
+                    # add action node as child of the S-node
+                    node_s.children.add(node_a)
+                    # set S-node as the parent
+                    node_a.parents.add(node_s)
+                # add A-node to current level
+                self.a_levels[level].add(node_a)
+                
+```
+
+[(link to my code for all methods below)]()
+
+* `PlanningGraph.add_literal_level` method 
 * `PlanningGraph.inconsistent_effects_mutex` method
 * `PlanningGraph.interference_mutex` method
 * `PlanningGraph.competing_needs_mutex` method
@@ -134,11 +179,11 @@ def air_cargo_p3():
 
 ---
 ## Part 3: Written Analysis
-* _Provide an optimal plan for Problems 1, 2, and 3.
-* Compare and contrast non-heuristic search result metrics (optimality, time elapsed, number of node expansions) for Problems 1,2, and 3. Include breadth-first, depth-first, and at least one other uninformed non-heuristic search in your comparison; Your third choice of non-heuristic search may be skipped for Problem 3 if it takes longer than 10 minutes to run, but a note in this case should be included.
-* Compare and contrast heuristic search result metrics using A* with the "ignore preconditions" and "level-sum" heuristics for Problems 1, 2, and 3.
-* What was the best heuristic used in these problems? Was it better than non-heuristic search planning methods for all problems? Why or why not?
-* Provide tables or other visual aids as needed for clarity in your discussion._
+* _Provide an optimal plan for Problems 1, 2, and 3._
+* _Compare and contrast non-heuristic search result metrics (optimality, time elapsed, number of node expansions) for Problems 1,2, and 3. Include breadth-first, depth-first, and at least one other uninformed non-heuristic search in your comparison; Your third choice of non-heuristic search may be skipped for Problem 3 if it takes longer than 10 minutes to run, but a note in this case should be included._
+* _Compare and contrast heuristic search result metrics using A* with the "ignore preconditions" and "level-sum" heuristics for Problems 1, 2, and 3._
+* _What was the best heuristic used in these problems? Was it better than non-heuristic search planning methods for all problems? Why or why not?_
+* _Provide tables or other visual aids as needed for clarity in your discussion._
 
 
 ![problem 1](problem-1.jpg)
