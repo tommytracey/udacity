@@ -1,9 +1,15 @@
 
 _Udacity Artificial Intelligence Nanodegree, July 2017_
 # Project 3: Implement a Planning Search
-The **goal** of this project is to build a planning search agent that finds the optimal shipping routes for an air cargo transport system.
+The **goal** of this project is to build a planning search agent that finds the optimal shipping routes for an air cargo transport system. This is a classical planning problem. 
 
 The project includes basic skeletons for the classes and functions needed, but students must complete the missing pieces described below.
+
+In Part 1 of the project, we implement non-heuristics planning methods. We then run uninformed planning searches on the Air Cargo planning problems using breadth first search (BFS), depth first graph search, uniform cost search, and few other variations. 
+
+In Part 2 of the project, we implement domain-independent heuristics to guide the search. And we analyze the results in Part 3.
+
+Part 4 is a separate reseach paper highlighting important historic milestones in the development of AI planned search techniques. 
 
 <p>&nbsp;</p>
 
@@ -83,29 +89,34 @@ def air_cargo_p3():
             expr('At(C1, ATL)'),
             expr('At(C1, JFK)'),
             expr('At(C1, ORD)'),
+            expr('In(C1, P1)'),
+            expr('In(C1, P2)'),
+            #
             expr('At(C2, ATL)'),
             expr('At(C2, ORD)'),
             expr('At(C2, SFO)'),
+            expr('In(C2, P1)'),
+            expr('In(C2, P2)'),
+            #
             expr('At(C3, JFK)'),
             expr('At(C3, ORD)'),
             expr('At(C3, SFO)'),
+            expr('In(C3, P1)'),
+            expr('In(C3, P2)'),
+            #
             expr('At(C4, ATL)'),
             expr('At(C4, JFK)'),
             expr('At(C4, SFO)'),
+            expr('In(C4, P1)'),
+            expr('In(C4, P2)'),
+            #
             expr('At(P1, ATL)'),
             expr('At(P1, JFK)'),
             expr('At(P1, ORD)'),
+            #
             expr('At(P2, ATL)'),
             expr('At(P2, ORD)'),
             expr('At(P2, SFO)'),
-            expr('In(C1, P1)'),
-            expr('In(C1, P2)'),
-            expr('In(C2, P1)'),
-            expr('In(C2, P2)'),
-            expr('In(C3, P1)'),
-            expr('In(C3, P2)'),
-            expr('In(C4, P1)'),
-            expr('In(C4, P2)'),
            ]
     init = FluentState(pos, neg)
     goal = [
@@ -214,7 +225,7 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 1](problem-1c.jpg)
 
-Here is the optimal plan (6 steps total). The two sets of actions are done in parallel.
+Here is the optimal plan (6 steps total), and presumably the two sets of actions could be done in parallel.
 
 ```
 Load(C1, P1, SFO)
@@ -226,6 +237,12 @@ Load(C2, P2, JFK)
 Fly(P2, JFK, SFO)
 Unload(C2, P2, SFO)
 ```
+
+Given the results above, the `greedy_best_first_graph_search h_1` method is the best choice. While there are several search methods which produce an optimal plan, the `greedy_best_first` does it more efficiently than the others. As highlighted during the lectures, The Greedy Best First approach works by expanding nodes closest to the goal first and therefore minimizes the number of fluents it needs to process.
+
+The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. They provide reasonable efficiency and yield optimal paths without the added complexity of a heuristic.
+
+Among the heuristic methods, it's worth noting that all of them produced optimal paths, with `A*_ignore_preconditions` being the most efficient. But, given the small search space, it's hard to tell which of the heuristic search methods will perform best as the Air Cargo plans increase in complexity. 
 
 <p>&nbsp;</p>
 
@@ -245,7 +262,8 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 2](problem-2c.jpg)
 
-Here is the optimal plan (9 steps total). The three sets of actions are done in parallel.
+Here is the optimal plan (9 steps total), and presumably the three sets of actions could be done in parallel.
+
 
 ```
 Load(C3, P3, ATL)
@@ -263,11 +281,12 @@ Fly(P1, SFO, JFK)
 Unload(C1, P1, JFK)
 ```
 
+Once again, we see that `greedy_best_first` is the recommeded algorithm since it produces an optimal path with the greatest efficiency. What's more, the gain in efficiency is now much more noticable compared to `breadth_first_search` and `uniform_cost_search`. The added complexity of Problem 2 (adding 1 cargo, 1 plane, and 1 airport) makes these non-heuristic methods less viable as evidenced by longer execution time and higher number of nodes. In fact, the added complexity of this problem caused four of the other search algorithms to timeout, including both heuristic and non-heuristic methods. This demonstrates how important the size of the search space is when choosing and configuring a planning algorithm. Specifically, at this stage it's now clear that the `A*_levelsum` algorithm is too inefficent to be useful moving forward. 
 
 <p>&nbsp;</p>
 
 ### Problem 3
-Below are the initial goal and state for Problem 3. As you can see, this problem is more complex as it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes to haul everything.
+Below are the initial goal and state for Problem 3. This problem is the most complex since it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes are available to haul everything.
 
 ```
 Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD)
@@ -283,7 +302,7 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 3](problem-3.jpg)
 
-Here is the optimal plan (12 steps total). The two sets of actions are done in parallel.
+Here is the optimal plan (12 steps total), and presumably the two sets of actions could be done in parallel.
 
 ```
 Load(C1, P1, SFO)
@@ -302,16 +321,21 @@ Unload(C4, P2, SFO)
 Unload(C2, P2, SFO)
 ```
 
+Once again, we see that the larger search space causes the same four algorithms to timeout: `breadth_first_tree_search`, `depth_limited_search`, `recursive_best_first_search_h_1`, and `A*_h_pg_levelsum`. And, it appears that the added complexity now prevents the `greedy_best_first` method from producing an optimal path. 
+
+By this point we see an interesting pattern emerge: the `uniform_cost_search` and `A*_search_h_1` algorithms perform almost exactly the same across all three problems. This makes sense given the lecture discussion on how both of these methods are based on cost. Uniform Cost Search focuses on optimal path cost and will always find an optimal solution unless it gets stuck in an infinite loop. A* heuristic search expands the node of the lowest f-cost, adding nodes concentrically from the start node. However, as the search space expands, neither of these algorithms is very efficient. 
+
+With all that said, `A*_ignore_preconditions` is now the recommended algorithm since it does yield an optimal path with the greatest efficiency. And, overall, we can see that using informed search algorithms with well-designed heuristics is the best strategy.
+
 <p>&nbsp;</p>
 
 ---
 ## Part 4: Research Review
 ### Instructions
-The field of Artificial lIntelligence is continually changing and advancing. To be an AI Engineer at the cutting edge of your field, you need to be able to read and communicate some of these advancements with your peers. In order to help you get comfortable with this, in the second part of this project you will read a seminal paper in the field of Game-Playing and write a simple one page summary on it.
+_Read up on important historical developments in the field of AI planning and search. Write a one-page report on three of these developments, highlighting the relationships between the developments and their impact on the field of AI as a whole._
 
-Write a simple one page summary covering the paper's goals, the techniques introduced, and results (if any).
 
 ### My Research Review
-[Here is a link](https://github.com/tommytracey/udacity/tree/master/ai-nano/projects/2-isolation/results/research_review.pdf) to a PDF version of my research review on AlphaGo. The paper is titled, [Mastering the Game of Go with Deep Neural Networks and Tree Search](https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf), written by the team at Deep Mind and featured in the journal [Nature](https://www.nature.com/nature/journal/v529/n7587/full/nature16961.html) in January, 2016.
+[Here is a link]() to a PDF version of my research review on XYZ. 
 
 ---
