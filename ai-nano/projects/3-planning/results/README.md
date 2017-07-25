@@ -240,7 +240,7 @@ Unload(C2, P2, SFO)
 
 Given the results above, the `greedy_best_first_graph_search h_1` method is the best choice. While there are several search methods which produce an optimal plan, the `greedy_best_first` does it more efficiently than the others. As highlighted during the lectures, The Greedy Best First approach works by expanding nodes closest to the goal first and therefore minimizes the number of fluents it needs to process.
 
-The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. Even though they're not as efficient, they yield optimal paths without the added complexity of a heuristic. 
+The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. They provide reasonable efficiency and yield optimal paths without the added complexity of a heuristic. 
 
 <p>&nbsp;</p>
 
@@ -278,11 +278,12 @@ Fly(P1, SFO, JFK)
 Unload(C1, P1, JFK)
 ```
 
+Once again, we see that the `greedy_best_first` algorithm produces an optimal path with the greatest efficiency. What's more, the gain in efficiency is now much more noticable compared to `breadth_first_search` and `uniform_cost_search`. The added complexity of Problem 2 (adding 1 cargo, 1 plane, and 1 airport) makes these non-heuristic methods less viable as evidenced by longer execution time and higher number of nodes. In fact, the added complexity of this problem cause four of the other search algorithms to timeout. This demonstrates how important the size of the search space is when choosing and configuring a planning algorithm.
 
 <p>&nbsp;</p>
 
 ### Problem 3
-Below are the initial goal and state for Problem 3. As you can see, this problem is more complex as it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes to haul everything.
+Below are the initial goal and state for Problem 3. This problem is the most complex since it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes are available to haul everything.
 
 ```
 Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD)
