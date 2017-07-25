@@ -212,7 +212,6 @@ Goal(At(C1, JFK) ∧ At(C2, SFO))
 ```
 Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
 
-![problem 1](problem-1.jpg)
 
 <p>&nbsp;</p>
 
