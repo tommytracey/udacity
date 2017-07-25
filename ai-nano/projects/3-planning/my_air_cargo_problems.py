@@ -230,6 +230,15 @@ class AirCargoProblem(Problem):
         return count
 
 def air_cargo_p1() -> AirCargoProblem:
+    ''' Problem 1 Definition:
+    Init(At(C1, SFO) ∧ At(C2, JFK)
+    	∧ At(P1, SFO) ∧ At(P2, JFK)
+    	∧ Cargo(C1) ∧ Cargo(C2)
+    	∧ Plane(P1) ∧ Plane(P2)
+    	∧ Airport(JFK) ∧ Airport(SFO))
+    Goal(At(C1, JFK) ∧ At(C2, SFO))
+    '''
+
     cargos = ['C1', 'C2']
     planes = ['P1', 'P2']
     airports = ['JFK', 'SFO']
@@ -255,10 +264,111 @@ def air_cargo_p1() -> AirCargoProblem:
 
 
 def air_cargo_p2() -> AirCargoProblem:
-    # TODO implement Problem 2 definition
-    pass
+    ''' Problem 2 Definition:
+    Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL)
+        ∧ At(P1, SFO) ∧ At(P2, JFK) ∧ At(P3, ATL)
+    	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3)
+    	∧ Plane(P1) ∧ Plane(P2) ∧ Plane(P3)
+    	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL))
+    Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
+    '''
+    # TODO (done) implement Problem 2 definition
+
+    cargos = ['C1', 'C2', 'C3']
+    planes = ['P1', 'P2', 'P3']
+    airports = ['JFK', 'SFO', 'ATL']
+    pos = [
+            expr('At(C1, SFO)'),
+            expr('At(C2, JFK)'),
+            expr('At(C3, ATL)'),
+            expr('At(P1, SFO)'),
+            expr('At(P2, JFK)'),
+            expr('At(P3, ATL)'),
+           ]
+    neg = [
+            expr('At(C3, JFK)'),
+            expr('At(C3, SFO)'),
+            expr('In(C3, P1)'),
+            expr('In(C3, P2)'),
+            expr('In(C3, P3)'),
+            expr('At(C2, SFO)'),
+            expr('At(C2, ATL)'),
+            expr('In(C2, P1)'),
+            expr('In(C2, P2)'),
+            expr('In(C2, P3)'),
+            expr('At(C1, JFK)'),
+            expr('At(C1, ATL)'),
+            expr('In(C1, P1)'),
+            expr('In(C1, P2)'),
+            expr('In(C1, P3)'),
+            expr('At(P1, JFK)'),
+            expr('At(P2, SFO)'),
+            expr('At(P3, ATL)'),
+           ]
+    init = FluentState(pos, neg)
+    goal = [
+            expr('At(C1, JFK)'),
+            expr('At(C2, SFO)'),
+            expr('At(C3, ATL)'),
+            ]
+    return AirCargoProblem(cargos, planes, airports, init, goal)
 
 
 def air_cargo_p3() -> AirCargoProblem:
-    # TODO implement Problem 3 definition
-    pass
+    ''' Problem 3 Definition:
+    Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD)
+    	∧ At(P1, SFO) ∧ At(P2, JFK)
+    	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3) ∧ Cargo(C4)
+    	∧ Plane(P1) ∧ Plane(P2)
+    	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL) ∧ Airport(ORD))
+    Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
+    '''
+    # TODO (done) implement Problem 3 definition
+
+    cargos = ['C1', 'C2', 'C3', 'C4']
+    planes = ['P1', 'P2']
+    airports = ['ATL', 'JFK', 'ORD', 'SFO']
+    pos = [
+            expr('At(C1, SFO)'),
+            expr('At(C2, JFK)'),
+            expr('At(C3, ATL)'),
+            expr('At(C4, ORD)'),
+            expr('At(P1, SFO)'),
+            expr('At(P2, JFK)'),
+           ]
+    neg = [
+            expr('At(C1, ATL)'),
+            expr('At(C1, JFK)'),
+            expr('At(C1, ORD)'),
+            expr('At(C2, ATL)'),
+            expr('At(C2, ORD)'),
+            expr('At(C2, SFO)'),
+            expr('At(C3, JFK)'),
+            expr('At(C3, ORD)'),
+            expr('At(C3, SFO)'),
+            expr('At(C4, ATL)'),
+            expr('At(C4, JFK)'),
+            expr('At(C4, SFO)'),
+            expr('At(P1, ATL)'),
+            expr('At(P1, JFK)'),
+            expr('At(P1, ORD)'),
+            expr('At(P2, ATL)'),
+            expr('At(P2, ORD)'),
+            expr('At(P2, SFO)'),
+            expr('In(C1, P1)'),
+            expr('In(C1, P2)'),
+            expr('In(C2, P1)'),
+            expr('In(C2, P2)'),
+            expr('In(C3, P1)'),
+            expr('In(C3, P2)'),
+            expr('In(C4, P1)'),
+            expr('In(C4, P2)'),
+           ]
+    init = FluentState(pos, neg)
+    goal = [
+            expr('At(C1, JFK)'),
+            expr('At(C2, SFO)'),
+            expr('At(C3, JFK)'),
+            expr('At(C4, SFO)'),
+            ]
+    return AirCargoProblem(cargos, planes, airports, init, goal)

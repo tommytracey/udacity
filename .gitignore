@@ -16,6 +16,7 @@ intro-machine-learning
 
 **/images
 !/ai-nano/projects/1-sudoku/images
+!/ai-nano/projects/3-planning/images
 !/self-driving-nano/projects/2-traffic-signs/images
 !**/results/images
 **/**images
