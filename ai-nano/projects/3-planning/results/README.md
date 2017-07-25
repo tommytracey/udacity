@@ -214,6 +214,19 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 1](problem-1c.jpg)
 
+Here is the optimal plan (6 steps total). The two sets of actions are done in parallel. 
+
+```
+Load(C1, P1, SFO)
+Fly(P1, SFO, JFK)
+Unload(C1, P1, JFK)
+```
+```
+Load(C2, P2, JFK)
+Fly(P2, JFK, SFO)
+Unload(C2, P2, SFO)
+```
+
 <p>&nbsp;</p>
 
 ### Problem 2
@@ -231,6 +244,25 @@ Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
 Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
 
 ![problem 2](problem-2.jpg)
+
+Here is the optimal plan (9 steps total). The three sets of actions are done in parallel. 
+
+```
+Load(C3, P3, ATL)
+Fly(P3, ATL, SFO)
+Unload(C3, P3, SFO)
+```
+```
+Load(C2, P2, JFK)
+Fly(P2, JFK, SFO)
+Unload(C2, P2, SFO)
+```
+```
+Load(C1, P1, SFO)
+Fly(P1, SFO, JFK)
+Unload(C1, P1, JFK)
+```
+
 
 <p>&nbsp;</p>
 
@@ -251,7 +283,24 @@ Here are the results from all the searches that I performed, including both unin
 
 ![problem 3](problem-3.jpg)
 
+Here is the optimal plan (12 steps total). The two sets of actions are done in parallel. 
 
+```
+Load(C1, P1, SFO)
+Fly(P1, SFO, ATL)
+Load(C3, P1, ATL)
+Fly(P1, ATL, JFK)
+Unload(C3, P1, JFK)
+Unload(C1, P1, JFK)
+```
+```
+Load(C2, P2, JFK)
+Fly(P2, JFK, ORD)
+Load(C4, P2, ORD)
+Fly(P2, ORD, SFO)
+Unload(C4, P2, SFO)
+Unload(C2, P2, SFO)
+```
 
 <p>&nbsp;</p>
 
