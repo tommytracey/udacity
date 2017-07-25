@@ -1,26 +1,28 @@
 
+**PROJECT 3**
 _Udacity Artificial Intelligence Nanodegree, July 2017_
-### Project 3
 
-# Part 1: Implement a Planning Search
+<p>&nbsp;</p>
 
-
-## Heuristic Analysis
-
-![problem 1](/results/problem-1.jpg)
+## Part 1: Implement a Planning Search
 
 
-![problem 2](/results/problem-2.jpg)
+### Heuristic Analysis
+
+![problem 1](problem-1.jpg)
 
 
-![problem 2](/results/problem-3.jpg)
+![problem 2](problem-2.jpg)
 
-## Code Examples
+
+![problem 3](problem-3.jpg)
+
+### Code Examples
 
 
 ---
 
-# Part 2: Research Review
+## Part 2: Research Review
 ### Instructions
 The field of Artificial lIntelligence is continually changing and advancing. To be an AI Engineer at the cutting edge of your field, you need to be able to read and communicate some of these advancements with your peers. In order to help you get comfortable with this, in the second part of this project you will read a seminal paper in the field of Game-Playing and write a simple one page summary on it.
 
