@@ -160,19 +160,19 @@ __My solution:__
 
         # Loop through actions and determine which ones to add
         for action in self.all_actions:
-            # create an action node
+            # Create an action node
             node_a = PgNode_a(action)
             # For the action node to be reachable, its preconditions must be
             # satisfied by (i.e. a subset of) the previous state level
             level_s = self.s_levels[level]
             if node_a.prenodes.issubset(level_s):
-                # connect nodes to the previous S literal level
+                # Connect nodes to the previous S literal level
                 for node_s in level_s:
-                    # add action node as child of the S-node
+                    # Add action node as child of the S-node
                     node_s.children.add(node_a)
-                    # set S-node as the parent
+                    # Set S-node as the parent
                     node_a.parents.add(node_s)
-                # add A-node to current level
+                # Add A-node to current level
                 self.a_levels[level].add(node_a)
                 
 ```
