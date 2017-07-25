@@ -1,7 +1,7 @@
 
 _Udacity Artificial Intelligence Nanodegree, July 2017_
 # Project 3: Implement a Planning Search
-The **goal** of this project is to build a planning search agent that finds the optimal shipping routes for an air cargo transport system. 
+The **goal** of this project is to build a planning search agent that finds the optimal shipping routes for an air cargo transport system.
 
 The project includes basic skeletons for the classes and functions needed, but students must complete the missing pieces described below.
 
@@ -131,16 +131,16 @@ def air_cargo_p3():
 
 <p>&nbsp;</p>
 
-#### TODO - Implement a Planning Graph with automatic heuristics in `my_planning_graph.py` 
+#### TODO - Implement a Planning Graph with automatic heuristics in `my_planning_graph.py`
 
 * __2.b__ `PlanningGraph.add_action_level` method [(link to my code)]()
 
    _Add action A level to the planning graph as described in the Russell-Norvig text_
-   
+
    _1. determine what actions to add and create those PgNode_a objects_
-   
+
    _2. connect the nodes to the previous S literal level_
-   
+
    _For example, the A0 level will iterate through all possible actions for the problem and add a PgNode_a to a_levels[0] set if all prerequisite literals for the action hold in S0.  This can be accomplished by testing to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an action node is added, it MUST be connected to the S node instances in the appropriate s_level set._
 
 __My solution:__
@@ -154,7 +154,7 @@ __My solution:__
         :return:
             adds A nodes to the current level in self.a_levels[level]
         """
-        
+
         # Create empty set in level to store actions
         self.a_levels.append(set())
 
@@ -174,12 +174,12 @@ __My solution:__
                     node_a.parents.add(node_s)
                 # Add A-node to current level
                 self.a_levels[level].add(node_a)
-                
+
 ```
 
 [(link to my code for the remaining methods below)]()
 
-* __2.c__ `PlanningGraph.add_literal_level` method 
+* __2.c__ `PlanningGraph.add_literal_level` method
 * __2.d__ `PlanningGraph.inconsistent_effects_mutex` method
 * __2.e__ `PlanningGraph.interference_mutex` method
 * __2.f__ `PlanningGraph.competing_needs_mutex` method
@@ -200,21 +200,21 @@ __My solution:__
 <p>&nbsp;</p>
 
 ### Problem 1
-Below are the initial goal and state for Problem 1. This problem is relatively simple as it only involves 2 cargos, 2 airplanes, and 2 airports (JFK, SFO). 
+Below are the initial goal and state for Problem 1. This problem is relatively simple as it only involves 2 cargos, 2 airplanes, and 2 airports (JFK, SFO).
 
 ```
-Init(At(C1, SFO) ∧ At(C2, JFK) 
-	∧ At(P1, SFO) ∧ At(P2, JFK) 
-	∧ Cargo(C1) ∧ Cargo(C2) 
+Init(At(C1, SFO) ∧ At(C2, JFK)
+	∧ At(P1, SFO) ∧ At(P2, JFK)
+	∧ Cargo(C1) ∧ Cargo(C2)
 	∧ Plane(P1) ∧ Plane(P2)
 	∧ Airport(JFK) ∧ Airport(SFO))
 Goal(At(C1, JFK) ∧ At(C2, SFO))
 ```
-Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
+Here are the results from all the searches that I performed, including both uninformed and heuristic searches.
 
 ![problem 1](problem-1c.jpg)
 
-Here is the optimal plan (6 steps total). The two sets of actions are done in parallel. 
+Here is the optimal plan (6 steps total). The two sets of actions are done in parallel.
 
 ```
 Load(C1, P1, SFO)
@@ -230,22 +230,22 @@ Unload(C2, P2, SFO)
 <p>&nbsp;</p>
 
 ### Problem 2
-Below are the initial goal and state for Problem 2. This problem is slightly more complex as it now involves 3 cargos, 3 airplanes, and 3 airports (ATL, JFK, SFO). 
+Below are the initial goal and state for Problem 2. This problem is slightly more complex as it now involves 3 cargos, 3 airplanes, and 3 airports (ATL, JFK, SFO).
 
 ```
-Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) 
-	∧ At(P1, SFO) ∧ At(P2, JFK) ∧ At(P3, ATL) 
+Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL)
+	∧ At(P1, SFO) ∧ At(P2, JFK) ∧ At(P3, ATL)
 	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3)
 	∧ Plane(P1) ∧ Plane(P2) ∧ Plane(P3)
 	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL))
 Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
 ```
 
-Here are the results from all the searches that I performed, including both uninformed and heuristic searches. 
+Here are the results from all the searches that I performed, including both uninformed and heuristic searches.
 
-![problem 2](problem-2b.jpg)
+![problem 2](problem-2c.jpg)
 
-Here is the optimal plan (9 steps total). The three sets of actions are done in parallel. 
+Here is the optimal plan (9 steps total). The three sets of actions are done in parallel.
 
 ```
 Load(C3, P3, ATL)
@@ -267,23 +267,23 @@ Unload(C1, P1, JFK)
 <p>&nbsp;</p>
 
 ### Problem 3
-Below are the initial goal and state for Problem 3. As you can see, this problem is more complex as it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes to haul everything. 
+Below are the initial goal and state for Problem 3. As you can see, this problem is more complex as it now involves 4 cargos and 4 airports (ATL, JFK, ORD, SFO), but only 2 airplanes to haul everything.
 
 ```
-Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD) 
-	∧ At(P1, SFO) ∧ At(P2, JFK) 
+Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD)
+	∧ At(P1, SFO) ∧ At(P2, JFK)
 	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3) ∧ Cargo(C4)
 	∧ Plane(P1) ∧ Plane(P2)
 	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL) ∧ Airport(ORD))
 Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
 ```
 
-Here are the results from all the searches that I performed, including both uninformed and heuristic searches. Although, note that some of the searches did not finish in the allotted 10-minute timeframe. 
+Here are the results from all the searches that I performed, including both uninformed and heuristic searches. Although, note that some of the searches did not finish in the allotted 10-minute timeframe.
 
 
 ![problem 3](problem-3.jpg)
 
-Here is the optimal plan (12 steps total). The two sets of actions are done in parallel. 
+Here is the optimal plan (12 steps total). The two sets of actions are done in parallel.
 
 ```
 Load(C1, P1, SFO)
