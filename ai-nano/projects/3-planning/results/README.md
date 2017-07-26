@@ -5,11 +5,11 @@ The **goal** of this project is to build a planning search agent that finds the 
 
 The project includes basic skeletons for the classes and functions needed, but students must complete the missing pieces described below.
 
-In Part 1 of the project, we implement non-heuristics planning methods. We then run uninformed planning searches on the Air Cargo planning problems using breadth first search (BFS), depth first graph search, uniform cost search, and few other variations. 
+In *Part 1* of the project, we implement non-heuristics planning methods. We then run uninformed planning searches on the Air Cargo planning problems using breadth first search (BFS), depth first graph search, uniform cost search, and few other variations. 
 
-In Part 2 of the project, we implement domain-independent heuristics to guide the search. And we analyze the results in Part 3.
+In *Part 2* of the project, we implement domain-independent heuristics to guide the search. And we analyze the results in *Part 3*.
 
-Part 4 is a separate reseach paper highlighting important historic milestones in the development of AI planned search techniques. 
+*Part 4* is a short reseach paper highlighting important historic milestones in the development of AI planned search techniques. 
 
 <p>&nbsp;</p>
 
