@@ -240,6 +240,10 @@ Unload(C2, P2, SFO)
 
 Given the results above, the `greedy_best_first_graph_search h_1` method is the best choice. While there are several search methods which produce an optimal plan, the `greedy_best_first` does it more efficiently than the others. As highlighted during the lectures, The Greedy Best First approach works by expanding nodes closest to the goal first and therefore minimizes the number of fluents it needs to process.
 
+`breadth_first_search` (BFS) also finds the right solution. As discussed in the lectures, BFS always expands the shallowest unexpanded node, but the number of expansions become unwieldy as in search trees with higher branching factors, since the number of expansions increases exponentially with each subsequent branch. So, while BFS is a viable option for this simple problem, it becomes less viable as the problem complexity&mdash;and therefore the search space&mdash;increases.
+
+That said, BFS does expand fewer nodes than `uniform_cost_search` (UCS). This is because UCS keeps searching to make sure there isn't another shorter path, while BFS halts its search once an optimal path is discovered. Again, both methods become less efficient as the branching factor increases, but they're both complete in that they'll always yield an optimal path.  
+
 The results also indicate that for simple problems like this (i.e. ones with a small search space), non-heuristic methods like `breadth_first_search` and `uniform_cost_search` are viable options. They provide reasonable efficiency and yield optimal paths without the added complexity of a heuristic.
 
 Among the heuristic methods, it's worth noting that all of them produced optimal paths, with `A*_ignore_preconditions` being the most efficient. But, given the small search space, it's hard to tell which of the heuristic search methods will perform best as the Air Cargo plans increase in complexity. 
@@ -282,6 +286,8 @@ Unload(C1, P1, JFK)
 ```
 
 Once again, we see that `greedy_best_first` is the recommeded algorithm since it produces an optimal path with the greatest efficiency. What's more, the gain in efficiency is now much more noticable compared to `breadth_first_search` and `uniform_cost_search`. The added complexity of Problem 2 (adding 1 cargo, 1 plane, and 1 airport) makes these non-heuristic methods less viable as evidenced by longer execution time and higher number of nodes. In fact, the added complexity of this problem caused four of the other search algorithms to timeout, including both heuristic and non-heuristic methods. This demonstrates how important the size of the search space is when choosing and configuring a planning algorithm. Specifically, at this stage it's now clear that the `A*_levelsum` algorithm is too inefficent to be useful moving forward. 
+
+We also notice that the primary deficiency of `depth_first_search` (DFS) in that it searches down the tree and stops searching once a path is found. In this case, the path length it produces is 575 steps compared to the optimal path of 9. Although DFS often won't find the optimal path, this approach can still be useful because it can efficiently search trees with a high branching factor (as long as they're not infinite) with fewer expansions than BFS or UCS. Since DFS searches deep instead of wide, it avoids the exponential increase in nodes that BFS and UCS must traverse. So, DFS can be an efficient way to find _a_ path, but it's not a good method for finding _the best_ path. 
 
 <p>&nbsp;</p>
 
