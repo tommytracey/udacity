@@ -5,11 +5,11 @@ The **goal** of this project is to build a planning search agent that finds the 
 
 The project includes basic skeletons for the classes and functions needed, but students must complete the missing pieces described below.
 
-In *Part 1* of the project, we implement non-heuristics planning methods. We then run uninformed planning searches on the Air Cargo planning problems using breadth first search (BFS), depth first graph search, uniform cost search, and few other variations. 
+In **Part 1** of the project, we implement non-heuristics planning methods. We then run uninformed planning searches on the Air Cargo planning problems using breadth first search (BFS), depth first graph search, uniform cost search, and few other variations. 
 
-In *Part 2* of the project, we implement domain-independent heuristics to guide the search. And we analyze the results in *Part 3*.
+In **Part 2** of the project, we implement domain-independent heuristics to guide the search. And we analyze the results in **Part 3**.
 
-*Part 4* is a short reseach paper highlighting important historic milestones in the development of AI planned search techniques. 
+**Part 4** is a short reseach paper highlighting important historic milestones in the development of AI planned search techniques. 
 
 <p>&nbsp;</p>
 
@@ -26,7 +26,7 @@ In *Part 2* of the project, we implement domain-independent heuristics to guide 
 
 _Create concrete Action objects based on the domain action schema for: Load, Unload, and Fly. A concrete action is a specific literal action that does not include variables as with the schema. For example, the action schema `Load(c, p, a)` can represent the concrete actions `Load(C1, P1, SFO)` or `Load(C2, P2, JFK)`. The actions for the planning problem must be concrete because the problems in forward search and planning graphs must use propositional logic._
 
-**Solution:** The source code for my solution can be found [here](). Below is a snippet showing the implementation of the Load action.
+**My Solution:** The source code for my solution can be found [here](). Below is a snippet showing the implementation of the Load action.
 
 ```python
 def load_actions():
