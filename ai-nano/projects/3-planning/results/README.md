@@ -5,7 +5,7 @@ The **goal** of this project is to build a planning search agent that finds the 
 
 The project includes basic code skeletons for the classes and functions needed, but students must complete the missing pieces described below.
 
-There are four parts to this project. In **Part 1**, we implement non-heuristics planning methods and run _uninformed_ planning searches on the Air Cargo planning problems using Breadth First Search, Depth First Search, and Uniform Cost Search. In **Part 2**, we run _informed_ searches using heuristics such as 'level sum and a relaxed plan that 'ignores preconditions.' The results of these two approaches are analyzed in **Part 3**.
+There are four parts to this project. In **Part 1**, we implement non-heuristics planning methods and run _uninformed_ planning searches on the Air Cargo planning problems using Breadth First Search, Depth First Search, and Uniform Cost Search. In **Part 2**, we run _informed_ searches using heuristics such as 'level sum' and a relaxed plan that 'ignores preconditions.' The results of these two approaches are analyzed in **Part 3**.
 
 **Part 4** is a short reseach paper highlighting important historic milestones in the development of AI planning techniques. 
 
