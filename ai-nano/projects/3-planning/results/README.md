@@ -344,6 +344,6 @@ _Read up on important historical developments in the field of AI planning and se
 
 
 ### My Research Review
-[Here is a link]() to a PDF version of my research review on XYZ. 
+[Here is a link](research_review.pdf) to a PDF version of my research review. 
 
 ---
