@@ -1,0 +1,160 @@
+{
+    "tests": [
+        {
+            "traceback": "",
+            "description": "air_cargo_p1 returns the correct initial fluents",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p1 returns the correct goal fluents",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p1 returns an object of type problem",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p1 returns the correct initial values",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p2 returns the correct initial fluents",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p2 returns the correct goal fluents",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p2 returns an object of type problem",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p2 returns the correct initial values",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p3 returns the correct initial fluents",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p3 returns the correct goal fluents",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p3 returns an object of type problem",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "air_cargo_p3 returns the correct initial values",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "AirCargoProblem correctly lists possible actions in a given state",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "AirCargoProblem correctly constructs all possible actions",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "AirCargoProblem correctly updates state for a given action",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "AirCargoProblem implements the ignore preconditions heuristic",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "AirCargoProblem yields a correct solution when input to breadth_first_search",
+            "rubric_item_id": "5516",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "Action levels have the correct number of actions",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "Literal levels have the correct number of literals",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "competing_needs_mutex behaves correctly",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "inconsistent_effects_mutex behaves correctly",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "inconsistent_support_mutex behaves correctly",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "interference_mutex behaves correctly",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "negation_mutex behaves correctly",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "Serialization of mutexes is correct",
+            "rubric_item_id": "5519",
+            "result": "."
+        },
+        {
+            "traceback": "",
+            "description": "levelsum heuristic behaves correctly",
+            "rubric_item_id": "5519",
+            "result": "."
+        }
+    ]
+}
