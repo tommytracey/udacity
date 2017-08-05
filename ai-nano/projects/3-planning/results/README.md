@@ -351,8 +351,13 @@ _Read up on important historical developments in the field of AI planning and se
 ### References
 
 [1] Stuart Russell and Peter Norvig. 2009. Artificial Intelligence: A Modern Approach (3rd ed.), pp 92-93. Prentice Hall Press, Upper Saddle River, NJ, USA.
+
 [2] Stuart Russell and Peter Norvig. 2009. Artificial Intelligence: A Modern Approach (3rd ed.), p 108. Prentice Hall Press, Upper Saddle River, NJ, USA.
+
 [3] Stuart Russell and Peter Norvig. 2009. Artificial Intelligence: A Modern Approach (3rd ed.), p 108. Prentice Hall Press, Upper Saddle River, NJ, USA.
+
 [4] Stuart Russell and Peter Norvig. 2009. Artificial Intelligence: A Modern Approach (3rd ed.), p 382. Prentice Hall Press, Upper Saddle River, NJ, USA.
+
 [5] https://classroom.udacity.com/nanodegrees/nd889/parts/6be67fd1-9725-4d14-b36e-ae2b5b20804c/modules/f719d723-7ee0-472c-80c1-663f02de94f3/lessons/36fc5b2f-6367-4808-b87c-0faa42744994/concepts/d6804853-b929-4e66-b05b-1132e38fa28c
+
 [6] Stuart Russell and Peter Norvig. 2009. Artificial Intelligence: A Modern Approach (3rd ed.), p 92. Prentice Hall Press, Upper Saddle River, NJ, USA.
