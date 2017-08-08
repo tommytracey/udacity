@@ -14,19 +14,22 @@ intro-machine-learning
 **/input
 **/inputs
 
+**/exercises
+
 **/images
-!/ai-nano/projects/1-sudoku/images
-!/ai-nano/projects/3-planning/images
-!/self-driving-nano/projects/2-traffic-signs/images
 !**/results/images
 **/**images
 **/flower_photos
 **/photos
 **/**photos
 
+**/mac_sim.app
 **/models
-
 **/reading
 **/research
-
 **/setup
+
+!/ai-nano/projects/1-sudoku/images
+!/ai-nano/projects/3-planning/images
+!/deep-learning-nano/exercises
+!/self-driving-nano/projects/2-traffic-signs/images
