@@ -1,5 +1,6 @@
 import argparse
 import base64
+import cv2
 from datetime import datetime
 import os
 import shutil
@@ -44,7 +45,7 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 30
+set_speed = 20
 controller.set_desired(set_speed)
 
 
