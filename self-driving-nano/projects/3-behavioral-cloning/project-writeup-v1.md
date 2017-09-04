@@ -1,19 +1,12 @@
-#**Behavioral Cloning**
+**Udacity Nanodegree &nbsp; | &nbsp; Self-Driving Car Engineer**
+# Project 3: Behavioral Cloning
 
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
-**Behavioral Cloning Project**
-
-The goals / steps of this project are the following:
+### Goals
+The goals of this project are to:
 * Use the simulator to collect data of good driving behavior
-* Build, a convolution neural network in Keras that predicts steering angles from images
-* Train and validate the model with a training and validation set
+* Build a convolution neural network in Keras that predicts steering angles from images
+* Train and validate the model
 * Test that the model successfully drives around track one without leaving the road
-* Summarize the results with a written report
 
 
 [//]: # (Image References)
@@ -26,13 +19,52 @@ The goals / steps of this project are the following:
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
-## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
+### Summary of Results
+For this project, I was able to build models that navigated both Track 1 and Track 2 (the challenge track) autonomously. The model for Track 1 was able to navigate the track at the maximum allowed speed of 30 MPH. The model for Track 2 &mdash; which was trained using the weights from the Track 1 model &mdash; was set at 21 MPH, but reached speeds up to 30 MPH in some sections.
+
+Here are the videos that show these models successfully completing one lap around each track.
+
+[embed video 1]
+[embed video 2]
+
+### Summary of My Approach
+You can find a detailed walk-through of my approach and the various parts of my pipeline in the following Jupyter notebooks for [Track 1]() and [Track 2](). In the next section, I will outline how I addressed the required aspects of this project. But first, I want to highlight a few of the explorations that I conducted, which go beyond the required scope of this project. There are three in particular that I found particularly useful while iterating on my model.
+
+**1 | Visualizing the Generator Output**
+
+In this project, Udacity recommended that we create a generator to feed data into the model during training. The big advantage of a generator is that you can use a relatively small amount of data to produce a much larger training set.
+
+Another benefit of a generator is that it's efficient. You can augment your data on-the-fly, i.e. in small batches during training, rather than pre-processing a huge dataset beforehand. Generators also allow you to make your training set more dynamic. They can be setup to produce slightly different transformations every time you train the model, which adds variety to your training set and helps reduce overfitting.
+
+However, one of the challenges is that you have less visibility into the training data. You don't have a fixed training set that you can thoroughly investigate to make sure it only has "good data" for training your model. There's a chance your generator could be pumping "bad" (or useless) data into your model. The chances are higher if (like me) you're using a variety of data transformation techniques, which produce thousands of different parameter combinations. I quickly learned that: (a) I need to be careful about how I setup my generator, and (b) I need a way to preview sample outputs from the generator, so I can easily detect problems and make adjustments.
+
+Here is an example. Below you can see a set of training images with their corresponding augmented versions which were output by the generator. The transformations that were applied include: cropping, flipping, smoothing, horizontal and vertical shifts, rotation shifts, brightness shifts, color channel shifts, and resizing. This allowed me to see what the model sees!
+
+[(link to source code)]()
+
+<img> insert image </img>
+
+
+
+**2 | Distribution Flattening**
+
+
+**3 | Visualizing Model Filters**
+
+
+**4 | Transfer Learning**
+
+
+&nbsp;
 
 ---
-###Files Submitted & Code Quality
+## Rubric Points
+In this section, I consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+
+#### Files Submitted & Code Quality
+
+1 . Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
 * model.py containing the script to create and train the model
@@ -40,7 +72,8 @@ My project includes the following files:
 * model.h5 containing a trained convolution neural network
 * writeup_report.md or writeup_report.pdf summarizing the results
 
-####2. Submission includes functional code
+
+2 . Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
 ```sh
 python drive.py model.h5
