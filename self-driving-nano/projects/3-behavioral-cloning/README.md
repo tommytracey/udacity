@@ -15,15 +15,16 @@ For this project, I was able to build models that navigated both Track 1 and Tra
 
 Here are the videos that show these models successfully completing one lap around each track.
 
+&nbsp;
 **Track 1**
 
-[<img src='results/track1.png' width="60%"/>](https://www.youtube.com/embed/rJieV8ADRq4?rel=0)
+[<img src='results/track1.png' width="60%" target="_blank"/>](https://www.youtube.com/embed/rJieV8ADRq4?rel=0)
 
 
 ##### &nbsp;
 **Track 2**
 
-[<img src='results/track2.png' width="60%"/>](https://www.youtube.com/embed/yUl-1NCk2ac?rel=0)
+[<img src='results/track2.png' width="60%" target="_blank"/>](https://www.youtube.com/embed/yUl-1NCk2ac?rel=0)
 
 
 #### &nbsp;
@@ -56,8 +57,7 @@ Finding the right distribution took some experimentation. If it's too steep then
 
 [(source code)]()
 
-
-![distribution](results/distribution-flattened.png)
+<img src='results/distribution-flattened.png' width="70%"/>
 
 
 &nbsp;
@@ -102,33 +102,42 @@ NOTE: There's supposed to be alternative way to do this in Keras, which I wasted
 In this section, I consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 &nbsp;
-#### Files Submitted & Code Quality
+### Files Submitted & Code Quality
 
 
-##### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
-My project includes the following files:
-* [model.py]() containing the script to create and train the model
-* [drive.py]() for driving the car in autonomous mode
-* [model.h5]() containing a trained convolution neural network
-* writeup_report (this page) summarizing the results
+
+**Track 1**
+* [model.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py) containing the script to create and train the model
+* [drive.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/drive.py) for driving the car in autonomous mode
+* [model.h5](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.h5) containing a trained convolution neural network
+* [writeup_report.md](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/README.md) (this page) summarizing the results
+
+**Track 2**
+* [model-track2.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model-track2.py) containing the script to create and train the model
+* [drive-track2.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/drive-track2.py) for driving the car in autonomous mode
+* [model-track2.h5](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model-track2.h5) containing a trained convolution neural network
+
 
 &nbsp;
-##### 2. Submission includes functional code
+#### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
 ```sh
 $ python drive.py model.h5
+
+$ python drive-track2.py model-track2.h5
 ```
 
 &nbsp;
-##### 3. Submission code is usable and readable
+#### 3. Submission code is usable and readable
 
 The model.py file contains the code for training and saving the convolution neural network. The model.py file was exported from [this Jupyter notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track1-final.ipynb), which outlines the pipeline I used for training and validating the model and contains detailed comments explaining how the code works.
 
 # &nbsp;
 ### Model Architecture and Training Strategy
 
-##### 1. An appropriate model architecture has been employed
+#### 1. An appropriate model architecture has been employed
 
 My CNN model consists of:
 
@@ -172,7 +181,7 @@ model.summary()
 ```
 
 &nbsp;
-##### 2. Attempts to reduce overfitting in the model
+#### 2. Attempts to reduce overfitting in the model
 
 The model was trained and validated on different data sets to ensure that the model was not overfitting. Here are some of the training and validation accuracies recorded for the Track 1 model.
 
@@ -185,15 +194,15 @@ Initially, I experimented with dropouts on the fully connected layers, but I fou
 
 The ultimate test was running the model through the simulator. If the model was overfitting, it wouldn't be able to stay on the track. For example, I had one model that I'd overfit so badly on turning data that it perpetually drove in circles!
 
-[<img src='results/circles.png' width="60%"/>](https://youtu.be/-Urr1l-_HK8)
+[<img src='results/circles.png' width="60%" target="_blank"/>](https://youtu.be/-Urr1l-_HK8)
 
 &nbsp;
-##### 3. Model parameter tuning
+#### 3. Model parameter tuning
 
 The model used an adam optimizer, so the learning rate was not tuned manually ([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1480)).
 
 &nbsp;
-##### 4. Appropriate training data
+#### 4. Appropriate training data
 I recorded a variety of data samples to ensure the model could learn "good" driving behaviors without overfitting the data.
 
   - center driving data (3 laps)
@@ -206,7 +215,7 @@ I recorded a variety of data samples to ensure the model could learn "good" driv
 ### Model Architecture and Training Strategy
 
 &nbsp;
-##### 1. Solution Design Approach
+#### 1. Solution Design Approach
 
 The overall strategy for finding the right model architecture was to start small and scale up as needed. I tried to avoid having a bloated model with too many parameters and therefore took a long time to train. My working hypothesis was that having a good set of training data was the most important factor to building a model that can autonomously navigate both tracks. So, I wanted a model that allowed me to quickly iterate and test the changes I was making to the dataset. That said, I did experiment with larger models throughout the process.
 
@@ -216,7 +225,7 @@ To test the model, I first trained it on the data set provided by Udacity. I fou
 
 
 &nbsp;
-##### 2. Final Model Architecture
+#### 2. Final Model Architecture
 
 Here is a visualization of the architecture.
 
@@ -225,21 +234,21 @@ Here is a visualization of the architecture.
 ![alt text][image1]
 
 &nbsp;
-##### 3. Creation of the Training Set & Training Process
+#### 3. Creation of the Training Set & Training Process
 
 [This notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track1-final.ipynb) provides a detailed walk-through of all the steps I took to augment and refine the training data for Track 1 (and [this notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track2-final.ipynb) for Track 2). The challenge was to create training data that accurately depicted the driving behaviors the car needed to learn, while also providing enough variation in the data so that the model could generalize its learnings. It was a rigorous process of trial and error, experimenting with different data sources and augmentation techniques, then fine-tuning the model architecture and parameters.
 
 Here are the final training and validation numbers.
 
 - **Track 1 model**:
- - 40,774 training samples (prior to augmentation)
-   - 326,192 training samples after augmentation
- - 6,846 validation samples (14%)
- - 3 epochs
- - training loss: 0.0346, validation loss: 0.0241
+  - 40,774 training samples (prior to augmentation)
+    - 326,192 training samples after augmentation
+  - 6,846 validation samples (14%)
+  - 3 epochs
+  - training loss: 0.0346, validation loss: 0.0241
 - **Track 2 model** (repurposing the weights from Track 1 model):
- - 18,502 training samples (prior to augmentation)
-   - 74,008 training samples after augmentation
- - 1,194 validation samples (6%)
- - 10 epochs
- - training loss: 0.0635, validation loss = 0.0472
+  - 18,502 training samples (prior to augmentation)
+    - 74,008 training samples after augmentation
+  - 1,194 validation samples (6%)
+  - 10 epochs
+  - training loss: 0.0635, validation loss = 0.0472
