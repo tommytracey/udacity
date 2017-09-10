@@ -36,7 +36,7 @@ Here are the videos that show these models successfully completing one lap aroun
 
 #### &nbsp;
 ### Summary of My Approach
-You can find a detailed walk-through of my approach and the various parts of my pipeline in the following Jupyter notebooks for [Track 1]() and [Track 2](). In the next section, I will outline how I addressed the required aspects of this project. But first, I want to highlight a few of the explorations that I conducted, which go beyond the required scope of this project. There are three in particular that I found particularly useful while iterating on my model.
+You can find a detailed walk-through of my approach and the various parts of my pipeline in the following Jupyter notebooks for [Track 1](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track1-final.ipynb) and [Track 2](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track2-final.ipynb). In the next section, I will outline how I addressed the required aspects of this project. But first, I want to highlight a few of the explorations that I conducted, which go beyond the required scope of this project. There are three in particular that I found particularly useful while iterating on my model.
 
 &nbsp;
 
@@ -50,9 +50,9 @@ However, one of the challenges is that you have less visibility into the trainin
 
 Here is an example. Below you can see a set of training images with their corresponding augmented versions which were output by the generator. The transformations that were applied include: cropping, flipping, smoothing, horizontal and vertical shifts, rotation shifts, brightness shifts, color channel shifts, and resizing. This allowed me to see what the model sees!
 
-[(link to source code)]()
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1529)
 
-<img> insert image </img>
+![left_turn_filter][results/filters-left-turns.png]
 
 &nbsp;
 
