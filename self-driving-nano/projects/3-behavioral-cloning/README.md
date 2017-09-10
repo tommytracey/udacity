@@ -50,9 +50,9 @@ However, one of the challenges is that you have less visibility into the trainin
 
 Here is an example. Below you can see a set of training images with their corresponding augmented versions which were output by the generator. The transformations that were applied include: cropping, flipping, smoothing, horizontal and vertical shifts, rotation shifts, brightness shifts, color channel shifts, and resizing. This allowed me to see what the model sees!
 
-[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1529)
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1359)
 
-![left_turn_filter][results/filters-left-turns.png]
+![generator-output](/results/generator-output.png)
 
 &nbsp;
 
@@ -62,10 +62,10 @@ When you capture normal driving data via the simulator, the percentage of that d
 
 Finding the right distribution took some experimentation. If it's too steep then your car won't learn how to turn effectively. But, if it's too flat, your car won't learn to drive straight and will swerve endlessly around the road.
 
-[(link to source code)]()
+[(source code)]()
 
-< image examples >
 
+![distribution](/results/distribution-flattened.png)
 
 
 &nbsp;
@@ -76,7 +76,9 @@ The visualization approach I took superimposes the model filters onto the origin
 
 For example, here we see a sample of model filters for right turns (steering angle > 0.35). Notice that in some cases the filters have learned to ignore parts of the road. However, in other cases, the model is ignoring (or at least not focusing on) seemingly important features of the road.
 
-< image examples >
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1529)
+
+![left_turn_filter](/results/filters-left-turns.png)
 
 
 &nbsp;
@@ -89,11 +91,17 @@ Given these stark differences, my Track 1 model was not able to generalize to Tr
 
 The results were quite incredible. When I trained the Track 2 model using the Track 1 weights (and Track 2 data), it yielded MUCH better driving behavior than training with Track 2 data from scratch.
 
-[Here's a link]() to the source code which shows how I imported the weights. It's very simple to do in Keras, once you figure out the right approach. You have to recreate the model and use the `load_weights` method.
+[Here's a link](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model-track2.py#L1416) to the source code which shows how I imported the weights. It's very simple to do in Keras, once you figure out the right approach. You have to recreate the model and use the `load_weights` method just before you compile.
 
-< insert code snippet >
+```python
+# Weights from Track 1 model
+model.load_weights('models/track1.h5')
 
-NOTE: There's supposed to be alternative way to do this in Keras, which I wasted 4-5 hours debugging. You should be able to replace the dense layers from your existing model and repurpose just the convolutional layers. Unfortunately, there appears to be a bug in Keras that creates a shape mismatch when using the `load_model` method in this way. However, this approach _does_ work if you use one of the pre-trained CNNs that have their own distinct methods in Keras (e.g. VGG).
+# Compile and preview the model
+model.compile(optimizer=Adam(lr=lr), loss='mean_squared_error', metrics=['accuracy'])
+```
+
+NOTE: There's supposed to be alternative way to do this in Keras, which I wasted 4-5 hours debugging. You should be able to replace the dense layers from your existing model and repurpose just the convolutional layers. Unfortunately, there appears to be a [bug in Keras](https://github.com/fchollet/keras/issues/4802#issuecomment-269323462) that creates a shape mismatch when using the [`load_model` method](https://keras.io/getting-started/faq/#how-can-i-save-a-keras-model) in this way. However, this approach _does_ work if you use one of the pre-trained CNNs that have their own distinct methods in Keras (e.g. [VGG16](https://keras.io/applications/#vgg16)).
 
 ### &nbsp;
 
@@ -108,22 +116,22 @@ In this section, I consider the [rubric points](https://review.udacity.com/#!/ru
 ##### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network
-* writeup_report.md or writeup_report.pdf summarizing the results
+* [model.py]() containing the script to create and train the model
+* [drive.py]() for driving the car in autonomous mode
+* [model.h5]() containing a trained convolution neural network
+* writeup_report (this page) summarizing the results
 
 &nbsp;
 ##### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
 ```sh
-python drive.py model.h5
+$ python drive.py model.h5
 ```
 
 &nbsp;
 ##### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. [This Jupyter notebook]() shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The model.py file contains the code for training and saving the convolution neural network. The model.py file was exported from [this Jupyter notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track1-final.ipynb), which outlines the pipeline I used for training and validating the model and contains detailed comments explaining how the code works.
 
 # &nbsp;
 ### Model Architecture and Training Strategy
@@ -139,29 +147,58 @@ My CNN model consists of:
 - 4 fully connected layers
 - ELU activations to introduce nonlinearity throughout the convolutional and connected layers
 
-[(source code)]()
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model-track2.py#L1392)
 
-< insert image >
+```python
+## Create the model ** Track 2 **
+# based on NVIDIA model: https://github.com/hdmetor/Nvidia-SelfDriving
+
+model = Sequential()
+
+model.add(Lambda(lambda x: x/255 - 0.5, input_shape=resized_shape))
+
+model.add(Conv2D(24, 5, strides=d_str, padding=d_pad, activation=d_act, kernel_regularizer=reg, name='block1_conv1'))
+model.add(Conv2D(36, 5, strides=d_str, padding=d_pad, activation=d_act, kernel_regularizer=reg, name='block1_conv2'))
+model.add(Conv2D(48, 3, strides=d_str, padding=d_pad, activation=d_act, kernel_regularizer=reg, name='block1_conv3'))
+
+model.add(Conv2D(64, 3, strides=d_str, padding=d_pad, activation=d_act, kernel_regularizer=reg, name='block2_conv1'))
+model.add(Conv2D(64, 3, strides=d_str, padding=d_pad, activation=d_act, kernel_regularizer=reg, name='block2_conv2'))
+
+model.add(Flatten())
+model.add(Dense(150, activation=d_act,  kernel_regularizer=reg))
+model.add(Dense(50, activation=d_act,  kernel_regularizer=reg))
+model.add(Dense(10, activation=d_act,  kernel_regularizer=reg))
+model.add(Dense(1))
+
+# Weights from Track 1 model
+model.load_weights('models/track1.h5')
+
+# Compile and preview the model
+model.compile(optimizer=Adam(lr=lr), loss='mean_squared_error', metrics=['accuracy'])
+
+model.summary()
+```
 
 &nbsp;
 ##### 2. Attempts to reduce overfitting in the model
 
 The model was trained and validated on different data sets to ensure that the model was not overfitting. Here are some of the training and validation accuracies recorded for the Track 1 model.
 
-< insert image >
+![epochs](/results/track1-training-epochs.png)
+
 
 I also used L2 regularization to reduce the magnitude of the weights. After some experimentation, I settled on an L2 decay rate of 0.001.
 
-Initially, I experimented with dropouts on the fully connected layers, but I found that they were causing the model to under fit, so I [commented them out]() and used L2 instead.
+Initially, I experimented with dropouts on the fully connected layers, but I found that they were causing the model to under fit, so I [commented them out](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1473) and used L2 instead.
 
-The ultimate test was running the model through the simulator. If the model was overfitting, it wouldn't be able to stay on the track. For example, I had one model that I'd overfit on turning data and it perpetually drove in circles!
+The ultimate test was running the model through the simulator. If the model was overfitting, it wouldn't be able to stay on the track. For example, I had one model that I'd overfit so badly on turning data that it perpetually drove in circles!
 
-< insert video >
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nVyhEbB7k64?rel=0" frameborder="0" allowfullscreen></iframe>
 
 &nbsp;
 ##### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually ([source code]()).
+The model used an adam optimizer, so the learning rate was not tuned manually ([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1480)).
 
 &nbsp;
 ##### 4. Appropriate training data
@@ -181,7 +218,7 @@ I recorded a variety of data samples to ensure the model could learn "good" driv
 
 The overall strategy for finding the right model architecture was to start small and scale up as needed. I tried to avoid having a bloated model with too many parameters and therefore took a long time to train. My working hypothesis was that having a good set of training data was the most important factor to building a model that can autonomously navigate both tracks. So, I wanted a model that allowed me to quickly iterate and test the changes I was making to the dataset. That said, I did experiment with larger models throughout the process.
 
-First, I tried to repurpose the CNN I'd built for the last project (traffic sign classification). But, even after I simplified this model, it still had millions of parameters and took a long time to train (without producing great results). So, I ditched this approach in favor of a well-known NVIDIA model which had a track record (pun intended) solving behavioral cloning for autonomous driving. Again, the overall goal was to get a lightweight model working so I could iterate on the data set. Once I felt the dataset was adequate for training purposes, I invested more time tweaking the model and exploring alternative architectures like [Keras' pre-trained version of VGG]() and [Comma.ai]. But, ultimately I settled on the NVIDIA model given its good performance and relatively small footprint.
+First, I tried to repurpose the CNN I'd built for the last project (traffic sign classification). But, even after I simplified this model, it still had millions of parameters and took a long time to train (without producing great results). So, I ditched this approach in favor of a well-known NVIDIA model which had a track record (pun intended) solving behavioral cloning for autonomous driving. Again, the overall goal was to get a lightweight model working so I could iterate on the data set. Once I felt the dataset was adequate for training purposes, I invested more time tweaking the model and exploring alternative architectures like [Keras' pre-trained version of VGG]() and [Comma.ai](https://github.com/commaai/research/blob/master/train_steering_model.py). But, ultimately I settled on the NVIDIA model given its good performance and relatively small footprint.
 
 To test the model, I first trained it on the data set provided by Udacity. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting the training data. And this was evident by the inability of the car to stay on the road in the simulator. But, at this point I knew the model was capable of learning, so I shifted my focus to the data to address the overfitting problem. Generating a larger and more balanced data set (i.e., one with a higher ratio of turning data) did reduce overfitting. From there, I focused on tuning the regularization parameters.
 
@@ -198,15 +235,19 @@ Here is a visualization of the architecture.
 &nbsp;
 ##### 3. Creation of the Training Set & Training Process
 
-[This notebook]() provides a detailed walk-through of all the steps I took to augment and refine the training data for Track 1 (and [this notebook]() for Track 2). The challenge was to create training data that accurately depicted the driving behaviors the car needed to learn, while also providing enough variation in the data so that the model could generalize its learnings. It was a rigorous process of trial and error, experimenting with different data sources and augmentation techniques, then fine-tuning the model architecture and parameters.
+[This notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track1-final.ipynb) provides a detailed walk-through of all the steps I took to augment and refine the training data for Track 1 (and [this notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/behavioral-cloning-track2-final.ipynb) for Track 2). The challenge was to create training data that accurately depicted the driving behaviors the car needed to learn, while also providing enough variation in the data so that the model could generalize its learnings. It was a rigorous process of trial and error, experimenting with different data sources and augmentation techniques, then fine-tuning the model architecture and parameters.
 
 Here are the final training and validation numbers.
 
 - **Track 1 model**:
- - X training samples
- - Y validation samples
- - Z epochs
+ - 40,774 training samples (prior to augmentation)
+   - 326,192 training samples after augmentation
+ - 6,846 validation samples (14%)
+ - 3 epochs
+ - training loss: 0.0346, validation loss: 0.0241
 - **Track 2 model** (repurposing the weights from Track 1 model):
- - X training samples
- - Y validation samples
- - Z epochs
+ - 18,502 training samples (prior to augmentation)
+   - 74,008 training samples after augmentation
+ - 1,194 validation samples (6%)
+ - 10 epochs
+ - training loss: 0.0635, validation loss = 0.0472
