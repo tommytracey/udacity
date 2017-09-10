@@ -15,7 +15,7 @@ For this project, I was able to build models that navigated both Track 1 and Tra
 
 Here are the videos that show these models successfully completing one lap around each track.
 
-&nbsp;
+#### &nbsp;
 **Track 1**
 
 <a href="https://www.youtube.com/embed/rJieV8ADRq4?rel=0" target="_blank"><img src="results/track1.png" width="60%" /></a>
@@ -24,7 +24,7 @@ Here are the videos that show these models successfully completing one lap aroun
 ##### &nbsp;
 **Track 2**
 
-[<img src='results/track2.png' width="60%" target="_blank"/>](https://www.youtube.com/embed/yUl-1NCk2ac?rel=0)
+<a href="https://www.youtube.com/embed/yUl-1NCk2ac?rel=0" target="_blank"><img src="results/track2.png" width="60%" /></a>
 
 
 #### &nbsp;
@@ -57,7 +57,7 @@ Finding the right distribution took some experimentation. If it's too steep then
 
 [(source code)]()
 
-<img src='results/distribution-flattened.png' width="70%"/>
+<img src='results/distribution-flattened.png' width="60%"/>
 
 
 &nbsp;
@@ -108,13 +108,13 @@ In this section, I consider the [rubric points](https://review.udacity.com/#!/ru
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 
-**Track 1**
+##### Track 1
 * [model.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py) containing the script to create and train the model
 * [drive.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/drive.py) for driving the car in autonomous mode
 * [model.h5](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.h5) containing a trained convolution neural network
 * [writeup_report.md](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/README.md) (this page) summarizing the results
 
-**Track 2**
+##### Track 2
 * [model-track2.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model-track2.py) containing the script to create and train the model
 * [drive-track2.py](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/drive-track2.py) for driving the car in autonomous mode
 * [model-track2.h5](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model-track2.h5) containing a trained convolution neural network
@@ -122,7 +122,7 @@ In this section, I consider the [rubric points](https://review.udacity.com/#!/ru
 
 &nbsp;
 #### 2. Submission includes functional code
-Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
+Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing:
 ```sh
 $ python drive.py model.h5
 
@@ -136,6 +136,8 @@ The model.py file contains the code for training and saving the convolution neur
 
 # &nbsp;
 ### Model Architecture and Training Strategy
+
+##### &nbsp;
 
 #### 1. An appropriate model architecture has been employed
 
@@ -227,11 +229,10 @@ To test the model, I first trained it on the data set provided by Udacity. I fou
 &nbsp;
 #### 2. Final Model Architecture
 
-Here is a visualization of the architecture.
+Here is a diagram of the final architecture.
 
-< insert image >
+<img src='results/model-diagram.png' width="70%"/>
 
-![alt text][image1]
 
 &nbsp;
 #### 3. Creation of the Training Set & Training Process
@@ -246,6 +247,7 @@ Here are the final training and validation numbers.
   - 6,846 validation samples (14%)
   - 3 epochs
   - training loss: 0.0346, validation loss: 0.0241
+
 - **Track 2 model** (repurposing the weights from Track 1 model):
   - 18,502 training samples (prior to augmentation)
     - 74,008 training samples after augmentation
