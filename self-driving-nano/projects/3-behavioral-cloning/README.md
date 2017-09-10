@@ -229,10 +229,13 @@ To test the model, I first trained it on the data set provided by Udacity. I fou
 &nbsp;
 #### 2. Final Model Architecture
 
+&nbsp;
 
 <img src='results/model-architecture.png' width="70%"/>
 
-<img src='results/model-summary.png' width="70%"/>
+&nbsp;
+
+<img src='results/model-summary.png' width="60%"/>
 
 
 &nbsp;
