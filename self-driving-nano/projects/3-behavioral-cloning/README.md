@@ -1,118 +1,206 @@
-# Behaviorial Cloning Project
+**Udacity Nanodegree &nbsp; | &nbsp; Self-Driving Car Engineer**
+# Project 3: Behavioral Cloning
 
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+### Goals
+The goals of this project are to:
+* Use the simulator to collect data of good driving behavior
+* Build a convolution neural network in Keras that predicts steering angles from images
+* Train and validate the model
+* Test that the model successfully drives around track one without leaving the road
 
-Overview
+
+[//]: # (Image References)
+
+[image1]: ./examples/placeholder.png "Model Visualization"
+[image2]: ./examples/placeholder.png "Grayscaling"
+[image3]: ./examples/placeholder_small.png "Recovery Image"
+[image4]: ./examples/placeholder_small.png "Recovery Image"
+[image5]: ./examples/placeholder_small.png "Recovery Image"
+[image6]: ./examples/placeholder_small.png "Normal Image"
+[image7]: ./examples/placeholder_small.png "Flipped Image"
+
+&nbsp;
+### Summary of Results
+For this project, I was able to build models that navigated both Track 1 and Track 2 (the challenge track) autonomously. The model for Track 1 was able to navigate the track at the maximum allowed speed of 30 MPH. The model for Track 2 &mdash; which was trained using the weights from the Track 1 model &mdash; was set at 21 MPH, but reached speeds up to 30 MPH in some sections.
+
+Here are the videos that show these models successfully completing one lap around each track.
+
+[embed video 1]
+[embed video 2]
+
+&nbsp;
+### Summary of My Approach
+You can find a detailed walk-through of my approach and the various parts of my pipeline in the following Jupyter notebooks for [Track 1]() and [Track 2](). In the next section, I will outline how I addressed the required aspects of this project. But first, I want to highlight a few of the explorations that I conducted, which go beyond the required scope of this project. There are three in particular that I found particularly useful while iterating on my model.
+
+&nbsp;
+
+**1 | &nbsp; Visualizing the Generator Output**
+
+In this project, Udacity recommended that we create a generator to feed data into the model during training. The big advantage of a generator is that you can use a relatively small amount of data to produce a much larger training set.
+
+Another benefit of a generator is that it's efficient. You can augment your data on-the-fly, i.e. in small batches during training, rather than pre-processing a huge dataset beforehand. Generators also allow you to make your training set more dynamic. They can be setup to produce slightly different transformations every time you train the model, which adds variety to your training set and helps reduce overfitting.
+
+However, one of the challenges is that you have less visibility into the training data. You don't have a fixed training set that you can thoroughly investigate to make sure it only has "good data" for training your model. There's a chance your generator could be pumping "bad" (or useless) data into your model. The chances are higher if (like me) you're using a variety of data transformation techniques, which produce thousands of different parameter combinations. I quickly learned that: (a) I need to be careful about how I setup my generator, and (b) I need a way to preview sample outputs from the generator, so I can easily detect problems and make adjustments.
+
+Here is an example. Below you can see a set of training images with their corresponding augmented versions which were output by the generator. The transformations that were applied include: cropping, flipping, smoothing, horizontal and vertical shifts, rotation shifts, brightness shifts, color channel shifts, and resizing. This allowed me to see what the model sees!
+
+[(link to source code)]()
+
+<img> insert image </img>
+
+&nbsp;
+
+**2 | &nbsp; Distribution Flattening**
+
+When you capture normal driving data via the simulator, the percentage of that data involves turning the vehicle is quite low. Most of the time you're driving straight. So, to ensure the model sees more turns, I found it useful to flatten the distribution of steering angles being input into the model.
+
+Finding the right distribution took some experimentation. If it's too steep then your car won't learn how to turn effectively. But, if it's too flat, your car won't learn to drive straight and will swerve endlessly around the road.
+
+[(link to source code)]()
+
+< image examples >
+
+
+
+&nbsp;
+
+**3 | &nbsp; Visualizing Model Filters**
+
+The visualization approach I took superimposes the model filters onto the original training images. To me this is the most intuitive way to understand how your model "sees" the road and which characteristics of the track are factoring into the model's steering predictions. In this way, it's a great tool for identifying weaknesses in your model. This insight helps inform and test further adjustments to the model and/or augmentation of the training data. I only wish I'd done this exploration sooner in the project!
+
+For example, here we see a sample of model filters for right turns (steering angle > 0.35). Notice that in some cases the filters have learned to ignore parts of the road. However, in other cases, the model is ignoring (or at least not focusing on) seemingly important features of the road.
+
+< image examples >
+
+
+&nbsp;
+
+**4 | &nbsp; Transfer Learning**
+
+After many attempts, I finally got a solid working model that could consistently navigate around Track 1. Then it was time to focus on Track 2, which is much more challenging. Track 2 has lots more turns and overall the turns are much sharper. Also, the track has lots of hills which shift the horizon and make the track difficult to see.
+
+Given these stark differences, my Track 1 model was not able to generalize to Track 2 &mdash; i.e., I wasn't able to simply run the Track 1 model on Track 2 without crashing the car. However, I was able to repurpose the weights from the Track 1 model to boost the model training process for Track 2.
+
+The results were quite incredible. When I trained the Track 2 model using the Track 1 weights (and Track 2 data), it yielded MUCH better driving behavior than training with Track 2 data from scratch.
+
+[Here's a link]() to the source code which shows how I imported the weights. It's very simple to do in Keras, once you figure out the right approach. You have to recreate the model and use the `load_weights` method.
+
+< insert code snippet >
+
+NOTE: There's supposed to be alternative way to do this in Keras, which I wasted 4-5 hours debugging. You should be able to replace the dense layers from your existing model and repurpose just the convolutional layers. Unfortunately, there appears to be a bug in Keras that creates a shape mismatch when using the `load_model` method in this way. However, this approach _does_ work if you use one of the pre-trained CNNs that have their own distinct methods in Keras (e.g. VGG).
+
+### &nbsp;
+
 ---
-This repository contains starting files for the Behavioral Cloning Project.
+## Rubric Points
+In this section, I consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to clone driving behavior. You will train, validate and test a model using Keras. The model will output a steering angle to an autonomous vehicle.
+&nbsp;
+#### Files Submitted & Code Quality
 
-We have provided a simulator where you can steer a car around a track for data collection. You'll use image data and steering angles to train a neural network and then use this model to drive the car autonomously around the track.
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Behavioral-Cloning-P3/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
+##### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
-To meet specifications, the project will require submitting five files: 
-* model.py (script used to create and train the model)
-* drive.py (script to drive the car - feel free to modify this file)
-* model.h5 (a trained Keras model)
-* a report writeup file (either markdown or pdf)
-* video.mp4 (a video recording of your vehicle driving autonomously around the track for at least one full lap)
+My project includes the following files:
+* model.py containing the script to create and train the model
+* drive.py for driving the car in autonomous mode
+* model.h5 containing a trained convolution neural network
+* writeup_report.md or writeup_report.pdf summarizing the results
 
-This README file describes how to output the video in the "Details About Files In This Directory" section.
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/432/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
-The goals / steps of this project are the following:
-* Use the simulator to collect data of good driving behavior 
-* Design, train and validate a model that predicts a steering angle from image data
-* Use the model to drive the vehicle autonomously around the first track in the simulator. The vehicle should remain on the road for an entire loop around the track.
-* Summarize the results with a written report
-
-### Dependencies
-This lab requires:
-
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
-
-The lab enviroment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
-
-The following resources can be found in this github repository:
-* drive.py
-* video.py
-* writeup_template.md
-
-The simulator can be downloaded from the classroom. In the classroom, we have also provided sample data that you can optionally use to help train your model.
-
-## Details About Files In This Directory
-
-### `drive.py`
-
-Usage of `drive.py` requires you have saved the trained model as an h5 file, i.e. `model.h5`. See the [Keras documentation](https://keras.io/getting-started/faq/#how-can-i-save-a-keras-model) for how to create this file using the following command:
-```sh
-model.save(filepath)
-```
-
-Once the model has been saved, it can be used with drive.py using this command:
-
+&nbsp;
+##### 2. Submission includes functional code
+Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
 ```sh
 python drive.py model.h5
 ```
 
-The above command will load the trained model and use the model to make predictions on individual images in real-time and send the predicted angle back to the server via a websocket connection.
+&nbsp;
+##### 3. Submission code is usable and readable
 
-Note: There is known local system's setting issue with replacing "," with "." when using drive.py. When this happens it can make predicted steering values clipped to max/min values. If this occurs, a known fix for this is to add "export LANG=en_US.utf8" to the bashrc file.
+The model.py file contains the code for training and saving the convolution neural network. [This Jupyter notebook]() shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
-#### Saving a video of the autonomous agent
+# &nbsp;
+### Model Architecture and Training Strategy
 
-```sh
-python drive.py model.h5 run1
-```
+##### 1. An appropriate model architecture has been employed
 
-The fourth argument, `run1`, is the directory in which to save the images seen by the agent. If the directory already exists, it'll be overwritten.
+My CNN model consists of:
 
-```sh
-ls run1
+- a normalization layer
+- 5 convolutional layers
+- a combination of 3x3 and 5x5 filter sizes with depths between 24 and 64
+- a flat layer
+- 4 fully connected layers
+- ELU activations to introduce nonlinearity throughout the convolutional and connected layers
 
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_424.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_451.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_477.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_528.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_573.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_618.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_697.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_723.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_749.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_817.jpg
-...
-```
+[(source code)]()
 
-The image file name is a timestamp of when the image was seen. This information is used by `video.py` to create a chronological video of the agent driving.
+< insert image >
 
-### `video.py`
+&nbsp;
+##### 2. Attempts to reduce overfitting in the model
 
-```sh
-python video.py run1
-```
+The model was trained and validated on different data sets to ensure that the model was not overfitting. Here are some of the training and validation accuracies recorded for the Track 1 model.
 
-Creates a video based on images found in the `run1` directory. The name of the video will be the name of the directory followed by `'.mp4'`, so, in this case the video will be `run1.mp4`.
+< insert image >
 
-Optionally, one can specify the FPS (frames per second) of the video:
+I also used L2 regularization to reduce the magnitude of the weights. After some experimentation, I settled on an L2 decay rate of 0.001.
 
-```sh
-python video.py run1 --fps 48
-```
+Initially, I experimented with dropouts on the fully connected layers, but I found that they were causing the model to under fit, so I [commented them out]() and used L2 instead.
 
-Will run the video at 48 FPS. The default FPS is 60.
+The ultimate test was running the model through the simulator. If the model was overfitting, it wouldn't be able to stay on the track. For example, I had one model that I'd overfit on turning data and it perpetually drove in circles!
 
-#### Why create a video
+< insert video >
 
-1. It's been noted the simulator might perform differently based on the hardware. So if your model drives succesfully on your machine it might not on another machine (your reviewer). Saving a video is a solid backup in case this happens.
-2. You could slightly alter the code in `drive.py` and/or `video.py` to create a video of what your model sees after the image is processed (may be helpful for debugging).
+&nbsp;
+##### 3. Model parameter tuning
+
+The model used an adam optimizer, so the learning rate was not tuned manually ([source code]()).
+
+&nbsp;
+##### 4. Appropriate training data
+I recorded a variety of data samples to ensure the model could learn "good" driving behaviors without overfitting the data.
+
+  - center driving data (3 laps)
+  - center driving data going the other direction (2 laps)
+  - turning data: recorded on sections of the track with sharp turns
+  - recovery data: showing the car recovering to the center of the track from the left and right sides of the road
+  - trouble spots: recorded on unique parts of the track that the initial models struggled with, e.g. the bridge
+
+# &nbsp;
+### Model Architecture and Training Strategy
+
+&nbsp;
+##### 1. Solution Design Approach
+
+The overall strategy for finding the right model architecture was to start small and scale up as needed. I tried to avoid having a bloated model with too many parameters and therefore took a long time to train. My working hypothesis was that having a good set of training data was the most important factor to building a model that can autonomously navigate both tracks. So, I wanted a model that allowed me to quickly iterate and test the changes I was making to the dataset. That said, I did experiment with larger models throughout the process.
+
+First, I tried to repurpose the CNN I'd built for the last project (traffic sign classification). But, even after I simplified this model, it still had millions of parameters and took a long time to train (without producing great results). So, I ditched this approach in favor of a well-known NVIDIA model which had a track record (pun intended) solving behavioral cloning for autonomous driving. Again, the overall goal was to get a lightweight model working so I could iterate on the data set. Once I felt the dataset was adequate for training purposes, I invested more time tweaking the model and exploring alternative architectures like [Keras' pre-trained version of VGG]() and [Comma.ai]. But, ultimately I settled on the NVIDIA model given its good performance and relatively small footprint.
+
+To test the model, I first trained it on the data set provided by Udacity. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting the training data. And this was evident by the inability of the car to stay on the road in the simulator. But, at this point I knew the model was capable of learning, so I shifted my focus to the data to address the overfitting problem. Generating a larger and more balanced data set (i.e., one with a higher ratio of turning data) did reduce overfitting. From there, I focused on tuning the regularization parameters.
+
+
+&nbsp;
+##### 2. Final Model Architecture
+
+Here is a visualization of the architecture.
+
+< insert image >
+
+![alt text][image1]
+
+&nbsp;
+##### 3. Creation of the Training Set & Training Process
+
+[This notebook]() provides a detailed walk-through of all the steps I took to augment and refine the training data for Track 1 (and [this notebook]() for Track 2). The challenge was to create training data that accurately depicted the driving behaviors the car needed to learn, while also providing enough variation in the data so that the model could generalize its learnings. It was a rigorous process of trial and error, experimenting with different data sources and augmentation techniques, then fine-tuning the model architecture and parameters.
+
+Here are the final training and validation numbers.
+
+- **Track 1 model**:
+ - X training samples
+ - Y validation samples
+ - Z epochs
+- **Track 2 model** (repurposing the weights from Track 1 model):
+ - X training samples
+ - Y validation samples
+ - Z epochs
