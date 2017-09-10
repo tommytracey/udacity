@@ -25,10 +25,16 @@ For this project, I was able to build models that navigated both Track 1 and Tra
 
 Here are the videos that show these models successfully completing one lap around each track.
 
-[embed video 1]
-[embed video 2]
+**Track 1**
 
-&nbsp;
+<iframe width="560" height="315" src="https://www.youtube.com/embed/rJieV8ADRq4?rel=0" frameborder="0" allowfullscreen></iframe>
+
+##### &nbsp;
+**Track 2**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/yUl-1NCk2ac?rel=0" frameborder="0" allowfullscreen></iframe>
+
+#### &nbsp;
 ### Summary of My Approach
 You can find a detailed walk-through of my approach and the various parts of my pipeline in the following Jupyter notebooks for [Track 1]() and [Track 2](). In the next section, I will outline how I addressed the required aspects of this project. But first, I want to highlight a few of the explorations that I conducted, which go beyond the required scope of this project. There are three in particular that I found particularly useful while iterating on my model.
 
