@@ -18,7 +18,7 @@ Here are the videos that show these models successfully completing one lap aroun
 &nbsp;
 **Track 1**
 
-[<img src='results/track1.png' width="60%" target="_blank"/>](https://www.youtube.com/embed/rJieV8ADRq4?rel=0)
+<a href="https://www.youtube.com/embed/rJieV8ADRq4?rel=0" target="_blank"><img src="results/track1.png" width="60%" /></a>
 
 
 ##### &nbsp;
