@@ -9,16 +9,6 @@ The goals of this project are to:
 * Test that the model successfully drives around track one without leaving the road
 
 
-[//]: # (Image References)
-
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
-
 &nbsp;
 ### Summary of Results
 For this project, I was able to build models that navigated both Track 1 and Track 2 (the challenge track) autonomously. The model for Track 1 was able to navigate the track at the maximum allowed speed of 30 MPH. The model for Track 2 &mdash; which was trained using the weights from the Track 1 model &mdash; was set at 21 MPH, but reached speeds up to 30 MPH in some sections.
@@ -27,12 +17,14 @@ Here are the videos that show these models successfully completing one lap aroun
 
 **Track 1**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/rJieV8ADRq4?rel=0" frameborder="0" allowfullscreen></iframe>
+[<img src='results/track1.png' width="60%"/>](https://www.youtube.com/embed/rJieV8ADRq4?rel=0)
+
 
 ##### &nbsp;
 **Track 2**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/yUl-1NCk2ac?rel=0" frameborder="0" allowfullscreen></iframe>
+[<img src='results/track2.png' width="60%"/>](https://www.youtube.com/embed/yUl-1NCk2ac?rel=0)
+
 
 #### &nbsp;
 ### Summary of My Approach
@@ -52,7 +44,7 @@ Here is an example. Below you can see a set of training images with their corres
 
 [(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1359)
 
-![generator-output](/results/generator-output.png)
+![generator-output](results/generator-output.png)
 
 &nbsp;
 
@@ -65,7 +57,7 @@ Finding the right distribution took some experimentation. If it's too steep then
 [(source code)]()
 
 
-![distribution](/results/distribution-flattened.png)
+![distribution](results/distribution-flattened.png)
 
 
 &nbsp;
@@ -78,7 +70,7 @@ For example, here we see a sample of model filters for right turns (steering ang
 
 [(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/3-behavioral-cloning/model.py#L1529)
 
-![left_turn_filter](/results/filters-left-turns.png)
+![left_turn_filter](results/filters-left-turns.png)
 
 
 &nbsp;
@@ -184,7 +176,7 @@ model.summary()
 
 The model was trained and validated on different data sets to ensure that the model was not overfitting. Here are some of the training and validation accuracies recorded for the Track 1 model.
 
-![epochs](/results/track1-training-epochs.png)
+![epochs](results/track1-training-epochs.png)
 
 
 I also used L2 regularization to reduce the magnitude of the weights. After some experimentation, I settled on an L2 decay rate of 0.001.
@@ -193,7 +185,7 @@ Initially, I experimented with dropouts on the fully connected layers, but I fou
 
 The ultimate test was running the model through the simulator. If the model was overfitting, it wouldn't be able to stay on the track. For example, I had one model that I'd overfit so badly on turning data that it perpetually drove in circles!
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/nVyhEbB7k64?rel=0" frameborder="0" allowfullscreen></iframe>
+[<img src='results/circles.png' width="60%"/>](https://youtu.be/-Urr1l-_HK8)
 
 &nbsp;
 ##### 3. Model parameter tuning
