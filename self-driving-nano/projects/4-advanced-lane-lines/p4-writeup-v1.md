@@ -20,12 +20,12 @@ For this project, I was able to accurately detect the driving lane and project i
 
 &nbsp;
 
-<a href="https://www.youtube.com/embed/rJieV8ADRq4?rel=0" target="_blank"><img src="results/track1.png" width="60%" /></a>
+<a href="https://www.youtube.com/watch?v=Zh3mrU5ELKQ" target="_blank"><img src="results/video-thumbnail.png" width="60%" /></a>
 
 
 &nbsp;
 ### My Approach
-You can find a step-by-step breakdown of my approach and the various parts of my pipeline [here in this Jupyter notebook](). In the next section, I will outline how I addressed the required aspects of this project.
+You can find a step-by-step breakdown of my approach and the various parts of my pipeline [here in this Jupyter notebook](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.ipynb). In the next section, I will outline how I addressed the required aspects of this project.
 
 
 &nbsp;
@@ -43,32 +43,56 @@ I start by preparing "object points", which will be the (x, y, z) coordinates of
 
 I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result:
 
-[(source code)]()
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L93)
 
-<img src='results/ABCDE.png' width="60%"/>
+<img src='results/chess-boards.png' width="80%"/>
 
 &nbsp;
-### Pipeline (single images)
+### Pipeline
 
 &nbsp;
 #### 1. Provide an example of a distortion-corrected image.
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+Now that we've calibrated our camera, we can apply the resulting matrix from the [stored calibration](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/camera_cal/calibration1.p) to correct the distortion in our driving images.
 
-<img src='results/ABCDE.png' width="60%"/>
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L175)
+
+In the example below, the distortion correction is most noticeable if you look at the traffic sign on the left side of the road. You'll notice that the sign now appears closer and it faces the viewer straight on instead of at an angle.
+
+<img src='results/undistorted.png' width="80%"/>
 
 &nbsp;
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-[(source code)]()
+I used a combination of color and gradient thresholds to identify lane lines within the driving images and then generate a binary image. But determining which gradients and which parameters yield the best results requires a lot of trial and error. To make this tuning process more efficient, I used this [Jupyter Widgets function](http://ipywidgets.readthedocs.io/en/stable/examples/Using%20Interact.html), which allows you to tune the parameters and instantly view the results within your Jupyter notebook. A very useful tool!
 
-<img src='results/ABCDE.png' width="60%"/>
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L54)
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+<img src='results/threshold-controls-2.gif' width="60%"/>
 
-[(source code)]()
+&nbsp;
 
-<img src='results/ABCDE.png' width="60%"/>
+After experimenting with lots of different threshold parameters, I was able to produce optimal results for each gradient. Here are the individual gradients I explore.
+
+[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L368)
+
+![x-gradient](results/x-gradient.png)
+
+![y-gradient](results/y-gradient.png)
+
+![mag-gradient](results/mag-gradient.png)
+
+![dir-gradient](results/dir-gradient.png)
+
+&nbsp;
+#### Color Channels
+
+I also used this approach to evaluate different color channels.
+
+
+
+
+
 
 &nbsp;
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
@@ -117,6 +141,8 @@ I verified that my perspective transform was working as expected by drawing the 
 
 Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
 
+< insert equations >
+
 [(source code)]()
 
 <img src='results/ABCDE.png' width="60%"/>
@@ -148,4 +174,13 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 &nbsp;
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
+
+
+#### Things that worked:
+
+
+
+#### Things that didn't work:
+
+* CLAHE

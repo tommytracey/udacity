@@ -268,7 +268,7 @@ def abs_thresh_image(image: fixed(img), orient:('x','y')='x', sobel_kernel:(3,21
 
 # ### Gradient Magnitude
 
-# In[8]:
+# In[94]:
 
 
 # Gradient magnitude using both X and Y
@@ -296,7 +296,7 @@ def mag_thresh(img, sobel_kernel=3, thresh=(0, 255)):
     return binary_output
 
 
-# In[38]:
+# In[95]:
 
 
 ## Interactive version for tuning threshold parameters (only works while running Jupyter Notebook)
@@ -434,7 +434,7 @@ show_RGB(gray, gray_binary, chan1='gray', title1='Grayscale', title2='Grayscale 
 # 
 # More information explaning this method is available [here in the OpenCV docs](http://docs.opencv.org/3.1.0/d5/daf/tutorial_py_histogram_equalization.html).
 
-# In[15]:
+# In[92]:
 
 
 # CLAHE threshold function
@@ -458,7 +458,7 @@ def clahe_thresh(img, thresh=182):
     return clahe_binary
 
 
-# In[40]:
+# In[93]:
 
 
 ## Interactive version for tuning threshold parameters (only works while running Jupyter Notebook)
