@@ -1155,12 +1155,12 @@ def get_vertices(img):
     img_width, img_height = img.shape[1], img.shape[0]
     
     # Define the region of interest
-    y_mid = img_size[0]/2       # midpoint of image width y
-    x_mid = img_size[1]/2       # midpoint of image height x
-    y_up_off = 80               # y offset for upper vertices of ROI polynomial
-    y_low_off = 450             # y offset for lower vertices of ROI polynomial
-    x_up_off = 110
-    x_low_off = 350
+    y_mid = img_size[0]/2   # midpoint of image width y
+    x_mid = img_size[1]/2   # midpoint of image height x
+    y_up_off = 80           # y offset from horizontal midpoint for calculating upper vertices of ROI polynomial
+    y_low_off = 450         # y offset from horizontal midpoint for calculating lower vertices of ROI polynomial
+    x_up_off = 110          # x offset from vertical midpoint for calculating upper vertices of ROI polynomial
+    x_low_off = 350         # x offset from vertical midpoint for calculating lower vertices of ROI polynomial
     
     points = [
         (y_mid - y_up_off, x_mid + x_up_off),   
@@ -1216,6 +1216,18 @@ straight2_warp, straight2_M, straight2_Minv = perspective_transform(warp_test_b,
 
 show_RGB(warp_test_a, straight1_warp, chan2='BGR', title1='test image', title2='perspective transform') 
 show_RGB(warp_test_b, straight2_warp, chan2='BGR', title1='test image', title2='perspective transform') 
+
+
+# In[96]:
+
+
+src
+
+
+# In[97]:
+
+
+dst
 
 
 # In[339]:
