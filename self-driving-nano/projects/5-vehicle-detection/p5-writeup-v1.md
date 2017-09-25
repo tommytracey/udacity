@@ -37,7 +37,7 @@ In the next section, I will outline how I addressed each aspect of the project. 
 ### Step 0 | Import & Visualize Data
 For the initial preparation, I imported the dataset and appended the proper labels. I then previewed a small sample to make sure the images were labeled correctly. As you can see via the sample below, the dataset includes two image classes: vehicles (labeled 1) and  non-vehicles (labeled 0).
 
-[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L299)
+([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L299))
 
 <img src='results/image-preview.png' width="100%"/>
 
@@ -76,7 +76,7 @@ I then checked to make sure the distribution of training and testing were balanc
 
 Lastly, I trained the classifier on the data set and calculated the accuracy.
 
-[(source code)](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L380)
+([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L380))
 
 &nbsp;
 
@@ -124,7 +124,7 @@ You can see that the final method includes:
 * window scales of 1.0 to 4.0
 * ystart positions of 400, 416, 432, and 464
 
-[(source code)]()
+([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L611))
 
 ```python
 def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, cell_per_block=2, hog_channel='ALL'):
@@ -254,36 +254,80 @@ Resulting bounding boxes:
 
 <img src='results/bbox-test.png' width="100%"/>
 
-
-
 &nbsp;
 
-### Step 4 | Video Pipeline
+### Step 4 | Vehicle Detection Pipeline
 
 #### 4.1 &nbsp; Filtering for false positives
 
 In the previous step, we use the [`apply_threshold()`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L75) function as an initial filter for false positives. This ensures that objects with a low number of window detections don't get register as positive detections.
 
-However, testing on the complete video revealed that this method alone was insufficient. So I added a complimentary method that uses a history of detections from the previous series of frames within the video. This mimics the [`moving_average`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L1613) approach I used as smoothing technique in the previous project (which uses the history of lane parameters to calculate the final lane projections using a moving average). But, for this project, instead of using the history as a moving average, its used to create a dynamic threshold for detection. In other words, the threshold is higher when there are lots of detections in the previous sequence of frames in the video. Increasing the threshold in this way helps make the detection algorithm less sensitive, and in turn, reduces the number of false positives. 
+However, testing on the complete video revealed that this method alone was insufficient. So I added a [complimentary method](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L794) that uses a history of detections from the previous series of frames within the video. This mimics the [`moving_average`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L1613) approach I used as smoothing technique in the previous project, which uses the history of lane parameters to calculate the final lane projections using a moving average. But, for this project, instead of using the history to calculate a moving average, its used to calculate a dynamic threshold for detection. In other words, the threshold is higher when there are lots of detections in the previous sequence of frames in the video. Increasing the threshold in this way helps make the detection algorithm less sensitive, and in turn, reduces the number of false positives.
 
-([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L739))
+&nbsp;
 
+#### 4.2 &nbsp; Pipeline
 
-### Here are six frames and their corresponding heatmaps:
+([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L811))
 
-![alt text][image5]
+```python
+def vehicle_pipeline(img):
+    '''Pipeline for detecting cars and drawing bounding boxes. Processes frames taking into account
+    recent history of bounding boxes in previous frames.
+    '''
+    rectangles = mult_sliding_windows(img)
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
+    # add detections to the history
+    if len(rectangles) > 0:
+        det.add_rects(rectangles)
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+    heatmap_img = np.zeros_like(img[:,:,0])
+    for rect_set in det.prev_rects:
+        heatmap_img = add_heat(heatmap_img, rect_set)
+    heatmap_img = apply_threshold(heatmap_img, 1 + len(det.prev_rects)//2)
 
+    labels = label(heatmap_img)
+    draw_img, rect = draw_labeled_bboxes(np.copy(img), labels)
 
+    return draw_img
+```
+
+&nbsp;
+
+### Step 5 | Combine Lane & Vehicle Detection Pipelines
+In this last step, I combine my lane detection pipeline from Project 4 with the vehicle detection pipeline above.
+
+&nbsp;
+
+#### 5.1 &nbsp; Add Lane Detection Pipeline
+
+([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L860))
+
+&nbsp;
+
+#### 5.2 &nbsp; Integrate Into Single Pipeline
+
+([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L1333))
+
+```python
+def lane_car(img):
+    car_img = vehicle_pipeline(img)
+    lane_img = lane_pipeline(car_img)
+
+    return lane_img
+```
+
+&nbsp;
+
+#### 5.3 &nbsp; Final Video Output
+
+<a href="https://youtu.be/npIloiy1vMM"><img src="results/video-thumbnail.png" width="60%" /></a>
+
+&nbsp;
 
 ---
 
-###Discussion
+### Discussion
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
