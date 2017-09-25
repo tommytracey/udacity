@@ -74,7 +74,7 @@ I then checked to make sure the distribution of training and testing were balanc
 
 <img src='results/distribution.png' width="50%"/>
 
-Lastly, I trained the classifier on the data set and calculated the accuracy.
+Lastly, I trained the classifier on the data set and calculated the accuracy. As you can see from the table above, the optimization process was good ol' fashioned trial and error. :)
 
 ([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L380))
 
@@ -232,7 +232,7 @@ Resulting heatmap using the [`add_heat()`](https://github.com/tommytracey/udacit
 
 &nbsp;
 
-Then we use the [`apply_threshold()`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L75) function to reduce the number of false positives.  
+Then we use the [`apply_threshold()`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L75) function to reduce the number of false positives. Notice how the blobs are slightly more compact.
 
 Heatmap with threshold applied:
 
@@ -250,7 +250,7 @@ Labeled heatmap:
 
 Lastly, I used [`draw_labeled_bboxes()`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L125) to draw bounding boxes around each labled area.
 
-Resulting bounding boxes:
+Resulting bounding boxes for all test images:
 
 <img src='results/bbox-test.png' width="100%"/>
 
@@ -262,7 +262,7 @@ Resulting bounding boxes:
 
 In the previous step, we use the [`apply_threshold()`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L75) function as an initial filter for false positives. This ensures that objects with a low number of window detections don't get register as positive detections.
 
-However, testing on the complete video revealed that this method alone was insufficient. So I added a [complimentary method](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L794) that uses a history of detections from the previous series of frames within the video. This mimics the [`moving_average`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L1613) approach I used as smoothing technique in the previous project, which uses the history of lane parameters to calculate the final lane projections using a moving average. But, for this project, instead of using the history to calculate a moving average, its used to calculate a dynamic threshold for detection. In other words, the threshold is higher when there are lots of detections in the previous sequence of frames in the video. Increasing the threshold in this way helps make the detection algorithm less sensitive, and in turn, reduces the number of false positives.
+However, testing on the complete video revealed that this method alone was insufficient. So I added a [complimentary method](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L794) that uses a history of detections from the previous series of frames within the video. This mimics the [`moving_average()`](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/4-advanced-lane-lines/p4-advanced-lane-detection-final.py#L1613) approach I used as smoothing technique in the previous project, which uses the history of lane parameters to calculate the final lane projections using a moving average. But, for this project, instead of using the history to calculate a moving average, its used to calculate a dynamic threshold for detection. In other words, the threshold is higher when there are lots of detections in the previous sequence of frames in the video. Increasing the threshold in this way helps make the detection algorithm less sensitive, and in turn, reduces the number of false positives.
 
 &nbsp;
 
@@ -297,13 +297,9 @@ def vehicle_pipeline(img):
 ### Step 5 | Combine Lane & Vehicle Detection Pipelines
 In this last step, I combine my lane detection pipeline from Project 4 with the vehicle detection pipeline above.
 
-&nbsp;
-
 #### 5.1 &nbsp; Add Lane Detection Pipeline
 
 ([source code](https://github.com/tommytracey/udacity/blob/master/self-driving-nano/projects/5-vehicle-detection/p5-vehicle-detection-final.py#L860))
-
-&nbsp;
 
 #### 5.2 &nbsp; Integrate Into Single Pipeline
 
@@ -327,8 +323,20 @@ def lane_car(img):
 
 ---
 
-### Discussion
+## Highlights, Problems, & Areas for Exploration
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+&nbsp;
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+#### Highlights / Things that worked well:
+* I was surprised at how well the sliding window technique worked once it was setup with different window sizes, positions, and overlaps. You can imagine that this method may have been a precursor to the convolutional filters now used in neural networks for image detection. After having worked with CNNs already, it was cool to use this sliding window technique, even if it does seem a bit primitive.
+
+#### Lowlights / Things that didn't work well:
+* The window parameter tuning process was quite tedious. It seems that using a neural network would be much more efficient and yield better results.
+
+#### Other potential problems:
+Things that are likely to break the current solution (but were not tested):
+* Variations in vehicle types (i.e. motorcycles, semi-trucks)
+* Variations in light and weather conditions 
+
+#### Things to explore
+* Instead of using a SVM classifier, use an convolutional neural network (CNN) such as the You Only Look Once (YOLO) model.
