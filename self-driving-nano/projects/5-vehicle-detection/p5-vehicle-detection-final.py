@@ -349,7 +349,9 @@ preview_images(40)
 # Perform a Histogram of Oriented Gradients (HOG) feature extraction on a labeled training set of images and train a classifier Linear SVM classifier
 # 
 
-# In[78]:
+# #### Preview Examples of HOG Output
+
+# In[306]:
 
 
 randint = np.random.randint(0, len(non_vehicles))
@@ -359,6 +361,54 @@ _, car_dst = get_hog_features(car_img[:,:,2], 9, 8, 8, vis=True, feature_vec=Tru
 
 noncar_img = mpimg.imread(non_vehicles[randint])
 _, noncar_dst = get_hog_features(noncar_img[:,:,2], 9, 8, 8, vis=True, feature_vec=True)
+
+# Visualize results
+f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(7,7))
+f.subplots_adjust(hspace = .4, wspace=.2)
+ax1.imshow(car_img)
+ax1.set_title('Car Image', fontsize=16)
+ax2.imshow(car_dst, cmap='gray')
+ax2.set_title('Car HOG', fontsize=16)
+ax3.imshow(noncar_img)
+ax3.set_title('Non-Car Image', fontsize=16)
+ax4.imshow(noncar_dst, cmap='gray')
+ax4.set_title('Non-Car HOG', fontsize=16)
+
+
+# In[313]:
+
+
+randint = np.random.randint(0, len(non_vehicles))
+
+car_img = mpimg.imread(vehicles[randint])
+_, car_dst = get_hog_features(car_img[:,:,2], 9, 8, 8, vis=True, feature_vec=True)
+
+noncar_img = mpimg.imread(non_vehicles[randint])
+_, noncar_dst = get_hog_features(noncar_img[:,:,2], 9, 8, 8, vis=True, feature_vec=True)
+
+# Visualize results
+f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(7,7))
+f.subplots_adjust(hspace = .4, wspace=.2)
+ax1.imshow(car_img)
+ax1.set_title('Car Image', fontsize=16)
+ax2.imshow(car_dst, cmap='gray')
+ax2.set_title('Car HOG', fontsize=16)
+ax3.imshow(noncar_img)
+ax3.set_title('Non-Car Image', fontsize=16)
+ax4.imshow(noncar_dst, cmap='gray')
+ax4.set_title('Non-Car HOG', fontsize=16)
+
+
+# In[318]:
+
+
+randint = np.random.randint(0, len(non_vehicles))
+
+car_img = mpimg.imread(vehicles[randint])
+_, car_dst = get_hog_features(car_img[:,:,2], 9, 8, 4, vis=True, feature_vec=True)
+
+noncar_img = mpimg.imread(non_vehicles[randint])
+_, noncar_dst = get_hog_features(noncar_img[:,:,2], 9, 8, 4, vis=True, feature_vec=True)
 
 # Visualize results
 f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(7,7))
@@ -555,7 +605,7 @@ print('Number of boxes:', len(rectangles))
 
 # ### Combine Multiple Sliding Window Searches
 
-# In[286]:
+# In[348]:
 
 
 def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, cell_per_block=2, hog_channel='ALL'):
@@ -568,19 +618,16 @@ def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, 
     scale = 1.0
     rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
                            orient, pix_per_cell, cell_per_block, None, None))
-
     ystart = 416
     ystop = 480
     scale = 1.0
     rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
                            orient, pix_per_cell, cell_per_block, None, None))
-
     ystart = 432
     ystop = 528
     scale = 1.5
     rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
                            orient, pix_per_cell, cell_per_block, None, None))
-
     # 96 pixel windows
     ystart = 400
     ystop = 496
@@ -592,7 +639,6 @@ def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, 
     scale = 1.5
     rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
                            orient, pix_per_cell, cell_per_block, None, None))
-
     # 128 pixel windows
     ystart = 400
     ystop = 528
@@ -609,7 +655,17 @@ def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, 
     scale = 2.0
     rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
                            orient, pix_per_cell, cell_per_block, None, None))
-
+    # 164 pixel windows
+    ystart = 432
+    ystop = 596
+    scale = 2.5
+    rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
+                           orient, pix_per_cell, cell_per_block, None, None))
+    ystart = 464
+    ystop = 628
+    scale = 2.5
+    rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
+                           orient, pix_per_cell, cell_per_block, None, None)) 
     # 196 pixel windows
     ystart = 400
     ystop = 596
@@ -621,7 +677,6 @@ def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, 
     scale = 3.5
     rectangles.append(find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, 
                            orient, pix_per_cell, cell_per_block, None, None))
-
     # 256 pixel window
     ystart = 400
     ystop = 656
@@ -635,7 +690,7 @@ def mult_sliding_windows(test_img, colorspace='YUV', orient=9, pix_per_cell=16, 
     return rectangles
 
 
-# In[181]:
+# In[343]:
 
 
 # Visualize window clusters / positive detections
@@ -650,7 +705,7 @@ plt.imshow(test_img_rects)
 # ### Heatmap
 # Create a heatmap which shows areas with the highest number of windows / detections.
 
-# In[166]:
+# In[344]:
 
 
 # Generate heat map
@@ -661,7 +716,7 @@ plt.figure(figsize=(10,10))
 plt.imshow(heatmap_img, cmap='hot')
 
 
-# In[168]:
+# In[345]:
 
 
 # Apply threshold to remove low intesity detections
@@ -674,7 +729,7 @@ plt.imshow(heatmap_img, cmap='hot')
 # ### Convert Heatmap into Car Labels
 # Convert heatmaps into labeled detection zones so that a single bounding box can be drawn for each car (in next step).
 
-# In[169]:
+# In[346]:
 
 
 labels = label(heatmap_img)
@@ -685,7 +740,7 @@ print(labels[1], 'cars found')
 
 # ### Draw Bounding Boxes
 
-# In[174]:
+# In[347]:
 
 
 # Draw bounding boxes on a copy of the image
@@ -703,7 +758,7 @@ plt.imshow(draw_img)
 # ## Step 4 | Video Stream
 # Run your pipeline on a video stream with recurring detections frame by frame that reject outliers and follow detected vehicles.
 
-# In[295]:
+# In[349]:
 
 
 def process_single_frame(img):
@@ -719,7 +774,7 @@ def process_single_frame(img):
     return draw_img
 
 
-# In[183]:
+# In[350]:
 
 
 test_images = glob.glob('test_images/test*.jpg')
