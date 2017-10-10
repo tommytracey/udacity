@@ -332,6 +332,11 @@ def lane_car(img):
 
 #### Lowlights / Things that didn't work well:
 * The parameter tuning process was quite tedious. It seems that using a neural network would be much more efficient and yield better results.
+* There is still one false positive in the final video that I wasn't able to eradicate with compromising detection abilities or road coverage/visibility.
+
+<img src='results/false-positive.png' width="70%"/>
+
+&nbsp;
 
 #### Other potential problems:
 Things that are likely to break the current solution (but were not tested):
