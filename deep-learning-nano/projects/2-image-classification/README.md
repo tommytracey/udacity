@@ -1,6 +1,13 @@
+### Deep Learning Foundations Nanodegree
+# Project: Image Classification
 
-# Image Classification
-In this project, you'll classify images from the [CIFAR-10 dataset](https://www.cs.toronto.edu/~kriz/cifar.html).  The dataset consists of airplanes, dogs, cats, and other objects. You'll preprocess the images, then train a convolutional neural network on all the samples. The images need to be normalized and the labels need to be one-hot encoded.  You'll get to apply what you learned and build a convolutional, max pooling, dropout, and fully connected layers.  At the end, you'll get to see your neural network's predictions on the sample images.
+---
+# Results
+The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/deep-learning-nano/projects/2-image-classification/dlnd_image_classification-v2.ipynb).
+
+## Overview
+In this project, we classify images from the [CIFAR-10 dataset](https://www.cs.toronto.edu/~kriz/cifar.html).  The dataset consists of airplanes, dogs, cats, and other objects. You'll preprocess the images, then train a convolutional neural network on all the samples. The images need to be normalized and the labels need to be one-hot encoded.  We get to apply what you learned and build a convolutional, max pooling, dropout, and fully connected layers.  At the end, we get to see your neural network's predictions on the sample images.
+
 ## Get the Data
 Run the following cell to download the [CIFAR-10 dataset for python](https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz).
 
@@ -75,12 +82,12 @@ sample_id = 5
 helper.display_stats(cifar10_dataset_folder_path, batch_id, sample_id)
 ```
 
-    
+
     Stats of batch 1:
     Samples: 10000
     Label Counts: {0: 1005, 1: 974, 2: 1032, 3: 1016, 4: 999, 5: 937, 6: 1030, 7: 1001, 8: 1025, 9: 981}
     First 20 Labels: [6, 9, 9, 4, 1, 1, 2, 7, 8, 3, 4, 7, 7, 2, 9, 9, 9, 3, 2, 6]
-    
+
     Example of Image 5:
     Image - Min Value: 0 Max Value: 252
     Image - Shape: (32, 32, 3)
@@ -185,7 +192,7 @@ For the neural network, you'll build each layer into a function.  Most of the co
 
 >**Note:** If you're finding it hard to dedicate enough time for this course each week, we've provided a small shortcut to this part of the project. In the next couple of problems, you'll have the option to use classes from the [TensorFlow Layers](https://www.tensorflow.org/api_docs/python/tf/layers) or [TensorFlow Layers (contrib)](https://www.tensorflow.org/api_guides/python/contrib.layers) packages to build each layer, except the layers you build in the "Convolutional and Max Pooling Layer" section.  TF Layers is similar to Keras's and TFLearn's abstraction to layers, so it's easy to pickup.
 
->However, if you would like to get the most out of this course, try to solve all the problems _without_ using anything from the TF Layers packages. You **can** still use classes from other packages that happen to have the same name as ones you find in TF Layers! For example, instead of using the TF Layers version of the `conv2d` class, [tf.layers.conv2d](https://www.tensorflow.org/api_docs/python/tf/layers/conv2d), you would want to use the TF Neural Network version of `conv2d`, [tf.nn.conv2d](https://www.tensorflow.org/api_docs/python/tf/nn/conv2d). 
+>However, if you would like to get the most out of this course, try to solve all the problems _without_ using anything from the TF Layers packages. You **can** still use classes from other packages that happen to have the same name as ones you find in TF Layers! For example, instead of using the TF Layers version of the `conv2d` class, [tf.layers.conv2d](https://www.tensorflow.org/api_docs/python/tf/layers/conv2d), you would want to use the TF Neural Network version of `conv2d`, [tf.nn.conv2d](https://www.tensorflow.org/api_docs/python/tf/nn/conv2d).
 
 Let's begin!
 
@@ -278,14 +285,14 @@ def conv2d_maxpool(x_tensor, conv_num_outputs, conv_ksize, conv_strides, pool_ks
     """
     # Weight and bias
     x_depth = x_tensor.get_shape().as_list()[3]
-    
+
     weight = tf.Variable(tf.truncated_normal([*conv_ksize, x_depth, conv_num_outputs],\
                                           dtype=tf.float32, mean=0.0, stddev=0.1))
     bias = tf.Variable(tf.zeros(conv_num_outputs))
 
     # Apply convolution, bias, and non-linear activation
     conv_strides_list = [1, conv_strides[0], conv_strides[1], 1]
-    
+
     conv_layer = tf.nn.conv2d(tf.to_float(x_tensor), weight, strides=conv_strides_list, padding='SAME')
     conv_layer = tf.nn.bias_add(conv_layer, bias)
     conv_layer = tf.nn.relu(conv_layer)
@@ -319,7 +326,7 @@ def flatten(x_tensor):
     : return: A tensor of size (Batch Size, Flattened Image Size).
     """
     shape = x_tensor.get_shape().as_list()
-    dim = shape[1] * shape[2] * shape[3] 
+    dim = shape[1] * shape[2] * shape[3]
     return tf.reshape(x_tensor, [-1, dim])
 
 
@@ -347,10 +354,10 @@ def fully_conn(x_tensor, num_outputs):
     conv_inputs = x_tensor.get_shape().as_list()[1]
     weight = tf.Variable(tf.truncated_normal([conv_inputs, num_outputs], mean=0.0, stddev=0.01))
     bias = tf.Variable(tf.zeros(num_outputs))
-    
+
     fc_layer = tf.add(tf.matmul(x_tensor, weight), bias)
     return tf.nn.relu(fc_layer)
-              
+
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
@@ -379,7 +386,7 @@ def output(x_tensor, num_outputs):
     weight = tf.Variable(tf.random_normal([fc_inputs, num_outputs], mean=0.0, stddev=0.01))
     bias = tf.Variable(tf.zeros(num_outputs))
     return tf.add(tf.matmul (x_tensor, weight), bias)
-  
+
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
@@ -398,7 +405,7 @@ Implement the function `conv_net` to create a convolutional neural network model
 * Apply 1, 2, or 3 Fully Connected Layers
 * Apply an Output Layer
 * Return the output
-* Apply [TensorFlow's Dropout](https://www.tensorflow.org/api_docs/python/tf/nn/dropout) to one or more layers in the model using `keep_prob`. 
+* Apply [TensorFlow's Dropout](https://www.tensorflow.org/api_docs/python/tf/nn/dropout) to one or more layers in the model using `keep_prob`.
 
 
 ```python
@@ -432,7 +439,7 @@ def conv_net(x, keep_prob):
     # Fully connected layer(s)
     fc = fully_conn(flat, num_outputs)
     fc = tf.nn.dropout(fc, tf.to_float(keep_prob))
-    
+
     # Output layer
     out = output(fc, 10)
 
@@ -525,9 +532,9 @@ def print_stats(session, feature_batch, label_batch, cost, accuracy):
     : accuracy: TensorFlow accuracy function
     """
     current_cost = session.run(cost, feed_dict={x: feature_batch, y: label_batch, keep_prob: 1.0})
-    
+
     valid_accuracy = session.run(accuracy, feed_dict={x: valid_features, y: valid_labels, keep_prob: 1.0})
-    
+
     print('Epoch: {:<4} - Cost: {:<8.3} Valid Accuracy: {:<5.3}'.format(
         epoch,
         current_cost,
@@ -564,7 +571,7 @@ print('Checking the Training on a Single Batch...')
 with tf.Session() as sess:
     # Initializing the variables
     sess.run(tf.global_variables_initializer())
-    
+
     # Training cycle
     for epoch in range(epochs):
         batch_i = 1
@@ -616,7 +623,7 @@ print('Training...')
 with tf.Session() as sess:
     # Initializing the variables
     sess.run(tf.global_variables_initializer())
-    
+
     # Training cycle
     for epoch in range(epochs):
         # Loop over all batches
@@ -626,7 +633,7 @@ with tf.Session() as sess:
                 train_neural_network(sess, optimizer, keep_probability, batch_features, batch_labels)
             print('Epoch {:>2}, CIFAR-10 Batch {}:  '.format(epoch + 1, batch_i), end='')
             print_stats(sess, batch_features, batch_labels, cost, accuracy)
-            
+
     # Save Model
     saver = tf.train.Saver()
     save_path = saver.save(sess, save_model_path)
@@ -634,7 +641,7 @@ with tf.Session() as sess:
 
     Training...
     Epoch  1, CIFAR-10 Batch 1:  Epoch: 0    - Cost: 1.98     Valid Accuracy: 0.378
-    Epoch  1, CIFAR-10 Batch 2:  Epoch: 0    - Cost: 1.56     Valid Accuracy: 0.41 
+    Epoch  1, CIFAR-10 Batch 2:  Epoch: 0    - Cost: 1.56     Valid Accuracy: 0.41
     Epoch  1, CIFAR-10 Batch 3:  Epoch: 0    - Cost: 1.26     Valid Accuracy: 0.496
     Epoch  1, CIFAR-10 Batch 4:  Epoch: 0    - Cost: 1.27     Valid Accuracy: 0.522
     Epoch  1, CIFAR-10 Batch 5:  Epoch: 0    - Cost: 1.23     Valid Accuracy: 0.583
@@ -707,8 +714,8 @@ with tf.Session() as sess:
     Epoch 15, CIFAR-10 Batch 2:  Epoch: 14   - Cost: 0.00721  Valid Accuracy: 0.701
     Epoch 15, CIFAR-10 Batch 3:  Epoch: 14   - Cost: 0.00424  Valid Accuracy: 0.715
     Epoch 15, CIFAR-10 Batch 4:  Epoch: 14   - Cost: 0.0123   Valid Accuracy: 0.722
-    Epoch 15, CIFAR-10 Batch 5:  Epoch: 14   - Cost: 0.00479  Valid Accuracy: 0.71 
-    Epoch 16, CIFAR-10 Batch 1:  Epoch: 15   - Cost: 0.00379  Valid Accuracy: 0.73 
+    Epoch 15, CIFAR-10 Batch 5:  Epoch: 14   - Cost: 0.00479  Valid Accuracy: 0.71
+    Epoch 16, CIFAR-10 Batch 1:  Epoch: 15   - Cost: 0.00379  Valid Accuracy: 0.73
     Epoch 16, CIFAR-10 Batch 2:  Epoch: 15   - Cost: 0.00291  Valid Accuracy: 0.703
     Epoch 16, CIFAR-10 Batch 3:  Epoch: 15   - Cost: 0.0135   Valid Accuracy: 0.717
     Epoch 16, CIFAR-10 Batch 4:  Epoch: 15   - Cost: 0.0205   Valid Accuracy: 0.724
@@ -718,7 +725,7 @@ with tf.Session() as sess:
     Epoch 17, CIFAR-10 Batch 3:  Epoch: 16   - Cost: 0.0134   Valid Accuracy: 0.728
     Epoch 17, CIFAR-10 Batch 4:  Epoch: 16   - Cost: 0.00776  Valid Accuracy: 0.728
     Epoch 17, CIFAR-10 Batch 5:  Epoch: 16   - Cost: 0.00274  Valid Accuracy: 0.7  
-    Epoch 18, CIFAR-10 Batch 1:  Epoch: 17   - Cost: 0.0171   Valid Accuracy: 0.71 
+    Epoch 18, CIFAR-10 Batch 1:  Epoch: 17   - Cost: 0.0171   Valid Accuracy: 0.71
     Epoch 18, CIFAR-10 Batch 2:  Epoch: 17   - Cost: 0.00649  Valid Accuracy: 0.711
     Epoch 18, CIFAR-10 Batch 3:  Epoch: 17   - Cost: 0.00477  Valid Accuracy: 0.731
     Epoch 18, CIFAR-10 Batch 4:  Epoch: 17   - Cost: 0.0057   Valid Accuracy: 0.718
@@ -746,7 +753,7 @@ with tf.Session() as sess:
     Epoch 23, CIFAR-10 Batch 1:  Epoch: 22   - Cost: 0.00935  Valid Accuracy: 0.724
     Epoch 23, CIFAR-10 Batch 2:  Epoch: 22   - Cost: 0.00319  Valid Accuracy: 0.725
     Epoch 23, CIFAR-10 Batch 3:  Epoch: 22   - Cost: 0.00327  Valid Accuracy: 0.737
-    Epoch 23, CIFAR-10 Batch 4:  Epoch: 22   - Cost: 0.00464  Valid Accuracy: 0.72 
+    Epoch 23, CIFAR-10 Batch 4:  Epoch: 22   - Cost: 0.00464  Valid Accuracy: 0.72
     Epoch 23, CIFAR-10 Batch 5:  Epoch: 22   - Cost: 0.00265  Valid Accuracy: 0.723
     Epoch 24, CIFAR-10 Batch 1:  Epoch: 23   - Cost: 0.00247  Valid Accuracy: 0.716
     Epoch 24, CIFAR-10 Batch 2:  Epoch: 23   - Cost: 0.0101   Valid Accuracy: 0.719
@@ -808,11 +815,11 @@ def test_model():
         loaded_keep_prob = loaded_graph.get_tensor_by_name('keep_prob:0')
         loaded_logits = loaded_graph.get_tensor_by_name('logits:0')
         loaded_acc = loaded_graph.get_tensor_by_name('accuracy:0')
-        
+
         # Get accuracy in batches for memory limitations
         test_batch_acc_total = 0
         test_batch_count = 0
-        
+
         for train_feature_batch, train_label_batch in helper.batch_features_labels(test_features, test_labels, batch_size):
             test_batch_acc_total += sess.run(
                 loaded_acc,
@@ -833,7 +840,7 @@ test_model()
 ```
 
     Testing Accuracy: 0.7212223101265823
-    
+
 
 
 

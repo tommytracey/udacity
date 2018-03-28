@@ -1,8 +1,15 @@
+### Deep Learning Foundations Nanodegree
+# Project: Language Translation
 
-# Language Translation
-In this project, you’re going to take a peek into the realm of neural network machine translation.  You’ll be training a sequence to sequence model on a dataset of English and French sentences that can translate new sentences from English to French.
+---
+# Results
+The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/deep-learning-nano/projects/4-language-translation/dlnd_language_translation-v2.ipynb).
+
+## Overview
+In this project, we take a peek into the realm of neural network machine translation. We’ll be training a sequence to sequence model on a dataset of English and French sentences that can translate new sentences from English to French.
+
 ## Get the Data
-Since translating the whole language of English to French will take lots of time to train, we have provided you with a small portion of the English corpus.
+Since translating the whole language of English to French will take lots of time to train, Udacity has provided us with a small portion of the English corpus.
 
 
 ```python
@@ -50,7 +57,7 @@ print('\n'.join(target_text.split('\n')[view_sentence_range[0]:view_sentence_ran
     Roughly the number of unique words: 227
     Number of sentences: 137861
     Average number of words in a sentence: 13.225277634719028
-    
+
     English sentences 11 to 25:
     he saw a old yellow truck .
     india is rainy during june , and it is sometimes warm in november .
@@ -66,7 +73,7 @@ print('\n'.join(target_text.split('\n')[view_sentence_range[0]:view_sentence_ran
     india is never busy during autumn , and it is mild in spring .
     paris is mild during summer , but it is usually busy in april .
     france is never cold during september , and it is snowy in october .
-    
+
     French sentences 11 to 25:
     il a vu un vieux camion jaune .
     inde est pluvieux en juin , et il est parfois chaud en novembre .
@@ -126,7 +133,7 @@ def text_to_ids(source_text, target_text, source_vocab_to_int, target_vocab_to_i
     :param target_vocab_to_int: Dictionary to go from the target words to an id
     :return: A tuple of lists (source_id_text, target_id_text)
     """
-    
+
     x = [[source_vocab_to_int.get(word, 0) for word in sentence.split()] for sentence in source_text.split('\n')]
     y = [[target_vocab_to_int.get(word, 0) for word in sentence.split()] for sentence in target_text.split('\n')]
 
@@ -136,7 +143,7 @@ def text_to_ids(source_text, target_text, source_vocab_to_int, target_vocab_to_i
     for i in range(len(x)):
         source_id_text.append(x[i])
         target_id_text.append(y[i] + [target_vocab_to_int['<EOS>']])
-    
+
     return (source_id_text, target_id_text)
 
 """
@@ -227,12 +234,12 @@ def model_inputs():
     Create TF Placeholders for input, targets, and learning rate.
     :return: Tuple (input, targets, learning rate, keep probability)
     """
-    
+
     input_ = tf.placeholder(tf.int32, [None, None], name="input")
     targets = tf.placeholder(tf.int32, [None, None], name="targets")
     learning_rate = tf.placeholder(tf.float32, name="learning_rate")
     keep_prob = tf.placeholder(tf.float32, name="keep_prob")
-    
+
     return (input_, targets, learning_rate, keep_prob)
 
 """
@@ -257,10 +264,10 @@ def process_decoding_input(target_data, target_vocab_to_int, batch_size):
     :param batch_size: Batch Size
     :return: Preprocessed target data
     """
-    
+
     ending = tf.strided_slice(target_data, [0, 0], [batch_size, -1], [1, 1])
     dec_input = tf.concat([tf.fill([batch_size, 1], target_vocab_to_int['<GO>']), ending], 1)
-    
+
     return dec_input
 
 """
@@ -291,7 +298,7 @@ def encoding_layer(rnn_inputs, rnn_size, num_layers, keep_prob):
     dropout = tf.contrib.rnn.DropoutWrapper(lstm, output_keep_prob=keep_prob)
     cell = tf.contrib.rnn.MultiRNNCell([dropout] * num_layers)
     outputs, encoder_state = tf.nn.dynamic_rnn(cell, rnn_inputs, initial_state=None, dtype=tf.float32)
-    
+
     return encoder_state
 
 """
@@ -344,7 +351,7 @@ tests.test_decoding_layer_train(decoding_layer_train)
 
 
 ### Decoding - Inference
-Create inference logits using [`tf.contrib.seq2seq.simple_decoder_fn_inference()`](https://www.tensorflow.org/api_docs/python/tf/contrib/seq2seq/simple_decoder_fn_inference) and [`tf.contrib.seq2seq.dynamic_rnn_decoder()`](https://www.tensorflow.org/api_docs/python/tf/contrib/seq2seq/dynamic_rnn_decoder). 
+Create inference logits using [`tf.contrib.seq2seq.simple_decoder_fn_inference()`](https://www.tensorflow.org/api_docs/python/tf/contrib/seq2seq/simple_decoder_fn_inference) and [`tf.contrib.seq2seq.dynamic_rnn_decoder()`](https://www.tensorflow.org/api_docs/python/tf/contrib/seq2seq/dynamic_rnn_decoder).
 
 
 ```python
@@ -357,19 +364,19 @@ def decoding_layer_infer(encoder_state, dec_cell, dec_embeddings, start_of_seque
     :param dec_embeddings: Decoder embeddings
     :param start_of_sequence_id: GO ID
     :param end_of_sequence_id: EOS Id
-    :param maximum_length: Maximum length of 
+    :param maximum_length: Maximum length of
     :param vocab_size: Size of vocabulary
     :param decoding_scope: TensorFlow Variable Scope for decoding
     :param output_fn: Function to apply the output layer
     :param keep_prob: Dropout keep probability
     :return: Inference Logits
     """
-    
+
     infer_dec_fn = tf.contrib.seq2seq.simple_decoder_fn_inference(output_fn, encoder_state, dec_embeddings, \
                                                                   start_of_sequence_id, end_of_sequence_id, \
                                                                   maximum_length, vocab_size)
     infer_logits, _, _ = tf.contrib.seq2seq.dynamic_rnn_decoder(dec_cell, infer_dec_fn, scope=decoding_scope)
-    
+
     return infer_logits
 
 
@@ -409,11 +416,11 @@ def decoding_layer(dec_embed_input, dec_embeddings, encoder_state, vocab_size, s
     :param keep_prob: Dropout keep probability
     :return: Tuple of (Training Logits, Inference Logits)
     """
-    
+
     # Sequence variables
     start_of_sequence_id = target_vocab_to_int['<GO>']
     end_of_sequence_id = target_vocab_to_int['<EOS>']
-    
+
     # RNN cell
     dec_cell = tf.contrib.rnn.MultiRNNCell([tf.contrib.rnn.BasicLSTMCell(rnn_size)] * num_layers)
 
@@ -430,7 +437,7 @@ def decoding_layer(dec_embed_input, dec_embeddings, encoder_state, vocab_size, s
         infer_logits = decoding_layer_infer(encoder_state, dec_cell, dec_embeddings, start_of_sequence_id, \
                                             end_of_sequence_id, sequence_length, vocab_size, decoding_scope, \
                                             output_fn, keep_prob)
-        
+
     return (train_logits, infer_logits)
 
 
@@ -475,21 +482,21 @@ def seq2seq_model(input_data, target_data, keep_prob, batch_size, sequence_lengt
 
     # Apply embedding to input data for encoder
     enc_embed_input = tf.contrib.layers.embed_sequence(input_data, source_vocab_size, enc_embedding_size)
-    
+
     # Encode input using encoding_layer()
     encoder_state = encoding_layer(enc_embed_input, rnn_size, num_layers, keep_prob)
-    
+
     # Process targets using process_decoding_input()
     dec_input = process_decoding_input(target_data, target_vocab_to_int, batch_size)
-    
+
     # Apply embedding to the target data for decoder
     dec_embeddings = tf.Variable(tf.random_uniform([target_vocab_size, dec_embedding_size]))
     dec_embed_input = tf.nn.embedding_lookup(dec_embeddings, dec_input)
-    
+
     # Decode the encoded input using decoding_layer()
     logits = decoding_layer(dec_embed_input, dec_embeddings, encoder_state, target_vocab_size, \
                                sequence_length, rnn_size, num_layers, target_vocab_to_int, keep_prob)
-    
+
     return logits
 
 
@@ -551,7 +558,7 @@ with train_graph.as_default():
     input_data, targets, lr, keep_prob = model_inputs()
     sequence_length = tf.placeholder_with_default(max_target_sentence_length, None, name='sequence_length')
     input_shape = tf.shape(input_data)
-    
+
     train_logits, inference_logits = seq2seq_model(
         tf.reverse(input_data, [-1]), targets, keep_prob, batch_size, sequence_length, len(source_vocab_to_int), len(target_vocab_to_int),
         encoding_embedding_size, decoding_embedding_size, rnn_size, num_layers, target_vocab_to_int)
@@ -614,7 +621,7 @@ with tf.Session(graph=train_graph) as sess:
         for batch_i, (source_batch, target_batch) in enumerate(
                 helper.batch_data(train_source, train_target, batch_size)):
             start_time = time.time()
-            
+
             _, loss = sess.run(
                 [train_op, cost],
                 {input_data: source_batch,
@@ -622,14 +629,14 @@ with tf.Session(graph=train_graph) as sess:
                  lr: learning_rate,
                  sequence_length: target_batch.shape[1],
                  keep_prob: keep_probability})
-            
+
             batch_train_logits = sess.run(
                 inference_logits,
                 {input_data: source_batch, keep_prob: 1.0})
             batch_valid_logits = sess.run(
                 inference_logits,
                 {input_data: valid_source, keep_prob: 1.0})
-                
+
             train_acc = get_accuracy(target_batch, batch_train_logits)
             valid_acc = get_accuracy(np.array(valid_target), batch_valid_logits)
             end_time = time.time()
@@ -866,7 +873,7 @@ def sentence_to_seq(sentence, vocab_to_int):
     :param vocab_to_int: Dictionary to go from the words to an id
     :return: List of word ids
     """
-    
+
     # Convert sentences to lowercase
     sent_lower = sentence.lower().split()
 
@@ -878,7 +885,7 @@ def sentence_to_seq(sentence, vocab_to_int):
         # Convert unknown words
         else:
             word_ids.append(vocab_to_int['<UNK>'])
-    
+
     return word_ids
 
 """
@@ -927,7 +934,7 @@ print('  French Words: {}'.format([target_int_to_vocab[i] for i in np.argmax(tra
     Input
       Word Ids:      [200, 105, 110, 141, 58, 65, 36]
       English Words: ['he', 'saw', 'a', 'old', 'yellow', 'truck', '.']
-    
+
     Prediction
       Word Ids:      [208, 131, 113, 219, 277, 231, 147, 186, 1]
       French Words: ['il', 'a', 'vu', 'un', 'vieux', 'camion', 'jaune', '.', '<EOS>']

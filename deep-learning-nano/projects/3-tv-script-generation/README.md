@@ -1,8 +1,15 @@
+### Deep Learning Foundations Nanodegree
+# Project: TV Script Generation
 
-# TV Script Generation
-In this project, you'll generate your own [Simpsons](https://en.wikipedia.org/wiki/The_Simpsons) TV scripts using RNNs.  You'll be using part of the [Simpsons dataset](https://www.kaggle.com/wcukierski/the-simpsons-by-the-data) of scripts from 27 seasons.  The Neural Network you'll build will generate a new TV script for a scene at [Moe's Tavern](https://simpsonswiki.com/wiki/Moe's_Tavern).
+---
+# Results
+The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/deep-learning-nano/projects/3-tv-script-generation/dlnd_tv_script_generation_v3.ipynb).
+
+## Overview
+In this project, we generate your own [Simpsons](https://en.wikipedia.org/wiki/The_Simpsons) TV scripts using RNNs. We use part of the [Simpsons dataset](https://www.kaggle.com/wcukierski/the-simpsons-by-the-data) of scripts from 27 seasons.  The Neural Network we build will generate a new TV script for a scene at [Moe's Tavern](https://simpsonswiki.com/wiki/Moe's_Tavern).
+
 ## Get the Data
-The data is already provided for you.  You'll be using a subset of the original dataset.  It consists of only the scenes in Moe's Tavern.  This doesn't include other versions of the tavern, like "Moe's Cavern", "Flaming Moe's", "Uncle Moe's Family Feed-Bag", etc..
+The data is already provided for us. We'll be using a subset of the original dataset.  It consists of only the scenes in Moe's Tavern.  This doesn't include other versions of the tavern, like "Moe's Cavern", "Flaming Moe's", "Uncle Moe's Family Feed-Bag", etc..
 
 
 ```python
@@ -52,7 +59,7 @@ print('\n'.join(text.split('\n')[view_sentence_range[0]:view_sentence_range[1]])
     Average number of sentences in each scene: 15.248091603053435
     Number of lines: 4257
     Average number of words in each line: 11.50434578341555
-    
+
     The sentences 0 to 10:
     Moe_Szyslak: (INTO PHONE) Moe's Tavern. Where the elite meet to drink.
     Bart_Simpson: Eh, yeah, hello, is Mike there? Last name, Rotch.
@@ -62,8 +69,8 @@ print('\n'.join(text.split('\n')[view_sentence_range[0]:view_sentence_range[1]])
     Homer_Simpson: I got my problems, Moe. Give me another one.
     Moe_Szyslak: Homer, hey, you should not drink to forget your problems.
     Barney_Gumble: Yeah, you should only drink to enhance your social skills.
-    
-    
+
+
 
 
 ## Implement Preprocessing Functions
@@ -94,7 +101,7 @@ def create_lookup_tables(text):
     sorted_vocab = sorted(word_counts, key=word_counts.get, reverse=True)
     int_to_vocab = {ii: word for ii, word in enumerate(sorted_vocab)}
     vocab_to_int = {word: ii for ii, word in int_to_vocab.items()}
-    
+
     return vocab_to_int, int_to_vocab
 
 
@@ -296,7 +303,7 @@ def get_embed(input_data, vocab_size, embed_dim):
     :return: Embedded input.
     """
     embedding = tf.Variable(tf.random_uniform((vocab_size, embed_dim), -1, 1))
-    
+
     return tf.nn.embedding_lookup(embedding, input_data)
 
 """
@@ -313,7 +320,7 @@ You created a RNN Cell in the `get_init_cell()` function.  Time to use the cell 
 - Build the RNN using the [`tf.nn.dynamic_rnn()`](https://www.tensorflow.org/api_docs/python/tf/nn/dynamic_rnn)
  - Apply the name "final_state" to the final state using [`tf.identity()`](https://www.tensorflow.org/api_docs/python/tf/identity)
 
-Return the outputs and final_state state in the following tuple `(Outputs, FinalState)` 
+Return the outputs and final_state state in the following tuple `(Outputs, FinalState)`
 
 
 ```python
@@ -326,7 +333,7 @@ def build_rnn(cell, inputs):
     """
     Outputs, state = tf.nn.dynamic_rnn(cell, inputs, dtype=tf.float32)
     FinalState = tf.identity(state, name='final_state')
-    
+
     return (Outputs, FinalState)
 
 """
@@ -344,7 +351,7 @@ Apply the functions you implemented above to:
 - Build RNN using `cell` and your `build_rnn(cell, inputs)` function.
 - Apply a fully connected layer with a linear activation and `vocab_size` as the number of outputs.
 
-Return the logits and final state in the following tuple (Logits, FinalState) 
+Return the logits and final state in the following tuple (Logits, FinalState)
 
 
 ```python
@@ -363,7 +370,7 @@ def build_nn(cell, rnn_size, input_data, vocab_size):
 
     # Apply fully connected layer with linear activation
     Logits = tf.contrib.layers.fully_connected(Outputs, vocab_size, activation_fn=None)
-    
+
     return (Logits, FinalState)
 
 """
@@ -392,7 +399,7 @@ For exmple, `get_batches([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 2,
     # Batch of targets
     [[ 2  3  4], [ 8  9 10]]
   ],
- 
+
   # Second Batch
   [
     # Batch of Input
@@ -419,7 +426,7 @@ def get_batches(int_text, batch_size, seq_length):
     # Drop the last few words to make only full batches
     xdata = np.array(int_text[: n_batches * batch_size * seq_length])
     ydata = np.array(int_text[1: n_batches * batch_size * seq_length + 1])
-    
+
     # Split data into batches
     x_batches = np.split(xdata.reshape(batch_size, -1), n_batches, 1)
     y_batches = np.split(ydata.reshape(batch_size, -1), n_batches, 1)
@@ -707,7 +714,7 @@ Get tensors from `loaded_graph` using the function [`get_tensor_by_name()`](http
 - "final_state:0"
 - "probs:0"
 
-Return the tensors in the following tuple `(InputTensor, InitialStateTensor, FinalStateTensor, ProbsTensor)` 
+Return the tensors in the following tuple `(InputTensor, InitialStateTensor, FinalStateTensor, ProbsTensor)`
 
 
 ```python
@@ -798,11 +805,11 @@ with tf.Session(graph=loaded_graph) as sess:
         probabilities, prev_state = sess.run(
             [probs, final_state],
             {input_text: dyn_input, initial_state: prev_state})
-        
+
         pred_word = pick_word(probabilities[dyn_seq_length-1], int_to_vocab)
 
         gen_sentences.append(pred_word)
-    
+
     # Remove tokens
     tv_script = ' '.join(gen_sentences)
     for key, token in token_dict.items():
@@ -810,7 +817,7 @@ with tf.Session(graph=loaded_graph) as sess:
         tv_script = tv_script.replace(' ' + token.lower(), key)
     tv_script = tv_script.replace('\n ', '\n')
     tv_script = tv_script.replace('( ', '(')
-        
+
     print(tv_script)
 ```
 

@@ -1,9 +1,12 @@
+### Deep Learning Foundations Nanodegree
+# Project: Predicting Daily Bike Rentals
 
-# Your first neural network
+---
+# Results
+The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/deep-learning-nano/projects/1-DLND-your-first-network/dlnd-your-first-neural-network-v5.ipynb).
 
-In this project, you'll build your first neural network and use it to predict daily bike rental ridership. We've provided some of the code, but left the implementation of the neural network up to you (for the most part). After you've submitted this project, feel free to explore the data and the model more.
-
-
+## Overview
+In this project, we build your first neural network and use it to predict daily bike rental ridership. Some of the code is provided, but Udacity left the implementation of the neural network up to us (for the most part). 
 
 
 ```python
@@ -197,7 +200,7 @@ for each in dummy_fields:
     dummies = pd.get_dummies(rides[each], prefix=each, drop_first=False)
     rides = pd.concat([rides, dummies], axis=1)
 
-fields_to_drop = ['instant', 'dteday', 'season', 'weathersit', 
+fields_to_drop = ['instant', 'dteday', 'season', 'weathersit',
                   'weekday', 'atemp', 'mnth', 'workingday', 'hr']
 data = rides.drop(fields_to_drop, axis=1)
 data.head()
@@ -384,7 +387,7 @@ We'll save the last 21 days of the data to use as a test set after we've trained
 
 
 ```python
-# Save the last 21 days 
+# Save the last 21 days
 test_data = data[-21*24:]
 data = data[:-21*24]
 
@@ -418,11 +421,11 @@ Below, you have these tasks:
 2. Implement the forward pass in the `train` method.
 3. Implement the backpropagation algorithm in the `train` method, including calculating the output error.
 4. Implement the forward pass in the `run` method.
-  
+
 
 
 ```python
-class NeuralNetwork(object): 
+class NeuralNetwork(object):
     def __init__(self, input_nodes, hidden_nodes, output_nodes, learning_rate):
         # Set number of nodes in input, hidden and output layers.
         self.input_nodes = input_nodes
@@ -430,12 +433,12 @@ class NeuralNetwork(object):
         self.output_nodes = output_nodes
 
         # Initialize weights
-        self.weights_input_to_hidden = np.random.normal(0.0, self.hidden_nodes**-0.5, 
+        self.weights_input_to_hidden = np.random.normal(0.0, self.hidden_nodes**-0.5,
                                        (self.hidden_nodes, self.input_nodes))
         # shape check [h, 56]
 #        print('self.weights_input_to_hidden.shape:', self.weights_input_to_hidden.shape)
-        
-        self.weights_hidden_to_output = np.random.normal(0.0, self.output_nodes**-0.5, 
+
+        self.weights_hidden_to_output = np.random.normal(0.0, self.output_nodes**-0.5,
                                        (self.output_nodes, self.hidden_nodes))
         # shape check [1, h]
 #        print('self.weights_hidden_to_output.shape:', self.weights_hidden_to_output.shape)
@@ -447,19 +450,19 @@ class NeuralNetwork(object):
     def activation_function(self, x):
         return 1 / (1 + np.exp(-x))
 
-    
+
     def train(self, inputs_list, targets_list):
         # Convert inputs list to 2d array
         inputs = np.array(inputs_list, ndmin=2).T
         targets = np.array(targets_list, ndmin=2).T
 
         ### Forward pass ###
-        
+
         ## Hidden layer
         hidden_inputs = np.dot(self.weights_input_to_hidden, inputs) # [h, 56]*[56, 1] # signals into hidden layer
         hidden_outputs = self.activation_function(hidden_inputs) # [h, 1] # signals from hidden layer
 
-        # shape check 
+        # shape check
         # [h, 56] * [56, 1] --> [h, 1]
 #         print('hidden_inputs.shape:', hidden_inputs.shape)
         # [h, 1]
@@ -469,24 +472,24 @@ class NeuralNetwork(object):
         final_inputs = np.dot(self.weights_hidden_to_output, hidden_outputs) # [1, h] * [h, 1] # signals into final output layer
         final_outputs = final_inputs # signals from final output layer
 
-        # shape check 
+        # shape check
         # [1, h] * [h, 1]  --> [1, 1]
 #        print('final_inputs.shape:', final_inputs.shape)
         # [1, 1]
 #        print('final_outputs.shape:', final_outputs.shape)
 
         ### Backward pass ###
-        
+
         ## Output error
         error = targets - final_outputs
-        output_grad = 1  # because final node is pass through f(x) = x 
+        output_grad = 1  # because final node is pass through f(x) = x
         output_errors = error * output_grad  # Output layer error is the difference between desired target and actual output.
 
         # shape check [1, 1] - [1, 1] * 1  --> [1, 1]
 #        print('targets.shape:', targets.shape)
 #        print('error.shape:', error.shape)
 #        print('output_errors.shape:', output_errors.shape)
-        
+
         ## Backpropagated error
         hidden_errors = np.dot(self.weights_hidden_to_output.T, output_errors) # [1, h].T * [1, 1] # errors propagated to the hidden layer
         hidden_grad = hidden_outputs * (1 - hidden_outputs) # [h, 1] * (1- [h, 1]) # hidden layer gradients
@@ -505,20 +508,20 @@ class NeuralNetwork(object):
         # [1, h] += self.lr * [h, 1] * [56, 1].T * [h, 1]
         self.weights_input_to_hidden += self.lr * hidden_errors * inputs.T * hidden_grad # update input-to-hidden weights with gradient descent step
 
-   
+
     def run(self, inputs_list):
         # Run a forward pass through the network
         inputs = np.array(inputs_list, ndmin=2).T
-        
+
         #### Forward pass here ####
         # Hidden layer
         hidden_inputs = np.dot(self.weights_input_to_hidden, inputs) # signals into hidden layer
         hidden_outputs = self.activation_function(hidden_inputs) # signals from hidden layer
-        
+
         # Output layer
         final_inputs = np.dot(self.weights_hidden_to_output, hidden_outputs) # signals into final output layer
-        final_outputs = final_inputs # signals from final output layer 
-        
+        final_outputs = final_inputs # signals from final output layer
+
         return final_outputs
 ```
 
@@ -560,17 +563,17 @@ losses = {'train':[], 'validation':[]}
 for e in range(epochs):
     # Go through a random batch of 128 records from the training data set
     batch = np.random.choice(train_features.index, size=128)
-    for record, target in zip(train_features.ix[batch].values, 
+    for record, target in zip(train_features.ix[batch].values,
                               train_targets.ix[batch]['cnt']):
         network.train(record, target)
-    
+
     # Printing out the training progress
     train_loss = MSE(network.run(train_features), train_targets['cnt'].values)
     val_loss = MSE(network.run(val_features), val_targets['cnt'].values)
     sys.stdout.write("\rProgress: " + str(100 * e/float(epochs))[:4] \
                      + "% ... Training loss: " + str(train_loss)[:5] \
                      + " ... Validation loss: " + str(val_loss)[:5])
-    
+
     losses['train'].append(train_loss)
     losses['validation'].append(val_loss)
 ```
@@ -583,7 +586,7 @@ for e in range(epochs):
     learning_rate = 0.019
     hidden_nodes = 36
     Training loss: 0.052 ... Validation loss: 0.148
-    
+
     epochs = 2000
     learning_rate = 0.02
     hidden_nodes = 34
@@ -598,7 +601,7 @@ for e in range(epochs):
     learning_rate = 0.01
     hidden_nodes = 40
     Training loss: 0.058 ... Validation loss: 0.184
-    
+
     epochs = 1500
     learning_rate = 0.02
     hidden_nodes = 34
@@ -672,7 +675,7 @@ print('RMSE in bike rentals per hour: {0:.1f}'.format(RMSE_rentals))
 
 
 ## Thinking about your results
- 
+
 Answer these questions about your results. How well does the model predict the data? Where does it fail? Why does it fail where it does?
 
 
@@ -680,13 +683,13 @@ Answer these questions about your results. How well does the model predict the d
 
 Overall, the model does a good job predicting the data given that the training loss is <0.06 and the validation loss is <0.15 (close to zero is good when calculating mean squared error (MSE)). But, when you calculate the root mean squared error (RMSE), you see that the validation error translates to 70 bike rentals per hour. In those terms, if you're the one running the business, it sounds high! Certainly high enough to influence my inventory decisions. I'd probably need to keep an extra 200+ bikes in inventory (70 rentals per hour times 3 hours) to account for this error -- versus if the error was zero (which obviously isn't realistic).
 
-Part of this challenge is germaine to people's biking behavior, which varies greatly (i.e. high standard devidation which is almost equal to the mean). Because of this, you'll inherently have a lot of dormant inventory if you're going to meet peek demand. 
+Part of this challenge is germaine to people's biking behavior, which varies greatly (i.e. high standard devidation which is almost equal to the mean). Because of this, you'll inherently have a lot of dormant inventory if you're going to meet peek demand.
 
 However, looking at the graph, you also see that the model does a poor job predicting rentals around the Christmas and New Year's holidays. Intuitively it makes sense that there would be fewer rentals during this period (assuming the business operates in the U.S or some other largely Catholic country). But from the model's perspective, holidays can be misleading in a few different ways:
 
-1. Not all holidays are the same (in terms of customer behavior). For some holidays like Independence day or Labor Day, you might (intuitively) expect MORE bike rentals. Whereas other holidays seem like they'd be neutral, such as Veteran's Day or President's Day. But, with holidays like Christmas and New Year's, obviously we'd expect fewer rentals. There's probably a consistent seasonal and/or annual pattern that emerges around holidays, but training this into the model would require more than two years of data. 
+1. Not all holidays are the same (in terms of customer behavior). For some holidays like Independence day or Labor Day, you might (intuitively) expect MORE bike rentals. Whereas other holidays seem like they'd be neutral, such as Veteran's Day or President's Day. But, with holidays like Christmas and New Year's, obviously we'd expect fewer rentals. There's probably a consistent seasonal and/or annual pattern that emerges around holidays, but training this into the model would require more than two years of data.
 
-2. What constitutes a holiday? According to the data, the only holidays are: New Year's, Memorial Day, Indepence Day, Labor Day, Columbus Day, Veterans Day, Thanksgiving, Christmas...and oddly enough, Tax Day. Perhaps other holidays should be included? Perhaps some holidays should be considered 2-3 day holidays (instead of just one official day)? What about spring break? Perhaps holidays should be excluded altogether? Arguments can be made for all of these approaches, but clearly more testing would be needed to improve the model's predictions during holiday periods. 
+2. What constitutes a holiday? According to the data, the only holidays are: New Year's, Memorial Day, Indepence Day, Labor Day, Columbus Day, Veterans Day, Thanksgiving, Christmas...and oddly enough, Tax Day. Perhaps other holidays should be included? Perhaps some holidays should be considered 2-3 day holidays (instead of just one official day)? What about spring break? Perhaps holidays should be excluded altogether? Arguments can be made for all of these approaches, but clearly more testing would be needed to improve the model's predictions during holiday periods.
 
 
 ## Unit tests
@@ -699,24 +702,24 @@ import unittest
 
 inputs = [0.5, -0.2, 0.1]
 targets = [0.4]
-test_w_i_h = np.array([[0.1, 0.4, -0.3], 
+test_w_i_h = np.array([[0.1, 0.4, -0.3],
                        [-0.2, 0.5, 0.2]])
 test_w_h_o = np.array([[0.3, -0.1]])
 
 class TestMethods(unittest.TestCase):
-    
+
     ##########
     # Unit tests for data loading
     ##########
-    
+
     def test_data_path(self):
         # Test that file path to dataset has been unaltered
         self.assertTrue(data_path.lower() == 'bike-sharing-dataset/hour.csv')
-        
+
     def test_data_loaded(self):
         # Test that data frame loaded
         self.assertTrue(isinstance(rides, pd.DataFrame))
-    
+
     ##########
     # Unit tests for network functionality
     ##########
@@ -731,9 +734,9 @@ class TestMethods(unittest.TestCase):
         network = NeuralNetwork(3, 2, 1, 0.5)
         network.weights_input_to_hidden = test_w_i_h.copy()
         network.weights_hidden_to_output = test_w_h_o.copy()
-        
+
         network.train(inputs, targets)
-        self.assertTrue(np.allclose(network.weights_hidden_to_output, 
+        self.assertTrue(np.allclose(network.weights_hidden_to_output,
                                     np.array([[ 0.37275328, -0.03172939]])))
         self.assertTrue(np.allclose(network.weights_input_to_hidden,
                                     np.array([[ 0.10562014,  0.39775194, -0.29887597],
@@ -754,7 +757,7 @@ unittest.TextTestRunner().run(suite)
     .....
     ----------------------------------------------------------------------
     Ran 5 tests in 0.004s
-    
+
     OK
 
 
@@ -762,5 +765,3 @@ unittest.TextTestRunner().run(suite)
 
 
     <unittest.runner.TextTestResult run=5 errors=0 failures=0>
-
-

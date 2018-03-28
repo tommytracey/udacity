@@ -1,7 +1,14 @@
+### Deep Learning Foundations Nanodegree
+# Project: Face Generation
 
-# Face Generation
-In this project, you'll use generative adversarial networks to generate new images of faces.
-### Get the Data
+---
+# Results
+The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/deep-learning-nano/projects/5-face-generation/final-submission/dlnd_face_generation-v13.ipynb).
+
+## Overview
+In this project, we use generative adversarial networks to generate new images of faces.
+
+## Get the Data
 You'll be using two datasets in this project:
 - MNIST
 - CelebA
@@ -29,7 +36,7 @@ helper.download_extract('celeba', data_dir)
 
 ## Explore the Data
 ### MNIST
-As you're aware, the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset contains images of handwritten digits. You can view the first number of examples by changing `show_n_images`. 
+As you're aware, the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset contains images of handwritten digits. You can view the first number of examples by changing `show_n_images`.
 
 
 ```python
@@ -166,7 +173,7 @@ def generator(z, out_channel_dim, is_train=True):
     :return: The tensor output of the generator
     """
     # TODO: Implement Function
-    
+
     return None
 
 
@@ -192,7 +199,7 @@ def model_loss(input_real, input_z, out_channel_dim):
     :return: A tuple of (discriminator loss, generator loss)
     """
     # TODO: Implement Function
-    
+
     return None, None
 
 
@@ -217,7 +224,7 @@ def model_opt(d_loss, g_loss, learning_rate, beta1):
     :return: A tuple of (discriminator training operation, generator training operation)
     """
     # TODO: Implement Function
-    
+
     return None, None
 
 
@@ -283,15 +290,15 @@ def train(epoch_count, batch_size, z_dim, learning_rate, beta1, get_batches, dat
     :param data_image_mode: The image mode to use for images ("RGB" or "L")
     """
     # TODO: Build Model
-    
-    
+
+
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         for epoch_i in range(epoch_count):
             for batch_images in get_batches(batch_size):
                 # TODO: Train Model
-                
-                
+
+
 ```
 
 ### MNIST
