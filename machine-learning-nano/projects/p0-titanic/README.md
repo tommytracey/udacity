@@ -1,16 +1,19 @@
-# Machine Learning Engineer Nanodegree
-## Introduction and Foundations
-## Project: Titanic Survival Exploration
+### Machine Learning Engineer Nanodegree
+### Introduction and Foundations
+# Project: Titanic Survival Exploration
 
 
 ## Overview
-In this **optional** project, you will create decision functions that attempt to predict survival outcomes from the 1912 Titanic disaster based on each passenger's features, such as sex and age. You will start with a simple algorithm and increase its complexity until you are able to accurately predict the outcomes for at least 80% of the passengers in the provided data. This project will introduce you to some of the concepts of machine learning as you start the Nanodegree program.
+In this **optional** project, we create decision functions that attempt to predict survival outcomes from the 1912 Titanic disaster based on each passenger's features, such as sex and age. We start with a simple algorithm and increase its complexity until we're able to accurately predict the outcomes for at least 80% of the passengers in the provided data.
 
-In 1912, the ship RMS Titanic struck an iceberg on its maiden voyage and sank, resulting in the deaths of most of its passengers and crew. In this introductory project, we will explore a subset of the RMS Titanic passenger manifest to determine which features best predict whether someone survived or did not survive. To complete this project, you will need to implement several conditional predictions and answer the questions below. Your project submission will be evaluated based on the completion of the code and your responses to the questions.
-> **Tip:** Quoted sections like this will provide helpful instructions on how to navigate and use an iPython notebook.
+In 1912, the ship RMS Titanic struck an iceberg on its maiden voyage and sank, resulting in the deaths of most of its passengers and crew. In this introductory project, we will explore a subset of the RMS Titanic passenger manifest to determine which features best predict whether someone survived or did not survive. To complete this project, we need to implement several conditional predictions and answer the questions below. Our project submission will be evaluated based on the completion of the code and your responses to the questions.
+
+---
+# Results
+The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/machine-learning-nano/projects/p0-titanic/titanic_survival_exploration.ipynb).
 
 
-# Jupyter Notebook
+# Getting Started
 To begin working with the RMS Titanic passenger data, we'll first need to `import` the functionality we need, and load our data into a `pandas` DataFrame.  
 Run the code cell below to load our data and display the first few entries (passengers) for examination using the `.head()` function.
 > **Tip:** You can run a code cell by clicking on the cell and using the keyboard shortcut **Shift + Enter** or **Shift + Return**. Alternatively, a code cell can be executed using the **Play** button in the hotbar after selecting it. Markdown cells (text cells like this one) can be edited by double-clicking, and saved using these same shortcuts. [Markdown](http://daringfireball.net/projects/markdown/syntax) allows you to write easy-to-read plain text that can be converted to HTML.
