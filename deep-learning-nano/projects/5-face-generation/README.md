@@ -2,6 +2,9 @@
 # Project: Face Generation
 
 ---
+![Generated Face Sequence](GAN-face-sequence.png)
+
+
 # Results
 The sections below outline the work I completed as part of this project. The Jupyter Notebook document containing the source code is located [here](https://github.com/tommytracey/udacity/blob/master/deep-learning-nano/projects/5-face-generation/final-submission/dlnd_face_generation-v13.ipynb).
 
